@@ -1,62 +1,18 @@
 {% extends "users/basic.html" %}
 {% block content %}
-<div class="container mt-5">
-  <div class="row"><div class="col-lg-8 mx-auto">
-    <div class="card mb-4"><div class="card-body">
-      <h4>{{ theater.movie.name }}</h4>
-      <p class="text-muted mb-0">{{ theater.name }} | {{ theater.time }}</p>
-    </div></div>
-    <div class="card"><div class="card-body">
-      <h5 class="text-center mb-4">Select Your Seats</h5>
-      <div class="screen">All eyes this way please!</div>
-      <div id="payment-error" class="alert alert-danger d-none"></div>
-      <form id="seat-form" method="post" action="{% url 'create_payment_order' theater.id %}">
-        {% csrf_token %}
-        <div class="d-flex justify-content-center flex-wrap mb-4">
-          {% for seat in seats %}
-          <div class="seat {% if seat.is_booked %}sold{% endif %}">
-            {% if not seat.is_booked %}
-            <input type="checkbox" name="seats" value="{{ seat.id }}" class="d-none" id="seat-{{ seat.id }}">
-            <label for="seat-{{ seat.id }}">{{ seat.seat_number }}</label>
-            {% else %}{{ seat.seat_number }}{% endif %}
-          </div>
-          {% endfor %}
-        </div>
-        <p class="text-center">Price: ₹{{ booking_price_inr }} per seat</p>
-        <div class="text-center"><button id="pay-button" type="submit" class="btn btn-success btn-lg">Pay and Book Seats</button></div>
-      </form>
-    </div></div>
-  </div></div>
-</div>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-const form = document.getElementById('seat-form');
-const errorBox = document.getElementById('payment-error');
-const button = document.getElementById('pay-button');
-function csrfToken() { return form.querySelector('[name=csrfmiddlewaretoken]').value; }
-function showError(message) { errorBox.textContent = message; errorBox.classList.remove('d-none'); button.disabled = false; button.textContent = 'Pay and Book Seats'; }
-form.addEventListener('submit', async function(event) {
-  event.preventDefault(); errorBox.classList.add('d-none'); button.disabled = true; button.textContent = 'Preparing payment...';
-  try {
-    const response = await fetch(form.action, { method: 'POST', headers: {'X-CSRFToken': csrfToken()}, body: new FormData(form) });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Unable to create payment order.');
-    const checkout = new Razorpay({
-      key: data.key_id, amount: data.amount, currency: data.currency, name: 'BookMySeat',
-      description: data.movie + ' - ' + data.theater, order_id: data.order_id,
-      prefill: {name: '{{ request.user.get_full_name|escapejs }}', email: '{{ request.user.email|escapejs }}'},
-      handler: async function(payment) {
-        const verify = await fetch('{% url "verify_payment" %}', {method: 'POST', headers: {'Content-Type':'application/json', 'X-CSRFToken': csrfToken()}, body: JSON.stringify(payment)});
-        const result = await verify.json();
-        if (!verify.ok || !result.success) throw new Error(result.error || 'Payment verification failed.');
-        window.location.href = result.redirect_url;
-      }, modal: {ondismiss: function() { button.disabled = false; button.textContent = 'Pay and Book Seats'; }}
-    });
-    checkout.open();
-  } catch (error) { showError(error.message); }
-});
-</script>
-<style>
-.seat{width:42px;height:38px;border:1px solid #28a745;margin:3px;text-align:center;line-height:38px;cursor:pointer;border-radius:5px}.seat label{display:block;width:100%;height:100%;cursor:pointer}.seat:hover,.seat input:checked+label{background:#28a745;color:#fff}.seat.sold{background:#ccc;color:#666;cursor:not-allowed}.screen{margin:20px 0;background:#ccc;height:50px;text-align:center;line-height:50px;color:#666}
-</style>
+<div class="container mt-5"><div class="row"><div class="col-lg-8 mx-auto">
+<div class="card mb-4"><div class="card-body"><h4>{{ theater.movie.name }}</h4><p class="text-muted mb-0">{{ theater.name }} | {{ theater.time }}</p></div></div>
+<div class="card"><div class="card-body"><h5 class="text-center mb-4">Select Your Seats</h5><div class="screen">All eyes this way please!</div>
+<div id="payment-error" class="alert alert-danger d-none"></div>
+<form id="seat-form" method="post" action="{% url 'create_payment_order' theater.id %}">{% csrf_token %}
+<div class="d-flex justify-content-center flex-wrap mb-4">{% for seat in seats %}<div class="seat {% if seat.is_booked %}sold{% endif %}">{% if not seat.is_booked %}<input type="checkbox" name="seats" value="{{ seat.id }}" class="d-none" id="seat-{{ seat.id }}"><label for="seat-{{ seat.id }}">{{ seat.seat_number }}<small>₹{{ seat.price }}</small></label>{% else %}{{ seat.seat_number }}{% endif %}</div>{% endfor %}</div>
+<p class="text-center">Each seat shows its own price. The total is calculated securely on the server.</p>
+<div class="text-center"><button id="pay-button" type="submit" class="btn btn-success btn-lg">Pay and Book Seats</button></div></form>
+</div></div></div></div></div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script><script>
+const form=document.getElementById('seat-form'), errorBox=document.getElementById('payment-error'), button=document.getElementById('pay-button');
+const csrf=()=>form.querySelector('[name=csrfmiddlewaretoken]').value;
+const error=(message)=>{errorBox.textContent=message;errorBox.classList.remove('d-none');button.disabled=false;button.textContent='Pay and Book Seats';};
+form.addEventListener('submit',async e=>{e.preventDefault();errorBox.classList.add('d-none');button.disabled=true;button.textContent='Preparing payment...';try{const r=await fetch(form.action,{method:'POST',headers:{'X-CSRFToken':csrf()},body:new FormData(form)});const d=await r.json();if(!r.ok)throw Error(d.error||'Could not create order.');const checkout=new Razorpay({key:d.key_id,amount:d.amount,currency:d.currency,name:'BookMySeat',description:d.movie+' - '+d.theater,order_id:d.order_id,prefill:{name:'{{ request.user.get_full_name|escapejs }}',email:'{{ request.user.email|escapejs }}'},handler:async p=>{const v=await fetch('{% url "verify_payment" %}',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrf()},body:JSON.stringify(p)});const result=await v.json();if(!v.ok||!result.success)throw Error(result.error||'Verification failed.');location.href=result.redirect_url;}});checkout.open();}catch(err){error(err.message);}});
+</script><style>.seat{width:55px;height:48px;border:1px solid #28a745;margin:3px;text-align:center;cursor:pointer;border-radius:5px}.seat label{display:flex;width:100%;height:100%;align-items:center;justify-content:center;flex-direction:column;cursor:pointer}.seat small{font-size:10px}.seat:hover,.seat input:checked+label{background:#28a745;color:#fff}.seat.sold{background:#ccc;color:#666}.screen{margin:20px 0;background:#ccc;height:50px;text-align:center;line-height:50px;color:#666}</style>
 {% endblock %}

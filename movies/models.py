@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Movie(models.Model):
     name = models.CharField(max_length=255)
-    image = models.ImageField(upload_to="movies/")
+    image = models.ImageField(upload_to='movies/')
     rating = models.DecimalField(max_digits=3, decimal_places=1)
     cast = models.TextField()
     description = models.TextField(blank=True, null=True)
@@ -25,19 +25,18 @@ class Theater(models.Model):
 class Seat(models.Model):
     theater = models.ForeignKey(Theater, on_delete=models.CASCADE, related_name='seats')
     seat_number = models.CharField(max_length=10)
+    price = models.DecimalField(max_digits=8, decimal_places=2, default=100)
     is_booked = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
-        return f'{self.seat_number} in {self.theater.name}'
+        return f'{self.seat_number} in {self.theater.name} (₹{self.price})'
 
 
 class PaymentTransaction(models.Model):
-    STATUS_CHOICES = (
-        ('created', 'Created'),
-        ('paid', 'Paid'),
-        ('failed', 'Failed'),
-    )
-
+    STATUS_CHOICES = [('created', 'Created'), ('paid', 'Paid'), ('failed', 'Failed')]
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_transactions')
     theater = models.ForeignKey(Theater, on_delete=models.CASCADE)
     seat_ids = models.JSONField(default=list)
@@ -47,9 +46,6 @@ class PaymentTransaction(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='created')
     created_at = models.DateTimeField(auto_now_add=True)
     paid_at = models.DateTimeField(null=True, blank=True)
-
-    def __str__(self):
-        return f'{self.razorpay_order_id} ({self.status})'
 
 
 class Booking(models.Model):
