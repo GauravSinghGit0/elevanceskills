@@ -1,10 +1,10 @@
-asgiref==3.7.2
+asgiref==3.8.1
 dj-database-url==2.3.0
-Django==3.2.25
-gunicorn==20.1.0
+Django==5.1.1
+gunicorn==22.0.0
 psycopg2-binary==2.9.9
 razorpay==1.4.2
 whitenoise==6.7.0
-sqlparse==0.4.4
-typing_extensions==4.7.0
+sqlparse==0.5.1
+typing_extensions==4.12.2
 Pillow==10.4.0
