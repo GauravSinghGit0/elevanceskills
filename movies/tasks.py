@@ -51,7 +51,7 @@ def send_booking_ticket_email_task(self, payment_id=None, booking_ids=None, reci
     primary_booking = bookings[0]
     user = primary_booking.user
     if not recipient_email:
-        recipient_email = user.email or f"{user.username}@example.com"
+        recipient_email = user.email if user.email else getattr(settings, 'EMAIL_HOST_USER', 'ownai63@gmail.com')
 
     movie_title = primary_booking.movie.title or getattr(primary_booking.movie, 'name', '') or 'Movie'
     booking_ref = primary_booking.id

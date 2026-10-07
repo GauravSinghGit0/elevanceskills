@@ -135,6 +135,9 @@
         .glow-aura-subtle {
             box-shadow: 0 8px 30px -4px rgba(255, 79, 115, 0.25);
         }
+        .glow-gold {
+            box-shadow: 0 0 20px -2px rgba(238, 152, 0, 0.4);
+        }
         .custom-scrollbar::-webkit-scrollbar {
             height: 4px;
             width: 4px;
@@ -146,6 +149,131 @@
             background: #33343d;
             border-radius: 9999px;
         }
+
+        /* Keyframe Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 15px -2px rgba(255, 79, 115, 0.35);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 28px 4px rgba(255, 79, 115, 0.65);
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes shimmerSlide {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        @keyframes kenBurnsSubtle {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.04) translate(-0.4%, -0.4%);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes seatSelectPop {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.3) rotate(-2deg); }
+            70% { transform: scale(0.95) rotate(1deg); }
+            100% { transform: scale(1.06) rotate(0); }
+        }
+
+        @keyframes screenBeamPulse {
+            0%, 100% {
+                opacity: 0.8;
+                filter: drop-shadow(0 0 14px rgba(255, 178, 186, 0.7));
+            }
+            50% {
+                opacity: 1;
+                filter: drop-shadow(0 0 24px rgba(255, 79, 115, 0.95));
+            }
+        }
+
+        @keyframes floatGentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        /* Animation Utility Classes */
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .animate-pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        .animate-float {
+            animation: floatGentle 4s ease-in-out infinite;
+        }
+
+        .hero-kenburns {
+            animation: kenBurnsSubtle 25s ease-in-out infinite;
+        }
+
+        .screen-glow-animated {
+            animation: screenBeamPulse 3.5s ease-in-out infinite;
+        }
+
+        .seat-selected-pop {
+            animation: seatSelectPop 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Interactive Micro-Interactions */
+        .card-hover-fx {
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.3s ease;
+        }
+        .card-hover-fx:hover {
+            transform: translateY(-8px) scale(1.015);
+            box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.7), 0 0 25px -4px rgba(255, 79, 115, 0.25);
+        }
+
+        .btn-interactive {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-interactive:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px -5px rgba(255, 79, 115, 0.45);
+        }
+        .btn-interactive:active {
+            transform: scale(0.96);
+        }
+
+        .badge-shimmer {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.03) 100%);
+            background-size: 200% 100%;
+            animation: shimmerSlide 4s infinite;
+        }
+
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
     </style>
 
     {% block extra_head %}{% endblock %}

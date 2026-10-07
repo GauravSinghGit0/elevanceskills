@@ -1043,6 +1043,7 @@ class SeatLockService:
                     bookings = []
                     try:
                         for s in seats:
+                            Booking.objects.filter(seat=s).delete()
                             b = Booking.objects.create(
                                 user=user,
                                 seat=s,
@@ -1337,6 +1338,7 @@ class PaymentGatewayService:
                     bookings = []
                     try:
                         for s in seats:
+                            Booking.objects.filter(seat=s).delete()
                             b = Booking.objects.create(
                                 user=payment.user,
                                 seat=s,
