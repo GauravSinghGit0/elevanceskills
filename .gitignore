@@ -14,8 +14,7 @@ ENV/
 email_config.txt
 *.local
 
-# Django Static Collection and Media
-staticfiles/
+# Django Media
 *.log
 
 # OS artifacts
