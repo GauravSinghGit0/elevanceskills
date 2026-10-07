@@ -1,0 +1,33 @@
+{% load movie_tags %}
+{# Reusable Pagination Component #}
+{% if page_obj.has_other_pages %}
+<nav class="flex items-center justify-between gap-4 p-4 border-t border-outline-variant/20 bg-surface-container-low/60 rounded-xl my-4" aria-label="Pagination">
+    <span class="text-label-sm font-label-sm text-on-surface-variant">
+        Page <strong class="text-on-surface">{{ page_obj.number }}</strong> of <strong class="text-on-surface">{{ page_obj.paginator.num_pages }}</strong>
+    </span>
+
+    <div class="flex items-center gap-1">
+        {% if page_obj.has_previous %}
+        <a
+            href="{% param_replace page=page_obj.previous_page_number %}"
+            class="px-3.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface hover:text-primary text-label-sm font-label-sm transition-colors flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">chevron_left</span>
+            <span>Previous</span>
+        </a>
+        {% endif %}
+
+        <span class="px-3.5 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-bold text-label-sm shadow-sm">
+            {{ page_obj.number }}
+        </span>
+
+        {% if page_obj.has_next %}
+        <a
+            href="{% param_replace page=page_obj.next_page_number %}"
+            class="px-3.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface hover:text-primary text-label-sm font-label-sm transition-colors flex items-center gap-1">
+            <span>Next</span>
+            <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </a>
+        {% endif %}
+    </div>
+</nav>
+{% endif %}

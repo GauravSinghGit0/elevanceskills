@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cineva - Account Access &amp; Operations Portal</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols Outlined -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS with Forms and Container Queries -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#33343d",
+                        "background": "#11131b",
+                        "on-tertiary-fixed-variant": "#2f2ebe",
+                        "on-tertiary-fixed": "#07006c",
+                        "inverse-primary": "#bd0042",
+                        "on-secondary-fixed": "#2a1700",
+                        "error": "#ffb4ab",
+                        "tertiary": "#c0c1ff",
+                        "surface-bright": "#373942",
+                        "surface-variant": "#33343d",
+                        "surface-container-high": "#282a32",
+                        "secondary": "#ffb95f",
+                        "tertiary-container": "#8083ff",
+                        "surface-container-low": "#191b23",
+                        "primary-container": "#ff4f73",
+                        "on-surface-variant": "#e5bdc0",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#1000a9",
+                        "on-error": "#690005",
+                        "surface": "#11131b",
+                        "on-error-container": "#ffdad6",
+                        "on-background": "#e1e1ed",
+                        "tertiary-fixed": "#e1e0ff",
+                        "surface-tint": "#ffb2ba",
+                        "surface-container": "#1d1f28",
+                        "primary-fixed-dim": "#ffb2ba",
+                        "surface-dim": "#11131b",
+                        "secondary-fixed": "#ffddb8",
+                        "outline-variant": "#5c3f42",
+                        "on-primary": "#670020",
+                        "tertiary-fixed-dim": "#c0c1ff",
+                        "on-primary-fixed-variant": "#910030",
+                        "primary-fixed": "#ffd9dc",
+                        "on-secondary-container": "#5b3800",
+                        "inverse-on-surface": "#2e3039",
+                        "secondary-container": "#ee9800",
+                        "on-primary-container": "#5a001b",
+                        "on-primary-fixed": "#400011",
+                        "inverse-surface": "#e1e1ed",
+                        "outline": "#ac888b",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-container-lowest": "#0c0e16",
+                        "on-secondary": "#472a00",
+                        "on-tertiary-container": "#0d0096",
+                        "primary": "#ffb2ba",
+                        "on-surface": "#e1e1ed"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "2rem",
+                        "gutter-mobile": "1rem",
+                        "space-xl": "2.5rem",
+                        "margin-mobile": "1rem",
+                        "space-md": "1rem",
+                        "space-sm": "0.5rem",
+                        "space-xs": "0.25rem",
+                        "space-lg": "1.5rem",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "display-lg-mobile": ["Outfit"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Outfit"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "title-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "title-md": ["Plus Jakarta Sans"],
+                        "display-md": ["Outfit"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-md": ["Outfit"],
+                        "display-md-mobile": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-sm": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "title-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "title-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "display-md": ["44px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-md-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 20px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .cinematic-glow {
+            box-shadow: 0 0 35px -5px rgba(255, 79, 115, 0.25);
+        }
+
+        .btn-glow {
+            box-shadow: 0 0 20px rgba(255, 79, 115, 0.35);
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 28px rgba(255, 79, 115, 0.55);
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 24px -4px rgba(255, 185, 95, 0.2);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface-container-lowest text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-primary selection:text-on-primary">
+    <!-- Ambient Cinematic Background Glows -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-primary-container/10 rounded-full blur-[140px]">
+        </div>
+        <div class="absolute top-1/2 -right-40 w-[700px] h-[700px] bg-secondary-container/10 rounded-full blur-[160px]">
+        </div>
+        <div
+            class="absolute -bottom-40 left-1/3 w-[500px] h-[500px] bg-tertiary-container/10 rounded-full blur-[150px]">
+        </div>
+    </div>
+    <!-- Minimal Brand Header (Auth Flow) -->
+    <header class="relative z-10 w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-container to-inverse-primary flex items-center justify-center shadow-lg shadow-primary-container/20 border border-outline-variant/30">
+                <span class="material-symbols-outlined text-on-primary text-2xl"
+                    style="font-variation-settings: 'FILL' 1;">movie</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-headline-sm text-headline-sm font-bold tracking-tight text-primary">Cineva</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant tracking-widest uppercase">Atmospheric
+                    Cinema Network</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div
+                class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container/60 border border-outline-variant/20 backdrop-blur-md">
+                <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant">IMAX Laser &amp; Dolby Atmos Live
+                    Hub</span>
+            </div>
+            <a class="px-4 py-2 rounded-lg bg-surface-container border border-outline-variant/30 font-label-md text-label-md text-on-surface hover:text-primary hover:border-primary-container/50 transition-all duration-200 flex items-center gap-1.5"
+                href="#">
+                <span class="material-symbols-outlined text-base">help</span>
+                <span>Support</span>
+            </a>
+        </div>
+    </header>
+    <!-- Main Split Canvas Area -->
+    <main class="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div
+            class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 rounded-3xl overflow-hidden bg-surface-container-low/80 backdrop-blur-2xl border border-outline-variant/20 shadow-2xl cinematic-glow">
+            <!-- LEFT / TOP COLUMN: Interactive Dynamic Authentication Form -->
+            <div class="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between">
+                <div>
+                    <!-- Upper Navigation: Role Switcher Segmented Control -->
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-2">
+                            <span
+                                class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Select
+                                Portal Persona</span>
+                            <span
+                                class="inline-flex items-center gap-1 font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary border border-outline-variant/30"
+                                id="badge-status">
+                                <span class="material-symbols-outlined text-xs">local_activity</span>
+                                <span>Member Privileges Active</span>
+                            </span>
+                        </div>
+                        <div
+                            class="grid grid-cols-2 p-1.5 rounded-2xl bg-surface-container-lowest/80 border border-outline-variant/20 gap-1.5">
+                            <!-- Moviegoer Option -->
+                            <button
+                                class="flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl font-label-lg text-label-lg transition-all duration-200 bg-surface-container text-primary shadow-md border border-outline-variant/40"
+                                id="tab-patron" onclick="switchRole('patron')" type="button">
+                                <span class="material-symbols-outlined text-lg"
+                                    style="font-variation-settings: 'FILL' 1;">confirmation_number</span>
+                                <span class="font-semibold">Moviegoer / Patron</span>
+                            </button>
+                            <!-- Cinema Operations & Admin Option -->
+                            <button
+                                class="flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl font-label-lg text-label-lg transition-all duration-200 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/40"
+                                id="tab-admin" onclick="switchRole('admin')" type="button">
+                                <span class="material-symbols-outlined text-lg">theater_comedy</span>
+                                <span class="font-semibold">Cinema Operations &amp; Admin</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- ROLE 1: MOVIEGOER / PATRON SECTION -->
+                    <div class="space-y-6" id="section-patron">
+                        <!-- Headline and Mode Switcher -->
+                        <div
+                            class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-outline-variant/15 pb-4">
+                            <div>
+                                <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold"
+                                    id="patron-title">Welcome Back</h1>
+                                <p class="font-body-md text-body-md text-on-surface-variant mt-1">Immerse yourself in
+                                    reserved seats, festival premieres &amp; lounge perks.</p>
+                            </div>
+                            <div
+                                class="flex items-center gap-1 bg-surface-container-high/60 p-1 rounded-lg border border-outline-variant/20 self-start sm:self-auto">
+                                <button
+                                    class="px-3 py-1 rounded-md font-label-sm text-label-sm text-primary bg-surface-container font-semibold transition-all"
+                                    id="btn-mode-signin" onclick="setPatronMode('signin')">Sign In</button>
+                                <button
+                                    class="px-3 py-1 rounded-md font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-all"
+                                    id="btn-mode-register" onclick="setPatronMode('register')">Register</button>
+                            </div>
+                        </div>
+                        <!-- Social Logins -->
+                        <div class="grid grid-cols-2 gap-3.5">
+                            <button
+                                class="flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 hover:border-outline-variant/40 font-label-md text-label-md text-on-surface transition-all duration-150 active:scale-[0.98]"
+                                type="button">
+                                <!-- Apple Icon SVG -->
+                                <svg class="w-4 h-4 fill-current" viewbox="0 0 24 24">
+                                    <path
+                                        d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.61 1.34-.55.63-.99 1.68-.86 2.69 1 .08 2-.45 2.55-1.18z">
+                                    </path>
+                                </svg>
+                                <span>Continue with Apple</span>
+                            </button>
+                            <button
+                                class="flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 hover:border-outline-variant/40 font-label-md text-label-md text-on-surface transition-all duration-150 active:scale-[0.98]"
+                                type="button">
+                                <!-- Google Icon SVG -->
+                                <svg class="w-4 h-4" viewbox="0 0 24 24">
+                                    <path
+                                        d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
+                                        fill="#EA4335"></path>
+                                    <path
+                                        d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
+                                        fill="#4285F4"></path>
+                                    <path
+                                        d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8 0-1.3.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"
+                                        fill="#FBBC05"></path>
+                                    <path
+                                        d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16c1.8 3.7 5.6 7 10.1 7z"
+                                        fill="#34A853"></path>
+                                </svg>
+                                <span>Continue with Google</span>
+                            </button>
+                        </div>
+                        <!-- Divider -->
+                        <div class="relative flex items-center justify-center">
+                            <div class="w-full border-t border-outline-variant/20"></div>
+                            <span
+                                class="absolute bg-surface-container-low px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">or
+                                sign in with email</span>
+                        </div>
+                        <!-- Email & Password Form -->
+                        <form class="space-y-4" onsubmit="event.preventDefault();">
+                            <div class="hidden space-y-1.5" id="register-name-field">
+                                <label class="block font-label-md text-label-md text-on-surface">Full Name</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3.5 top-3.5 text-on-surface-variant">person</span>
+                                    <input
+                                        class="w-full pl-11 pr-4 py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-body-md text-body-md placeholder:text-outline focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all"
+                                        placeholder="Julian Vance" type="text" />
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="block font-label-md text-label-md text-on-surface">Email Address</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3.5 top-3.5 text-on-surface-variant">mail</span>
+                                    <input
+                                        class="w-full pl-11 pr-4 py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-body-md text-body-md placeholder:text-outline focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all"
+                                        placeholder="patron@cineva.film" type="email" />
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <label class="block font-label-md text-label-md text-on-surface">Password</label>
+                                    <a class="font-label-sm text-label-sm text-primary hover:underline" href="#">Forgot
+                                        password?</a>
+                                </div>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3.5 top-3.5 text-on-surface-variant">lock</span>
+                                    <input
+                                        class="w-full pl-11 pr-11 py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-body-md text-body-md placeholder:text-outline focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all"
+                                        id="patron-password" placeholder="••••••••••••" type="password" />
+                                    <button
+                                        class="absolute right-3.5 top-3.5 text-on-surface-variant hover:text-on-surface"
+                                        onclick="togglePassword('patron-password', 'patron-eye')" type="button">
+                                        <span class="material-symbols-outlined text-xl"
+                                            id="patron-eye">visibility</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Options Row: Remember Me & FaceID -->
+                            <div class="flex items-center justify-between pt-1">
+                                <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                                    <input checked=""
+                                        class="w-4 h-4 rounded bg-surface-container-lowest border-outline-variant/40 text-primary-container focus:ring-primary-container/30 focus:ring-offset-0"
+                                        type="checkbox" />
+                                    <span class="font-body-sm text-body-sm text-on-surface">Keep me signed in</span>
+                                </label>
+                                <!-- Biometric Face ID Trigger Button -->
+                                <button
+                                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high/60 hover:bg-surface-container-high border border-outline-variant/30 text-secondary font-label-sm text-label-sm transition-all group"
+                                    onclick="triggerBiometrics()" type="button">
+                                    <span
+                                        class="material-symbols-outlined text-base group-hover:scale-110 transition-transform">face</span>
+                                    <span>Face ID / Passkey</span>
+                                </button>
+                            </div>
+                            <!-- Submit Action Button -->
+                            <button
+                                class="w-full mt-2 py-3.5 px-6 rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 btn-glow hover:brightness-110 active:scale-[0.99] transition-all duration-200"
+                                type="submit">
+                                <span id="patron-btn-text">Unlock Cinema Lounge</span>
+                                <span class="material-symbols-outlined text-xl">arrow_forward</span>
+                            </button>
+                        </form>
+                    </div>
+                    <!-- ROLE 2: CINEMA OPERATIONS & ADMIN SECTION (SSO / 2FA / Okta) -->
+                    <div class="hidden space-y-6" id="section-admin">
+                        <div class="border-b border-outline-variant/15 pb-4">
+                            <div class="flex items-center gap-2 text-secondary mb-1">
+                                <span class="material-symbols-outlined text-xl">verified_user</span>
+                                <span class="font-label-sm text-label-sm uppercase tracking-wider font-bold">Cineva
+                                    Auditorium Hub v2.4</span>
+                            </div>
+                            <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">
+                                Operator &amp; Staff Terminal</h1>
+                            <p class="font-body-md text-body-md text-on-surface-variant mt-1">Authorized cinema
+                                managers, booth projectionists, and ticketing desk access.</p>
+                        </div>
+                        <!-- Single Sign-On (SSO / Okta) Instant Bridge -->
+                        <div
+                            class="p-4 rounded-2xl bg-surface-container border border-outline-variant/30 relative overflow-hidden">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-10 h-10 rounded-xl bg-tertiary-container/20 border border-tertiary-container/30 flex items-center justify-center text-tertiary">
+                                        <span class="material-symbols-outlined">badge</span>
+                                    </div>
+                                    <div>
+                                        <h2 class="font-title-sm text-title-sm text-on-surface">Cineva Global Corporate
+                                            SSO</h2>
+                                        <p class="font-body-sm text-body-sm text-on-surface-variant">Federated
+                                            authentication via Okta, Azure AD, or Ping</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                class="w-full mt-3.5 py-3 px-4 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/40 text-on-surface font-label-md text-label-md flex items-center justify-center gap-2 transition-all"
+                                type="button">
+                                <span class="material-symbols-outlined text-secondary">vpn_key</span>
+                                <span>Sign in with Enterprise Identity Provider</span>
+                                <span
+                                    class="material-symbols-outlined text-sm text-on-surface-variant">open_in_new</span>
+                            </button>
+                        </div>
+                        <div class="relative flex items-center justify-center">
+                            <div class="w-full border-t border-outline-variant/20"></div>
+                            <span
+                                class="absolute bg-surface-container-low px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">or
+                                direct badge credentials</span>
+                        </div>
+                        <!-- Operator Credentials Form -->
+                        <form class="space-y-4" onsubmit="event.preventDefault();">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="block font-label-md text-label-md text-on-surface">Staff ID /
+                                        Corporate Email</label>
+                                    <div class="relative">
+                                        <span
+                                            class="material-symbols-outlined absolute left-3.5 top-3.5 text-on-surface-variant">badge</span>
+                                        <input
+                                            class="w-full pl-11 pr-4 py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-body-md text-body-md placeholder:text-outline focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all"
+                                            placeholder="OP-774092 or name@cineva.internal" type="text" />
+                                    </div>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="block font-label-md text-label-md text-on-surface">Theater /
+                                        Auditorium Complex</label>
+                                    <div class="relative">
+                                        <span
+                                            class="material-symbols-outlined absolute left-3.5 top-3.5 text-on-surface-variant">storefront</span>
+                                        <select
+                                            class="w-full pl-11 pr-8 py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-body-md text-body-md focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all appearance-none cursor-pointer">
+                                            <option>Complex #04 — Lincoln Center IMAX, NYC</option>
+                                            <option>Complex #09 — Sunset Dome 4DX, LA</option>
+                                            <option>Complex #12 — Piccadilly Cinema Lounge, London</option>
+                                            <option>Network Operations Control (All Theaters)</option>
+                                        </select>
+                                        <span
+                                            class="material-symbols-outlined absolute right-3 top-3.5 text-on-surface-variant pointer-events-none text-lg">expand_more</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 2FA & PIN Matrix Input -->
+                            <div class="space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <label class="block font-label-md text-label-md text-on-surface">Security Hardware
+                                        PIN / Authenticator Code</label>
+                                    <span class="font-label-sm text-label-sm text-secondary flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-xs">timer</span> 30s TOTP
+                                    </span>
+                                </div>
+                                <div class="grid grid-cols-6 gap-2.5">
+                                    <input
+                                        class="pin-box text-center py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-title-lg text-title-lg focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all"
+                                        maxlength="1" type="text" value="4" />
+                                    <input
+                                        class="pin-box text-center py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-title-lg text-title-lg focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all"
+                                        maxlength="1" type="text" value="8" />
+                                    <input
+                                        class="pin-box text-center py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-title-lg text-title-lg focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all"
+                                        maxlength="1" type="text" value="2" />
+                                    <input
+                                        class="pin-box text-center py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-title-lg text-title-lg focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all"
+                                        maxlength="1" placeholder="•" type="text" />
+                                    <input
+                                        class="pin-box text-center py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-title-lg text-title-lg focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all"
+                                        maxlength="1" placeholder="•" type="text" />
+                                    <input
+                                        class="pin-box text-center py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/30 text-on-surface font-title-lg text-title-lg focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all"
+                                        maxlength="1" placeholder="•" type="text" />
+                                </div>
+                            </div>
+                            <!-- Auditorium Clearance Badge Indicator -->
+                            <div
+                                class="p-3 rounded-xl bg-surface-container-lowest border border-outline-variant/20 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span
+                                        class="w-8 h-8 rounded-lg bg-secondary-container/20 border border-secondary-container/40 flex items-center justify-center text-secondary">
+                                        <span class="material-symbols-outlined text-lg">shield_lock</span>
+                                    </span>
+                                    <div>
+                                        <div class="font-label-sm text-label-sm text-on-surface font-bold">Required
+                                            Clearance: Level 3+ Projectionist</div>
+                                        <div class="font-body-sm text-body-sm text-on-surface-variant">DCP Keys, Laser
+                                            Calibration &amp; Box Office Overrides</div>
+                                    </div>
+                                </div>
+                                <span
+                                    class="px-2.5 py-1 rounded-full bg-surface-container-high text-secondary border border-secondary/30 font-label-sm text-label-sm font-semibold">Verified
+                                    Station</span>
+                            </div>
+                            <!-- Admin Submit Button -->
+                            <button
+                                class="w-full mt-2 py-3.5 px-6 rounded-xl bg-gradient-to-r from-secondary-container to-secondary text-on-secondary font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 gold-glow hover:brightness-110 active:scale-[0.99] transition-all duration-200"
+                                type="submit">
+                                <span>Authorize &amp; Access Auditorium Console</span>
+                                <span class="material-symbols-outlined text-xl">admin_panel_settings</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <!-- Security and Compliance Footer Footnote inside Card -->
+                <div
+                    class="pt-6 mt-6 border-t border-outline-variant/15 flex flex-wrap items-center justify-between gap-3 font-body-sm text-body-sm text-on-surface-variant">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-primary">lock</span>
+                        <span>256-bit TLS Hardware-Encrypted Session</span>
+                    </div>
+                    <div class="flex items-center gap-4 font-label-sm text-label-sm">
+                        <a class="hover:text-primary transition-colors" href="#">Certified Security Standards</a>
+                        <span>•</span>
+                        <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                        <span>•</span>
+                        <a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+            <!-- RIGHT COLUMN: Cinematic Media & Upcoming Perks Panel -->
+            <div
+                class="lg:col-span-5 relative bg-surface-container p-6 sm:p-8 flex flex-col justify-between overflow-hidden border-t lg:border-t-0 lg:border-l border-outline-variant/20">
+                <!-- Atmospheric Background Artwork Simulation -->
+                <div class="absolute inset-0 z-0">
+                    <img class="w-full h-full object-cover opacity-35 filter brightness-75 contrast-125"
+                        data-alt="A dramatic, hyper-detailed wide shot of a lavish state-of-the-art IMAX auditorium in deep obsidian darkness with glowing neon crimson accent lights along the curved staircases and champagne golden architectural sconces. On the vast curved silver screen, a vivid sci-fi space nebula radiates high-contrast bioluminescent violet and amber illumination. The seating is tiered plush leather recliners with private tables, evoking an ultra-exclusive cinematic VIP premiere."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaBbJEtgTf0MEFD1yCtRxs_c5uz5auZhoV_zd2mBYXuf5Tbzt9NrUT9wwXDdu_C3gAcQQAxcaq9PCk51RKXVQ04b9qWhTYBt9jasPvj1VUc9ZpCLI8PUPesis2JzOS98MxMDI3Pns61aiE4GR_OY5sRzufQ0SRHkPQUHRwTUjXnGlCc0D8sFTT8n4GR9cHCzPOzboYDZm7b0vjEIdQ8s_LKi-2ZosDUd4pJ4BtuxAepTVkWzaSTp8l0Q" />
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container/80 to-transparent">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-surface-container/60 to-transparent"></div>
+                </div>
+                <!-- Upper Panel Details: Premiere Pass Showcase -->
+                <div class="relative z-10 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span
+                            class="px-3 py-1 rounded-full bg-primary-container/20 border border-primary-container/30 text-primary font-label-sm text-label-sm tracking-wide font-bold uppercase flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-xs"
+                                style="font-variation-settings: 'FILL' 1;">stars</span>
+                            Cineva Premier Member
+                        </span>
+                        <span class="font-label-sm text-label-sm text-secondary font-bold">Fall / Winter Series</span>
+                    </div>
+                    <div>
+                        <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">The
+                            Future of Film Screening</h2>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Unlock 70mm IMAX early
+                            bookings, Dolby Atmos seat mapping, and director Q&amp;A privileges.</p>
+                    </div>
+                    <!-- Feature Stacks: Bento Mini-Cards -->
+                    <div class="space-y-3 pt-2">
+                        <!-- Perk 1 -->
+                        <div
+                            class="p-3.5 rounded-2xl bg-surface-container-low/75 backdrop-blur-md border border-outline-variant/20 flex items-center gap-3.5 hover:border-primary-container/40 transition-all">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-primary-container/20 border border-primary-container/30 flex items-center justify-center text-primary shrink-0">
+                                <span class="material-symbols-outlined">airline_seat_recline_extra</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="font-title-sm text-title-sm text-on-surface truncate">Curved VIP
+                                        Recliners</h3>
+                                    <span
+                                        class="font-label-sm text-label-sm text-secondary font-semibold">Priority</span>
+                                </div>
+                                <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Zero-gravity
+                                    seating with ambient tray illumination</p>
+                            </div>
+                        </div>
+                        <!-- Perk 2 -->
+                        <div
+                            class="p-3.5 rounded-2xl bg-surface-container-low/75 backdrop-blur-md border border-outline-variant/20 flex items-center gap-3.5 hover:border-secondary/40 transition-all">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-secondary-container/20 border border-secondary-container/30 flex items-center justify-center text-secondary shrink-0">
+                                <span class="material-symbols-outlined">local_bar</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="font-title-sm text-title-sm text-on-surface truncate">Artisanal Lounge
+                                        &amp; Bar</h3>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant">In-Seat</span>
+                                </div>
+                                <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Pre-order curated
+                                    cocktails and gourmet confectionery</p>
+                            </div>
+                        </div>
+                        <!-- Perk 3 -->
+                        <div
+                            class="p-3.5 rounded-2xl bg-surface-container-low/75 backdrop-blur-md border border-outline-variant/20 flex items-center gap-3.5 hover:border-tertiary/40 transition-all">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-tertiary-container/20 border border-tertiary-container/30 flex items-center justify-center text-tertiary shrink-0">
+                                <span class="material-symbols-outlined">qr_code_2</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="font-title-sm text-title-sm text-on-surface truncate">Digital Wallet
+                                        Fast-Pass</h3>
+                                    <span class="font-label-sm text-label-sm text-primary font-semibold">Tap &amp;
+                                        Go</span>
+                                </div>
+                                <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Turnstile NFC
+                                    access without paper or box office queues</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Lower Panel Details: Live Screening Badge Preview -->
+                <div class="relative z-10 mt-6 pt-4 border-t border-outline-variant/20">
+                    <div class="flex items-center justify-between mb-2">
+                        <span
+                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Tonight's
+                            Flagship Feature</span>
+                        <span class="font-label-sm text-label-sm text-secondary flex items-center gap-1 font-bold">
+                            <span class="material-symbols-outlined text-xs">nest_eco_leaf</span> Atmos Mastered
+                        </span>
+                    </div>
+                    <div
+                        class="p-3 rounded-xl bg-surface-container-lowest/80 border border-outline-variant/30 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-9 h-12 rounded bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant/30 shrink-0">
+                                <span class="material-symbols-outlined text-primary">theaters</span>
+                            </div>
+                            <div>
+                                <div class="font-title-sm text-title-sm text-on-surface font-semibold">CHRONOS: 2099
+                                    (IMAX 70mm)</div>
+                                <div class="font-body-sm text-body-sm text-on-surface-variant">Lincoln Center •
+                                    Auditorium 01 • 08:30 PM</div>
+                            </div>
+                        </div>
+                        <span
+                            class="px-2.5 py-1 rounded bg-primary-container/20 text-primary border border-primary-container/30 font-label-sm text-label-sm font-bold shrink-0">94%
+                            Full</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Shared Component: Footer (from Shared Components JSON) -->
+    <footer
+        class="w-full block bg-surface-container-lowest border-t border-outline-variant/20 shadow-none z-10 relative">
+        <div class="w-full max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                <span class="text-headline-sm font-headline-sm font-bold text-primary">Cineva</span>
+                <span class="hidden sm:inline text-outline-variant">|</span>
+                <p class="text-on-surface-variant font-body-sm text-body-sm">
+                    © 2024 Cineva Entertainment Inc. All rights reserved. Atmos, IMAX, and 4DX are registered
+                    trademarks.
+                </p>
+            </div>
+            <nav class="flex flex-wrap items-center justify-center gap-6">
+                <a class="text-on-surface-variant font-body-sm text-body-sm hover:text-primary transition-colors duration-200"
+                    href="#">About Us</a>
+                <a class="text-on-surface-variant font-body-sm text-body-sm hover:text-primary transition-colors duration-200"
+                    href="#">Experiences &amp; IMAX</a>
+                <a class="text-on-surface-variant font-body-sm text-body-sm hover:text-primary transition-colors duration-200"
+                    href="#">Cinema Partner Program</a>
+                <a class="text-on-surface-variant font-body-sm text-body-sm hover:text-primary transition-colors duration-200"
+                    href="#">Privacy Policy</a>
+                <a class="text-on-surface-variant font-body-sm text-body-sm hover:text-primary transition-colors duration-200"
+                    href="#">Terms of Service</a>
+                <a class="text-on-surface-variant font-body-sm text-body-sm hover:text-primary transition-colors duration-200"
+                    href="#">Certified Security Standards</a>
+            </nav>
+        </div>
+    </footer>
+    <!-- Micro-interactions Script -->
+    <script>
+        // Tab switching between Patron & Admin
+        function switchRole(role) {
+            const patronTab = document.getElementById('tab-patron');
+            const adminTab = document.getElementById('tab-admin');
+            const patronSection = document.getElementById('section-patron');
+            const adminSection = document.getElementById('section-admin');
+            const badgeStatus = document.getElementById('badge-status');
+
+            if (role === 'patron') {
+                patronTab.className = "flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl font-label-lg text-label-lg transition-all duration-200 bg-surface-container text-primary shadow-md border border-outline-variant/40";
+                adminTab.className = "flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl font-label-lg text-label-lg transition-all duration-200 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/40";
+
+                patronSection.classList.remove('hidden');
+                adminSection.classList.add('hidden');
+
+                badgeStatus.innerHTML = `
+          <span class="material-symbols-outlined text-xs">local_activity</span>
+          <span>Member Privileges Active</span>
+        `;
+                badgeStatus.className = "inline-flex items-center gap-1 font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary border border-outline-variant/30";
+            } else {
+                adminTab.className = "flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl font-label-lg text-label-lg transition-all duration-200 bg-surface-container text-secondary shadow-md border border-outline-variant/40";
+                patronTab.className = "flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl font-label-lg text-label-lg transition-all duration-200 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/40";
+
+                adminSection.classList.remove('hidden');
+                patronSection.classList.add('hidden');
+
+                badgeStatus.innerHTML = `
+          <span class="material-symbols-outlined text-xs">shield</span>
+          <span>Operations Vault Locked</span>
+        `;
+                badgeStatus.className = "inline-flex items-center gap-1 font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-secondary-container/20 text-secondary border border-secondary/30";
+            }
+        }
+
+        // Toggle Sign In / Register inside Patron Section
+        function setPatronMode(mode) {
+            const btnSignIn = document.getElementById('btn-mode-signin');
+            const btnRegister = document.getElementById('btn-mode-register');
+            const title = document.getElementById('patron-title');
+            const regNameField = document.getElementById('register-name-field');
+            const btnText = document.getElementById('patron-btn-text');
+
+            if (mode === 'register') {
+                btnRegister.className = "px-3 py-1 rounded-md font-label-sm text-label-sm text-primary bg-surface-container font-semibold transition-all";
+                btnSignIn.className = "px-3 py-1 rounded-md font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-all";
+                title.innerText = "Join Cineva Premier";
+                regNameField.classList.remove('hidden');
+                btnText.innerText = "Create Free Patron Pass";
+            } else {
+                btnSignIn.className = "px-3 py-1 rounded-md font-label-sm text-label-sm text-primary bg-surface-container font-semibold transition-all";
+                btnRegister.className = "px-3 py-1 rounded-md font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-all";
+                title.innerText = "Welcome Back";
+                regNameField.classList.add('hidden');
+                btnText.innerText = "Unlock Cinema Lounge";
+            }
+        }
+
+        // Toggle Password Visibility
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerText = 'visibility_off';
+            } else {
+                input.type = 'password';
+                icon.innerText = 'visibility';
+            }
+        }
+
+        // Biometrics trigger simulation
+        function triggerBiometrics() {
+            alert("Authenticating via WebAuthn Biometrics / Face ID...");
+        }
+
+        // Auto focus jump for 2FA PIN fields
+        const pinInputs = document.querySelectorAll('.pin-box');
+        pinInputs.forEach((input, index) => {
+            input.addEventListener('keyup', (e) => {
+                if (e.key >= '0' && e.key <= '9') {
+                    if (index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    }
+                } else if (e.key === 'Backspace') {
+                    if (index > 0) {
+                        pinInputs[index - 1].focus();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

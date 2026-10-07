@@ -1,0 +1,366 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}Assign Theaters: {{ movie.title }} — Cineva Ops{% endblock %}
+{% block breadcrumb_active %}Assign Theaters{% endblock %}
+
+{% block top_actions %}
+<a
+    href="{% url 'movie_admin_edit' movie.id %}"
+    class="flex items-center gap-1.5 h-10 px-3.5 rounded-lg bg-surface-container border border-outline-variant/30 text-secondary hover:text-primary hover:border-secondary/40 text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">edit</span>
+    <span>Edit Details</span>
+</a>
+
+<a
+    href="{% url 'movie_admin_dashboard' %}"
+    class="flex items-center gap-1.5 h-10 px-4 rounded-lg bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    <span>Back to Catalog</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<div class="flex flex-col gap-6">
+    <!-- Movie Overview Header Strip -->
+    <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
+        <div class="flex items-center gap-5">
+            <div class="w-16 h-24 rounded-lg overflow-hidden bg-surface-container border border-outline-variant/30 flex-shrink-0 shadow-md">
+                <img
+                    src="{{ movie.get_primary_poster_url }}"
+                    alt="{{ movie.title }}"
+                    class="w-full h-full object-cover"
+                    onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=400&q=80'"
+                />
+            </div>
+            <div class="flex flex-col">
+                <div class="flex items-center gap-2.5">
+                    <h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">{{ movie.title }}</h1>
+                    <span class="px-2 py-0.5 rounded text-label-sm font-bold bg-surface-container text-on-surface-variant border border-outline-variant/30">{{ movie.age_certification }}</span>
+                    {% if movie.is_active %}
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Active
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm bg-surface-container-high text-outline border border-outline-variant/30">
+                        Inactive
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="flex flex-wrap items-center gap-3 text-label-md text-on-surface-variant mt-1.5">
+                    <span>{{ movie.duration }} min</span>
+                    <span>•</span>
+                    <span>{{ movie.language.name|default:"General" }}</span>
+                    <span>•</span>
+                    <span>Rating: <strong class="text-secondary font-bold">★ {{ movie.rating|floatformat:1 }}</strong></span>
+                </div>
+                <p class="text-body-sm text-on-surface-variant/80 mt-1 line-clamp-1 max-w-xl">{{ movie.short_description|default:movie.description }}</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 self-stretch md:self-auto justify-end">
+            <a
+                href="{% url 'theater_list' movie.id %}"
+                target="_blank"
+                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-secondary hover:text-primary font-label-md font-bold transition-colors">
+                <span class="material-symbols-outlined text-[18px]">visibility</span>
+                <span>Audience Showtime View</span>
+                <span class="material-symbols-outlined text-xs">open_in_new</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Assignment Form -->
+    <form method="POST" class="grid grid-cols-12 gap-8">
+        {% csrf_token %}
+
+        <!-- Left Column: Theaters Selection Grid (8 cols) -->
+        <div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+            <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col gap-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-outline-variant/20">
+                    <div>
+                        <h2 class="text-title-lg font-title-lg font-bold text-on-surface flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-2xl">theater_comedy</span>
+                            <span>Multiplex Venue Assignment</span>
+                        </h2>
+                        <p class="text-body-sm text-on-surface-variant mt-0.5">Select the theaters that will host screenings for this movie title.</p>
+                    </div>
+
+                    <!-- Quick Bulk Toggles -->
+                    <div class="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onclick="toggleAllTheaters(true)"
+                            class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-secondary hover:text-primary text-label-sm font-label-sm font-bold transition-colors">
+                            Select All
+                        </button>
+                        <button
+                            type="button"
+                            onclick="toggleAllTheaters(false)"
+                            class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm transition-colors">
+                            Deselect All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Theaters Cards List -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for th in theaters %}
+                    <label class="theater-card relative p-4 rounded-xl bg-surface border {% if th.id in currently_assigned_ids %}border-primary/50 bg-primary-container/5{% else %}border-outline-variant/25{% endif %} hover:border-primary/40 cursor-pointer transition-all flex items-start gap-3.5 group">
+                        <input
+                            type="checkbox"
+                            name="theater_ids"
+                            value="{{ th.id }}"
+                            class="theater-checkbox mt-1 w-5 h-5 rounded border-outline-variant/40 text-primary focus:ring-primary focus:ring-offset-0 bg-surface-container-low"
+                            {% if th.id in currently_assigned_ids %}checked{% endif %}
+                            onchange="updateCardStyle(this)"
+                        />
+
+                        <div class="flex-1 flex flex-col">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-title-sm font-title-sm font-bold text-on-surface group-hover:text-primary transition-colors">
+                                    {{ th.name }}
+                                </span>
+                                {% if th.id in currently_assigned_ids %}
+                                <span class="badge-status px-2 py-0.5 rounded text-[11px] font-bold bg-primary/20 text-primary border border-primary/30">
+                                    Assigned
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <span class="text-label-sm text-secondary font-medium mt-0.5 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">location_on</span>
+                                <span>{{ th.city|default:"General City" }}</span>
+                            </span>
+
+                            <p class="text-body-sm text-on-surface-variant/70 text-xs mt-1 line-clamp-1">{{ th.address|default:"Venue address" }}</p>
+
+                            <div class="flex items-center gap-2 mt-2 pt-2 border-t border-outline-variant/15 text-label-sm text-on-surface-variant">
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px] text-tertiary">meeting_room</span>
+                                    <span>{{ th.screens.count }} Screen{{ th.screens.count|pluralize }}</span>
+                                </span>
+                                {% if th.movie and th.movie.id != movie.id %}
+                                <span class="text-outline text-xs truncate max-w-[130px]" title="Currently screening {{ th.movie.title }}">
+                                    • Curr: {{ th.movie.title }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </label>
+                    {% empty %}
+                    <div class="col-span-2 py-8 text-center text-on-surface-variant">
+                        <span class="material-symbols-outlined text-4xl mb-2 text-outline">theater_comedy</span>
+                        <p class="text-body-md">No theaters registered yet in the system.</p>
+                        <a href="{% url 'admin_theater_create' %}" class="inline-flex items-center gap-1 text-primary hover:underline text-label-md mt-2">
+                            <span>Create a new multiplex venue</span>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Showtimes Generation & Save Action (4 cols) -->
+        <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+            <!-- Automated Show Schedule Box -->
+            <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col gap-5">
+                <div class="flex items-center gap-2.5 pb-3 border-b border-outline-variant/20">
+                    <span class="material-symbols-outlined text-secondary text-2xl">schedule</span>
+                    <h3 class="text-title-md font-title-md font-bold text-on-surface">Auto-Schedule Shows</h3>
+                </div>
+
+                <label class="flex items-start gap-3 p-3.5 rounded-xl bg-surface border border-outline-variant/30 cursor-pointer hover:border-secondary/40 transition-colors">
+                    <input
+                        type="checkbox"
+                        name="auto_create_shows"
+                        value="1"
+                        checked
+                        id="auto_create_shows"
+                        class="mt-1 w-5 h-5 rounded border-outline-variant/40 text-secondary focus:ring-secondary focus:ring-offset-0 bg-surface-container-low"
+                    />
+                    <div class="flex flex-col">
+                        <span class="text-title-sm font-bold text-on-surface">Generate Daily Shows</span>
+                        <span class="text-body-sm text-on-surface-variant/80 text-xs mt-0.5">
+                            Auto-creates 4 daily showtimes per screen (10:15 AM, 01:45 PM, 05:30 PM, 09:15 PM) for newly assigned theaters.
+                        </span>
+                    </div>
+                </label>
+
+                <!-- Scheduling Parameters -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-label-md font-label-md font-semibold text-on-surface flex items-center justify-between">
+                            <span>Days Ahead:</span>
+                            <span class="text-label-sm text-secondary font-bold" id="days_label">3 Days</span>
+                        </label>
+                        <input
+                            type="range"
+                            name="days_ahead"
+                            min="1"
+                            max="7"
+                            value="3"
+                            id="days_ahead"
+                            oninput="document.getElementById('days_label').innerText = this.value + ' Days'"
+                            class="w-full accent-secondary cursor-pointer"
+                        />
+                        <div class="flex justify-between text-[11px] text-outline font-mono">
+                            <span>1 Day (Today)</span>
+                            <span>3 Days</span>
+                            <span>7 Days (Week)</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-label-md font-label-md font-semibold text-on-surface flex items-center justify-between">
+                            <span>Standard Ticket Price (₹):</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-outline font-bold">₹</span>
+                            <input
+                                type="number"
+                                name="ticket_price"
+                                step="10"
+                                min="50"
+                                max="1500"
+                                value="180.00"
+                                class="w-full h-10 pl-8 pr-4 text-body-sm font-body-sm bg-surface border border-outline-variant/30 rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary/40 focus:outline-none"
+                            />
+                        </div>
+                        <span class="text-xs text-on-surface-variant/70">Applies to generated screenings (VIP recliner seats use tier multiplier).</span>
+                    </div>
+                </div>
+
+                <!-- Commit CTA Button -->
+                <div class="pt-2 border-t border-outline-variant/20 flex flex-col gap-2.5">
+                    <button
+                        type="submit"
+                        class="w-full py-3 px-4 rounded-xl bg-primary-container text-on-primary-container hover:bg-primary font-label-lg text-label-lg font-bold shadow-lg shadow-primary-container/25 transition-all duration-150 active:scale-[0.98] flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">save</span>
+                        <span>Save &amp; Apply Assignments</span>
+                    </button>
+
+                    <a
+                        href="{% url 'movie_admin_dashboard' %}"
+                        class="w-full py-2.5 px-4 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md text-center transition-colors">
+                        Cancel &amp; Discard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Scheduled Shows for this Movie Section -->
+    <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col gap-5 mt-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-outline-variant/20">
+            <div>
+                <h3 class="text-title-lg font-title-lg font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-tertiary text-2xl">event_available</span>
+                    <span>Active Upcoming Shows for {{ movie.title }}</span>
+                </h3>
+                <p class="text-body-sm text-on-surface-variant mt-0.5">Live screenings open for bookings across theaters.</p>
+            </div>
+            <a
+                href="{% url 'admin_show_create' %}?movie={{ movie.id }}"
+                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-primary text-label-md font-bold transition-colors">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                <span>Add Single Show</span>
+            </a>
+        </div>
+
+        {% if upcoming_shows %}
+        <div class="overflow-x-auto custom-scrollbar rounded-xl border border-outline-variant/20">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-surface-container text-label-sm font-label-sm uppercase tracking-wider text-outline border-b border-outline-variant/20">
+                        <th class="py-3 px-4">Theater &amp; City</th>
+                        <th class="py-3 px-4">Auditorium / Screen</th>
+                        <th class="py-3 px-4">Start Time</th>
+                        <th class="py-3 px-4">End Time</th>
+                        <th class="py-3 px-4">Price</th>
+                        <th class="py-3 px-4">Status</th>
+                        <th class="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant/10 text-body-sm">
+                    {% for s in upcoming_shows %}
+                    <tr class="hover:bg-surface-container-high/30 transition-colors">
+                        <td class="py-3 px-4 font-semibold text-on-surface">
+                            <div>{{ s.theater.name }}</div>
+                            <span class="text-label-sm text-outline font-normal">{{ s.theater.city }}</span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-0.5 rounded bg-surface-container text-label-sm font-medium border border-outline-variant/20">
+                                {{ s.screen.name }} ({{ s.screen.screen_type }})
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 font-mono text-on-surface font-semibold">
+                            {{ s.start_time|date:"M d, Y" }} • {{ s.start_time|date:"h:i A" }}
+                        </td>
+                        <td class="py-3 px-4 font-mono text-on-surface-variant">
+                            {{ s.end_time|date:"h:i A" }}
+                        </td>
+                        <td class="py-3 px-4 font-bold text-secondary">
+                            ₹{{ s.price }}
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-0.5 rounded-full text-label-sm font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                {{ s.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <a
+                                    href="{% url 'admin_show_edit' s.id %}"
+                                    class="p-1 rounded text-on-surface-variant hover:text-secondary hover:bg-surface-container transition-colors"
+                                    title="Edit Show">
+                                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                                </a>
+                                <form method="POST" action="{% url 'admin_show_delete' s.id %}" class="inline m-0" onsubmit="return confirm('Delete this scheduled show?');">
+                                    {% csrf_token %}
+                                    <button
+                                        type="submit"
+                                        class="p-1 rounded text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors"
+                                        title="Delete Show">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="py-8 text-center text-on-surface-variant">
+            <span class="material-symbols-outlined text-4xl mb-2 text-outline">schedule</span>
+            <p class="text-body-md font-body-md">No upcoming shows scheduled for {{ movie.title }}.</p>
+            <p class="text-label-sm text-outline mt-1">Select theaters above and click "Save &amp; Apply Assignments" with Auto-Schedule enabled to generate shows instantly.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function toggleAllTheaters(select) {
+    document.querySelectorAll('.theater-checkbox').forEach(cb => {
+        cb.checked = select;
+        updateCardStyle(cb);
+    });
+}
+
+function updateCardStyle(cb) {
+    const card = cb.closest('.theater-card');
+    if (!card) return;
+    if (cb.checked) {
+        card.classList.add('border-primary/50', 'bg-primary-container/5');
+        card.classList.remove('border-outline-variant/25');
+    } else {
+        card.classList.remove('border-primary/50', 'bg-primary-container/5');
+        card.classList.add('border-outline-variant/25');
+    }
+}
+</script>
+{% endblock %}

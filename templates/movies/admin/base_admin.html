@@ -1,0 +1,162 @@
+{% extends "users/basic.html" %}
+
+{% block site_header %}{% endblock %}
+{% block site_footer %}{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-surface">
+    <!-- Left Navigation Sidebar -->
+    <aside class="h-screen w-64 fixed left-0 top-0 border-r border-outline-variant/20 shadow-2xl bg-surface-container-low flex flex-col justify-between p-4 z-40">
+        <!-- Brand Header -->
+        <div class="flex flex-col gap-5">
+            <div class="flex items-center gap-3 px-2 pt-2">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-container to-secondary-container flex items-center justify-center text-on-primary-container shadow-lg shadow-primary-container/20">
+                    <span class="material-symbols-outlined text-[24px]">theater_comedy</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-title-md font-title-md font-bold text-primary tracking-tight">Cineva Ops</span>
+                    <span class="text-label-sm font-label-sm text-on-surface-variant font-medium">Cinema Operations v2.4</span>
+                </div>
+            </div>
+
+            <!-- Quick Action CTA -->
+            <a href="{% url 'movie_admin_create' %}" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-primary-container text-on-primary-container hover:bg-primary transition-all duration-150 active:scale-95 text-label-lg font-label-lg font-bold shadow-md shadow-primary-container/20">
+                <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                <span>Add Movie</span>
+            </a>
+
+            <!-- Primary Navigation Links -->
+            <nav class="flex flex-col gap-1 overflow-y-auto max-h-[calc(100vh-320px)] custom-scrollbar pr-1">
+                <!-- Executive Business Analytics & BI -->
+                <a href="{% url 'admin_analytics_dashboard' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'admin_analytics_dashboard' %}bg-primary-container/20 border border-primary/40 text-primary font-bold shadow-inner{% else %}text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface{% endif %} font-title-sm text-title-sm transition-colors">
+                    <span class="material-symbols-outlined text-[20px] text-primary">insights</span>
+                    <span>Executive Analytics</span>
+                    <span class="ml-auto px-1.5 py-0.5 rounded bg-primary/20 text-[10px] font-mono font-bold text-primary">BI</span>
+                </a>
+
+                <!-- Movies Catalog -->
+                <a href="{% url 'movie_admin_dashboard' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'movie_admin_dashboard' %}bg-surface-container-highest text-primary font-bold shadow-inner{% else %}text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface{% endif %} font-title-sm text-title-sm transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">movie</span>
+                    <span>Movies Catalog</span>
+                </a>
+
+                <!-- Review Moderation Queue -->
+                <a href="{% url 'movie_admin_reports' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'movie_admin_reports' %}bg-surface-container-highest text-primary font-bold shadow-inner{% else %}text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface{% endif %} font-title-sm text-title-sm transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">verified_user</span>
+                    <span>Moderation Queue</span>
+                    {% if pending_reports_count and pending_reports_count > 0 %}
+                    <span class="ml-auto bg-error-container text-error text-label-sm font-label-sm px-2 py-0.5 rounded-full font-bold animate-pulse">{{ pending_reports_count }}</span>
+                    {% elif pending_count and pending_count > 0 %}
+                    <span class="ml-auto bg-error-container text-error text-label-sm font-label-sm px-2 py-0.5 rounded-full font-bold animate-pulse">{{ pending_count }}</span>
+                    {% endif %}
+                </a>
+
+                <!-- Theaters & Screens -->
+                <a href="{% url 'admin_theaters_list' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg {% if 'theater' in request.resolver_match.url_name %}bg-surface-container-highest text-secondary font-bold shadow-inner{% else %}text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface{% endif %} font-title-sm text-title-sm transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">theater_comedy</span>
+                    <span>Theaters &amp; Venues</span>
+                </a>
+
+                <!-- Show Schedules -->
+                <a href="{% url 'admin_shows_list' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg {% if 'show' in request.resolver_match.url_name %}bg-surface-container-highest text-tertiary font-bold shadow-inner{% else %}text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface{% endif %} font-title-sm text-title-sm transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">schedule</span>
+                    <span>Show Schedules</span>
+                </a>
+
+                <!-- Genres & Languages -->
+                <a href="/admin/movies/genre/" target="_blank" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant font-title-sm text-title-sm hover:bg-surface-container-high hover:text-on-surface transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">category</span>
+                    <span>Genres &amp; Languages</span>
+                    <span class="ml-auto material-symbols-outlined text-[14px] text-on-surface-variant/40">open_in_new</span>
+                </a>
+
+                <!-- Cast & Crew -->
+                <a href="/admin/movies/castmember/" target="_blank" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant font-title-sm text-title-sm hover:bg-surface-container-high hover:text-on-surface transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">group</span>
+                    <span>Cast &amp; Crew</span>
+                    <span class="ml-auto material-symbols-outlined text-[14px] text-on-surface-variant/40">open_in_new</span>
+                </a>
+
+                <!-- Django Admin Root -->
+                <a href="/admin/" target="_blank" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant font-title-sm text-title-sm hover:bg-surface-container-high hover:text-on-surface transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+                    <span>Django Admin</span>
+                    <span class="ml-auto material-symbols-outlined text-[14px] text-on-surface-variant/40">open_in_new</span>
+                </a>
+
+                <div class="my-2 border-t border-outline-variant/20"></div>
+
+                <!-- Return to Public Site -->
+                <a href="{% url 'home' %}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-secondary font-title-sm text-title-sm hover:bg-surface-container-high hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                    <span>View Public Site</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Operator Session Profile -->
+        <div class="pt-4 border-t border-outline-variant/20 flex flex-col gap-2">
+            <div class="p-2.5 rounded-xl bg-surface-container flex items-center gap-3 border border-outline-variant/20">
+                <div class="w-9 h-9 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-label-md">
+                    {{ request.user.username|slice:":2"|upper }}
+                </div>
+                <div class="flex flex-col overflow-hidden">
+                    <span class="text-body-sm font-body-sm text-on-surface font-semibold truncate">{{ request.user.username }}</span>
+                    <span class="text-label-sm font-label-sm text-secondary">
+                        {% if request.user.is_superuser %}Master Admin{% else %}Cinema Staff{% endif %}
+                    </span>
+                </div>
+                <form method="POST" action="{% url 'logout' %}" class="ml-auto m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="text-on-surface-variant hover:text-primary transition-colors p-1" title="Sign Out">
+                        <span class="material-symbols-outlined text-[18px]">logout</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="ml-64 flex-1 flex flex-col min-h-screen overflow-y-auto custom-scrollbar bg-surface">
+        <!-- Top Ops Bar -->
+        <header class="sticky top-0 z-30 flex items-center justify-between px-8 py-3.5 bg-surface/90 backdrop-blur-md border-b border-outline-variant/20 shadow-lg">
+            <div class="flex items-center gap-4">
+                <nav class="flex items-center gap-2 text-label-md font-label-md">
+                    <span class="text-on-surface-variant">Cinema Ops</span>
+                    <span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+                    <span class="text-primary font-semibold">{% block breadcrumb_active %}Control Hub{% endblock %}</span>
+                </nav>
+                {% block top_stats_pill %}{% endblock %}
+            </div>
+
+            <div class="flex items-center gap-4">
+                {% block top_actions %}{% endblock %}
+            </div>
+        </header>
+
+        <!-- Notification Messages -->
+        {% if messages %}
+        <div class="px-8 pt-4 w-full">
+            {% for message in messages %}
+            <div class="flex items-center justify-between p-4 mb-3 rounded-xl border {% if message.tags == 'error' %}bg-error-container/30 border-error text-error{% elif message.tags == 'success' %}bg-surface-container-high border-primary/40 text-primary{% elif message.tags == 'warning' %}bg-secondary-container/20 border-secondary text-secondary{% else %}bg-surface-container-high border-outline-variant/30 text-on-surface{% endif %} shadow-lg backdrop-blur-sm">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-xl">
+                        {% if message.tags == 'error' %}error{% elif message.tags == 'success' %}check_circle{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}
+                    </span>
+                    <span class="font-body-sm text-body-sm">{{ message }}</span>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-on-surface-variant hover:text-on-surface p-1">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Main Body -->
+        <main class="p-8 flex flex-col gap-6 max-w-7xl w-full mx-auto">
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,148 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}{{ action_title }} — Cineva Ops{% endblock %}
+{% block breadcrumb_active %}{{ action_title }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-control, input[type="text"], input[type="number"], input[type="datetime-local"], select {
+        background-color: #11131b !important;
+        border: 1px solid rgba(172, 136, 139, 0.25) !important;
+        color: #e1e1ed !important;
+        border-radius: 0.5rem !important;
+        padding: 0.625rem 0.875rem !important;
+        width: 100% !important;
+        font-size: 0.875rem !important;
+    }
+    .form-control:focus, input:focus, select:focus {
+        border-color: #ffb2ba !important;
+        outline: none !important;
+        box-shadow: 0 0 0 1px rgba(255, 178, 186, 0.4) !important;
+    }
+    select option {
+        background-color: #1d1f28;
+        color: #e1e1ed;
+    }
+</style>
+{% endblock %}
+
+{% block top_actions %}
+<a
+    href="{% url 'admin_shows_list' %}"
+    class="flex items-center gap-1.5 h-10 px-4 rounded-lg bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    <span>Back to Shows</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-2xl mx-auto flex flex-col gap-6">
+    <div class="pb-2 border-b border-outline-variant/20">
+        <h1 class="text-headline-md font-headline-md font-bold text-on-surface">{{ action_title }}</h1>
+        <p class="text-body-sm font-body-sm text-on-surface-variant mt-1">Configure showtime slots, pricing, auditorium screen allocation, and booking status.</p>
+    </div>
+
+    {% if form.errors %}
+    <div class="p-4 rounded-xl bg-error-container/30 border border-error text-error shadow-lg">
+        <div class="flex items-center gap-2 font-bold mb-2">
+            <span class="material-symbols-outlined text-xl">error</span>
+            <span>Please resolve scheduling conflicts or validation errors:</span>
+        </div>
+        <ul class="list-disc list-inside space-y-1 text-sm pl-2">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                <li><strong>{{ field|title }}:</strong> {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="POST" class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-5 shadow-xl">
+        {% csrf_token %}
+
+        <!-- Movie Selector -->
+        <div class="flex flex-col gap-1.5">
+            <label for="{{ form.movie.id_for_label }}" class="text-title-sm font-semibold text-on-surface">
+                Movie Title <span class="text-primary">*</span>
+            </label>
+            {{ form.movie }}
+            {% if form.movie.errors %}<span class="text-error text-xs">{{ form.movie.errors.0 }}</span>{% endif %}
+        </div>
+
+        <!-- Theater Selector -->
+        <div class="flex flex-col gap-1.5">
+            <label for="{{ form.theater.id_for_label }}" class="text-title-sm font-semibold text-on-surface">
+                Multiplex / Theater Venue <span class="text-primary">*</span>
+            </label>
+            {{ form.theater }}
+            {% if form.theater.errors %}<span class="text-error text-xs">{{ form.theater.errors.0 }}</span>{% endif %}
+        </div>
+
+        <!-- Screen Selector -->
+        <div class="flex flex-col gap-1.5">
+            <label for="{{ form.screen.id_for_label }}" class="text-title-sm font-semibold text-on-surface">
+                Auditorium / Screen <span class="text-primary">*</span>
+            </label>
+            {{ form.screen }}
+            {% if form.screen.errors %}<span class="text-error text-xs">{{ form.screen.errors.0 }}</span>{% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Start Time -->
+            <div class="flex flex-col gap-1.5">
+                <label for="{{ form.start_time.id_for_label }}" class="text-title-sm font-semibold text-on-surface">
+                    Show Start Time <span class="text-primary">*</span>
+                </label>
+                {{ form.start_time }}
+                {% if form.start_time.errors %}<span class="text-error text-xs">{{ form.start_time.errors.0 }}</span>{% endif %}
+            </div>
+
+            <!-- End Time -->
+            <div class="flex flex-col gap-1.5">
+                <label for="{{ form.end_time.id_for_label }}" class="text-title-sm font-semibold text-on-surface">
+                    Show End Time <span class="text-primary">*</span>
+                </label>
+                {{ form.end_time }}
+                {% if form.end_time.errors %}<span class="text-error text-xs">{{ form.end_time.errors.0 }}</span>{% endif %}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Price -->
+            <div class="flex flex-col gap-1.5">
+                <label for="{{ form.price.id_for_label }}" class="text-title-sm font-semibold text-on-surface">
+                    Base Ticket Price (₹) <span class="text-primary">*</span>
+                </label>
+                {{ form.price }}
+                {% if form.price.errors %}<span class="text-error text-xs">{{ form.price.errors.0 }}</span>{% endif %}
+            </div>
+
+            <!-- Status -->
+            <div class="flex flex-col gap-1.5">
+                <label for="{{ form.status.id_for_label }}" class="text-title-sm font-semibold text-on-surface">
+                    Screening Status <span class="text-primary">*</span>
+                </label>
+                {{ form.status }}
+                {% if form.status.errors %}<span class="text-error text-xs">{{ form.status.errors.0 }}</span>{% endif %}
+            </div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="pt-4 border-t border-outline-variant/20 flex flex-col sm:flex-row items-center gap-3">
+            <button
+                type="submit"
+                class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-primary-container text-on-primary-container hover:bg-primary font-label-lg font-bold shadow-md shadow-primary-container/25 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">save</span>
+                <span>Save Screening Schedule</span>
+            </button>
+
+            <a
+                href="{% url 'admin_shows_list' %}"
+                class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-center transition-colors">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

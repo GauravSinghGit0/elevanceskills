@@ -1,0 +1,412 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}{{ action_title }} — Cineva Ops{% endblock %}
+{% block breadcrumb_active %}{{ action_title }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Styling form inputs inside Cineva Ops cards */
+    .form-control, input[type="text"], input[type="url"], input[type="date"], input[type="number"], select, textarea {
+        background-color: #11131b !important;
+        border: 1px solid rgba(172, 136, 139, 0.25) !important;
+        color: #e1e1ed !important;
+        border-radius: 0.5rem !important;
+        padding: 0.625rem 0.875rem !important;
+        width: 100% !important;
+        font-size: 0.875rem !important;
+        line-height: 1.25rem !important;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+    }
+    .form-control:focus, input:focus, select:focus, textarea:focus {
+        border-color: #ffb2ba !important;
+        outline: none !important;
+        box-shadow: 0 0 0 1px rgba(255, 178, 186, 0.4) !important;
+    }
+    select option {
+        background-color: #1d1f28;
+        color: #e1e1ed;
+    }
+    input[type="checkbox"] {
+        background-color: #1d1f28;
+        border-color: rgba(172, 136, 139, 0.4);
+        border-radius: 0.25rem;
+        color: #ff4f73;
+    }
+    input[type="file"] {
+        color: #ac888b;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0.25rem 0 !important;
+    }
+</style>
+{% endblock %}
+
+{% block top_actions %}
+{% if movie %}
+<a
+    href="{% url 'movie_admin_gallery' movie.id %}"
+    class="flex items-center gap-1.5 h-10 px-3.5 rounded-lg bg-surface-container border border-outline-variant/30 text-secondary hover:text-primary hover:border-secondary/40 text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">photo_library</span>
+    <span>Posters &amp; Gallery</span>
+</a>
+
+<a
+    href="{% url 'movie_detail' movie.slug %}"
+    target="_blank"
+    class="flex items-center gap-1.5 h-10 px-3.5 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">visibility</span>
+    <span>Live Preview</span>
+</a>
+{% endif %}
+
+<a
+    href="{% url 'movie_admin_dashboard' %}"
+    class="flex items-center gap-1.5 h-10 px-4 rounded-lg bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    <span>Back to Catalog</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<div class="flex flex-col gap-6">
+    <!-- Header Summary Strip -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-outline-variant/20">
+        <div>
+            <h1 class="text-headline-md font-headline-md font-bold text-on-surface tracking-tight">{{ action_title }}</h1>
+            <p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+                Configure theatrical metadata, security-verified trailers, age classifications, and cinema billing.
+            </p>
+        </div>
+
+        {% if movie %}
+        <div class="flex items-center gap-2">
+            <span class="text-label-sm font-label-sm text-on-surface-variant">Movie ID: <strong class="font-mono text-on-surface">#{{ movie.id }}</strong></span>
+            <span class="text-outline-variant">•</span>
+            <span class="text-label-sm font-label-sm text-on-surface-variant">Rating: <strong class="text-secondary font-bold">★ {{ movie.rating|floatformat:1 }}</strong></span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Error Callout Banner if Form Invalid -->
+    {% if form.errors %}
+    <div class="p-4 rounded-xl bg-error-container/30 border border-error text-error shadow-lg">
+        <div class="flex items-center gap-2 font-title-sm font-title-sm font-bold mb-2">
+            <span class="material-symbols-outlined text-xl">error</span>
+            <span>Please correct the errors before publishing this movie:</span>
+        </div>
+        <ul class="list-disc list-inside space-y-1 text-body-sm font-body-sm text-error/90 pl-2">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                <li><strong class="text-error uppercase tracking-wider">{{ field|title }}:</strong> {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Main Movie Form Grid (8 cols left, 4 cols right) -->
+    <form method="POST" enctype="multipart/form-data" novalidate class="grid grid-cols-12 gap-8">
+        {% csrf_token %}
+
+        <!-- LEFT COLUMN (Metadata, Specs, Cast, Trailer) -->
+        <div class="col-span-12 lg:col-span-8 flex flex-col gap-8">
+            <!-- SECTION 1: Core Theatrical Identity -->
+            <section class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-5">
+                <div class="flex items-center gap-2.5 pb-3 border-b border-outline-variant/20">
+                    <span class="material-symbols-outlined text-primary text-[22px]">movie</span>
+                    <h2 class="text-title-md font-title-md font-bold text-on-surface">1. Core Theatrical Identity</h2>
+                </div>
+
+                <!-- Movie Title -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="{{ form.title.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface flex items-center justify-between">
+                        <span>Movie Title <span class="text-primary">*</span></span>
+                        <span class="text-label-sm font-label-sm text-on-surface-variant">Official Distribution Title</span>
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}<span class="text-error text-label-sm font-label-sm">{{ form.title.errors.0 }}</span>{% endif %}
+                </div>
+
+                <!-- URL Slug -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="{{ form.slug.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface flex items-center justify-between">
+                        <span>URL Slug</span>
+                        <span class="text-label-sm font-label-sm text-on-surface-variant">Auto-generated if left empty</span>
+                    </label>
+                    {{ form.slug }}
+                    {% if form.slug.errors %}<span class="text-error text-label-sm font-label-sm">{{ form.slug.errors.0 }}</span>{% endif %}
+                </div>
+
+                <!-- Short Synopsis -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="{{ form.short_description.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface flex items-center justify-between">
+                        <span>Short Synopsis / Card Tagline <span class="text-primary">*</span></span>
+                        <span class="text-label-sm font-label-sm text-on-surface-variant">Max 500 chars for discovery cards</span>
+                    </label>
+                    {{ form.short_description }}
+                    {% if form.short_description.errors %}<span class="text-error text-label-sm font-label-sm">{{ form.short_description.errors.0 }}</span>{% endif %}
+                </div>
+
+                <!-- Detailed Storyline / Plot -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="{{ form.detailed_description.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                        Detailed Storyline &amp; Production Notes
+                    </label>
+                    {{ form.detailed_description }}
+                    {% if form.detailed_description.errors %}<span class="text-error text-label-sm font-label-sm">{{ form.detailed_description.errors.0 }}</span>{% endif %}
+                </div>
+            </section>
+
+            <!-- SECTION 2: Technical Specifications & Release -->
+            <section class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-5">
+                <div class="flex items-center gap-2.5 pb-3 border-b border-outline-variant/20">
+                    <span class="material-symbols-outlined text-secondary text-[22px]">tune</span>
+                    <h2 class="text-title-md font-title-md font-bold text-on-surface">2. Classification &amp; Specifications</h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Age Certification -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ form.age_certification.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Age Rating <span class="text-primary">*</span>
+                        </label>
+                        {{ form.age_certification }}
+                        {% if form.age_certification.errors %}<span class="text-error text-label-sm">{{ form.age_certification.errors.0 }}</span>{% endif %}
+                    </div>
+
+                    <!-- Duration -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ form.duration.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Runtime (Minutes) <span class="text-primary">*</span>
+                        </label>
+                        {{ form.duration }}
+                        {% if form.duration.errors %}<span class="text-error text-label-sm">{{ form.duration.errors.0 }}</span>{% endif %}
+                    </div>
+
+                    <!-- Release Date -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ form.release_date.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Theatrical Release Date
+                        </label>
+                        {{ form.release_date }}
+                        {% if form.release_date.errors %}<span class="text-error text-label-sm">{{ form.release_date.errors.0 }}</span>{% endif %}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
+                    <!-- Primary Language -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ form.language.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Primary Spoken Language
+                        </label>
+                        {{ form.language }}
+                        {% if form.language.errors %}<span class="text-error text-label-sm">{{ form.language.errors.0 }}</span>{% endif %}
+                    </div>
+
+                    <!-- Genres (Multi-select) -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ form.genres.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface flex items-center justify-between">
+                            <span>Genres</span>
+                            <span class="text-label-sm font-label-sm text-outline">Hold Ctrl / Cmd to select</span>
+                        </label>
+                        {{ form.genres }}
+                        {% if form.genres.errors %}<span class="text-error text-label-sm">{{ form.genres.errors.0 }}</span>{% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Cast & Creative Billing -->
+            <section class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-5">
+                <div class="flex items-center gap-2.5 pb-3 border-b border-outline-variant/20">
+                    <span class="material-symbols-outlined text-tertiary text-[22px]">group</span>
+                    <h2 class="text-title-md font-title-md font-bold text-on-surface">3. Cast &amp; Creative Roster</h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <!-- Director Name Text -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ form.director_name.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Director Name (Display)
+                        </label>
+                        {{ form.director_name }}
+                        {% if form.director_name.errors %}<span class="text-error text-label-sm">{{ form.director_name.errors.0 }}</span>{% endif %}
+                    </div>
+
+                    <!-- Linked Director Record -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ form.director.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Linked Director Profile
+                        </label>
+                        {{ form.director }}
+                        {% if form.director.errors %}<span class="text-error text-label-sm">{{ form.director.errors.0 }}</span>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Cast Members Multi-Select -->
+                <div class="flex flex-col gap-1.5 mt-2">
+                    <label for="{{ form.cast_members.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface flex items-center justify-between">
+                        <span>Cast Members Roster</span>
+                        <span class="text-label-sm font-label-sm text-outline">Hold Ctrl / Cmd to select principal billing</span>
+                    </label>
+                    {{ form.cast_members }}
+                    {% if form.cast_members.errors %}<span class="text-error text-label-sm">{{ form.cast_members.errors.0 }}</span>{% endif %}
+                    <p class="text-label-sm font-label-sm text-on-surface-variant">
+                        To add new actors or directors, visit <a href="/admin/movies/castmember/" target="_blank" class="text-secondary hover:underline">Cast &amp; Crew Database</a>.
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 4: YouTube Trailer Integration -->
+            <section class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-5">
+                <div class="flex items-center gap-2.5 pb-3 border-b border-outline-variant/20">
+                    <span class="material-symbols-outlined text-primary-container text-[22px]">smart_display</span>
+                    <h2 class="text-title-md font-title-md font-bold text-on-surface">4. Official Trailer (Secure YouTube Link)</h2>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label for="{{ form.trailer_url.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                        YouTube Trailer URL
+                    </label>
+                    {{ form.trailer_url }}
+                    {% if form.trailer_url.errors %}<span class="text-error text-label-sm font-label-sm">{{ form.trailer_url.errors.0 }}</span>{% endif %}
+                    <p class="text-label-sm font-label-sm text-on-surface-variant leading-relaxed">
+                        Security standard: accepts format <code>https://www.youtube.com/watch?v=VIDEO_ID</code> or <code>https://youtu.be/VIDEO_ID</code>. Raw HTML <code>&lt;iframe&gt;</code> tags are strictly blocked to prevent XSS.
+                    </p>
+                </div>
+
+                {% if movie and movie.get_youtube_video_id %}
+                <div class="mt-2 p-4 rounded-xl bg-surface-container border border-outline-variant/30 flex items-center gap-4">
+                    <div class="w-20 aspect-video rounded-lg bg-surface-container-lowest overflow-hidden flex items-center justify-center text-primary border border-outline-variant/20 flex-shrink-0">
+                        <span class="material-symbols-outlined text-2xl">play_circle</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-title-sm font-title-sm text-on-surface font-semibold flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            <span>Valid YouTube Stream Verified</span>
+                        </div>
+                        <span class="text-label-sm font-label-sm text-outline font-mono">Stream Key ID: {{ movie.get_youtube_video_id }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </section>
+        </div>
+
+        <!-- RIGHT COLUMN (Poster Studio, Publishing, Actions) -->
+        <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+            <!-- SECTION 5: Primary Theatrical Poster -->
+            <section class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-4">
+                <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[20px]">image</span>
+                        <h3 class="text-title-md font-title-md font-bold text-on-surface">Primary Poster</h3>
+                    </div>
+                    <span class="text-label-sm font-label-sm font-mono text-primary bg-primary/10 px-2 py-0.5 rounded">3:4 Ratio</span>
+                </div>
+
+                <!-- Existing Poster Preview -->
+                {% if movie and movie.poster %}
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-40 aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-outline-variant/40 relative group">
+                        <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="w-full h-full object-cover" />
+                    </div>
+                    <span class="text-label-sm font-label-sm text-secondary flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">verified</span>
+                        <span>Current High-Res Poster</span>
+                    </span>
+                </div>
+                {% endif %}
+
+                <!-- File Input -->
+                <div class="flex flex-col gap-2 mt-2">
+                    <label for="{{ form.poster.id_for_label }}" class="text-label-md font-label-md font-semibold text-on-surface">
+                        {% if movie and movie.poster %}Replace Poster Image{% else %}Upload Poster Image{% endif %}
+                    </label>
+                    <div class="p-3 rounded-xl bg-surface border border-outline-variant/30">
+                        {{ form.poster }}
+                    </div>
+                    {% if form.poster.errors %}<span class="text-error text-label-sm">{{ form.poster.errors.0 }}</span>{% endif %}
+                    <p class="text-label-sm font-label-sm text-on-surface-variant">
+                        Max 5MB • Formats: JPEG, PNG, WebP. Verified securely with Pillow image header validation.
+                    </p>
+                </div>
+
+                {% if movie %}
+                <div class="pt-2 border-t border-outline-variant/20">
+                    <a href="{% url 'movie_admin_gallery' movie.id %}" class="w-full py-2 px-3 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-label-md font-label-md text-center flex items-center justify-center gap-1.5 transition-colors">
+                        <span class="material-symbols-outlined text-sm">photo_library</span>
+                        <span>Manage Multi-Image Gallery</span>
+                    </a>
+                </div>
+                {% endif %}
+            </section>
+
+            <!-- SECTION: Multiplex Theater Assignments -->
+            <section class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-4">
+                <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary text-[20px]">theater_comedy</span>
+                        <h3 class="text-title-md font-title-md font-bold text-on-surface">Screening Theaters</h3>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2 max-h-56 overflow-y-auto custom-scrollbar pr-1">
+                    {% for th in form.assigned_theaters %}
+                    <label class="flex items-center gap-2.5 p-2 rounded-lg bg-surface border border-outline-variant/20 hover:border-secondary/40 cursor-pointer text-body-sm transition-colors">
+                        {{ th.tag }}
+                        <span class="text-on-surface font-medium text-xs">{{ th.choice_label }}</span>
+                    </label>
+                    {% empty %}
+                    <p class="text-xs text-outline">No multiplexes registered yet.</p>
+                    {% endfor %}
+                </div>
+                <p class="text-xs text-on-surface-variant">
+                    Check the multiplexes that will screen this movie title.
+                </p>
+                {% if movie %}
+                <a href="{% url 'movie_admin_assign_theaters' movie.id %}" class="inline-flex items-center gap-1 text-xs text-secondary hover:underline font-bold">
+                    <span>Advanced Theater &amp; Showtime Generator</span>
+                    <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+                {% endif %}
+            </section>
+
+            <!-- SECTION 6: Publication Status & Submission -->
+            <section class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-4">
+                <div class="flex items-center gap-2 pb-3 border-b border-outline-variant/20">
+                    <span class="material-symbols-outlined text-secondary text-[20px]">toggle_on</span>
+                    <h3 class="text-title-md font-title-md font-bold text-on-surface">Publishing Status</h3>
+                </div>
+
+                <!-- Active Toggle Checkbox -->
+                <label class="flex items-start gap-3 p-3.5 rounded-xl bg-surface border border-outline-variant/30 cursor-pointer hover:border-primary/40 transition-colors">
+                    <div class="pt-0.5">
+                        {{ form.is_active }}
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-title-sm font-title-sm font-bold text-on-surface">Public Theatrical Release</span>
+                        <span class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">
+                            When enabled, this movie is discoverable in catalog, search, and booking showtimes.
+                        </span>
+                    </div>
+                </label>
+
+                <!-- Actions -->
+                <div class="flex flex-col gap-2.5 pt-4">
+                    <button
+                        type="submit"
+                        class="w-full py-3 px-4 rounded-xl bg-primary-container text-on-primary-container hover:bg-primary font-label-lg text-label-lg font-bold shadow-lg shadow-primary-container/25 transition-all duration-150 active:scale-[0.98] flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">save</span>
+                        <span>Save &amp; Commit Movie</span>
+                    </button>
+
+                    <a
+                        href="{% url 'movie_admin_dashboard' %}"
+                        class="w-full py-2.5 px-4 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md text-center transition-colors">
+                        Cancel &amp; Discard
+                    </a>
+                </div>
+            </section>
+        </div>
+    </form>
+</div>
+{% endblock %}

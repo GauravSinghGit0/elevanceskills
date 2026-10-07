@@ -1,0 +1,219 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}Theaters &amp; Auditoriums — Cineva Ops{% endblock %}
+{% block breadcrumb_active %}Theaters Management{% endblock %}
+
+{% block top_stats_pill %}
+<span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-label-sm font-label-sm text-on-surface">
+    <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+    <span>Total Theaters: <strong class="text-secondary">{{ total_theaters }} Active Venues</strong></span>
+</span>
+{% endblock %}
+
+{% block top_actions %}
+<form method="GET" class="relative w-64 md:w-80">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+    <input
+        class="w-full h-10 pl-9 pr-4 text-body-sm font-body-sm bg-surface-container-low border border-outline-variant/30 rounded-lg text-on-surface placeholder-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/40 transition-all"
+        name="search"
+        placeholder="Search theaters, cities..."
+        type="text"
+        value="{{ search }}"
+    />
+</form>
+
+<a
+    href="{% url 'admin_theater_create' %}"
+    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-secondary-container text-on-secondary-container hover:bg-secondary font-label-lg text-label-lg font-bold shadow-md shadow-secondary-container/25 transition-all duration-150 active:scale-95">
+    <span class="material-symbols-outlined text-[20px]">add</span>
+    <span class="whitespace-nowrap">New Theater</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<!-- KPI Stats Row -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="p-5 rounded-xl bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/20 shadow">
+        <div class="flex items-center justify-between text-on-surface-variant mb-2">
+            <span class="text-label-md uppercase font-semibold">Total Multiplexes</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+                <span class="material-symbols-outlined text-[20px]">theater_comedy</span>
+            </div>
+        </div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-headline-md font-bold text-on-surface">{{ total_theaters }}</span>
+            <span class="text-label-sm text-secondary font-semibold">Venues</span>
+        </div>
+    </div>
+
+    <div class="p-5 rounded-xl bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/20 shadow">
+        <div class="flex items-center justify-between text-on-surface-variant mb-2">
+            <span class="text-label-md uppercase font-semibold">Auditorium Screens</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-[20px]">meeting_room</span>
+            </div>
+        </div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-headline-md font-bold text-on-surface">{{ total_screens }}</span>
+            <span class="text-label-sm text-primary font-semibold">Screens</span>
+        </div>
+    </div>
+
+    <div class="p-5 rounded-xl bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/20 shadow">
+        <div class="flex items-center justify-between text-on-surface-variant mb-2">
+            <span class="text-label-md uppercase font-semibold">Operational Status</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-emerald-400">
+                <span class="material-symbols-outlined text-[20px]">check_circle</span>
+            </div>
+        </div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-headline-md font-bold text-emerald-400">{{ active_theaters }}</span>
+            <span class="text-label-sm text-emerald-400/80 font-semibold">Online</span>
+        </div>
+    </div>
+
+    <div class="p-5 rounded-xl bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/20 shadow">
+        <div class="flex items-center justify-between text-on-surface-variant mb-2">
+            <span class="text-label-md uppercase font-semibold">Total Show Schedules</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-tertiary">
+                <span class="material-symbols-outlined text-[20px]">schedule</span>
+            </div>
+        </div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-headline-md font-bold text-on-surface">{{ total_shows }}</span>
+            <span class="text-label-sm text-tertiary font-semibold">Screenings</span>
+        </div>
+    </div>
+</section>
+
+<!-- Theaters Table -->
+<div class="rounded-xl border border-outline-variant/20 bg-surface-container-lowest overflow-hidden shadow-2xl">
+    <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="border-b border-outline-variant/20 bg-surface-container-low text-label-sm font-label-sm uppercase tracking-wider text-outline">
+                    <th class="py-3.5 px-4">Multiplex / Venue Name</th>
+                    <th class="py-3.5 px-4">City</th>
+                    <th class="py-3.5 px-4">Screens</th>
+                    <th class="py-3.5 px-4">Primary / Assigned Movie</th>
+                    <th class="py-3.5 px-4">Total Shows</th>
+                    <th class="py-3.5 px-4">Status</th>
+                    <th class="py-3.5 px-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10 text-body-sm font-body-sm">
+                {% for th in theaters %}
+                <tr class="hover:bg-surface-container-high/30 transition-colors group">
+                    <td class="py-3.5 px-4">
+                        <div class="flex flex-col">
+                            <span class="text-title-sm font-bold text-on-surface">{{ th.name }}</span>
+                            <span class="text-xs text-on-surface-variant/80 mt-0.5 line-clamp-1">{{ th.address|default:"No address" }}</span>
+                        </div>
+                    </td>
+
+                    <td class="py-3.5 px-4">
+                        <span class="px-2.5 py-1 rounded-full text-label-sm font-medium bg-surface-container text-secondary border border-outline-variant/25">
+                            {{ th.city|default:"General" }}
+                        </span>
+                    </td>
+
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-1.5 text-on-surface">
+                            <span class="material-symbols-outlined text-base text-primary">meeting_room</span>
+                            <span class="font-bold">{{ th.screens.count }}</span>
+                            <span class="text-outline text-xs">({{ th.screens.all|slice:":2"|join:", " }})</span>
+                        </div>
+                    </td>
+
+                    <td class="py-3.5 px-4">
+                        {% if th.movie %}
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-10 rounded overflow-hidden bg-surface-container flex-shrink-0 border border-outline-variant/20">
+                                <img src="{{ th.movie.get_primary_poster_url }}" alt="{{ th.movie.title }}" class="w-full h-full object-cover" />
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="font-semibold text-on-surface text-label-md">{{ th.movie.title }}</span>
+                                <span class="text-xs text-outline">{{ th.movie.duration }} min</span>
+                            </div>
+                        </div>
+                        {% else %}
+                        <span class="text-outline text-label-sm">No Primary (Multi-screening)</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="py-3.5 px-4 font-mono text-on-surface font-semibold">
+                        {{ th.shows_count }} shows
+                    </td>
+
+                    <td class="py-3.5 px-4">
+                        {% if th.is_active %}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Active
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm bg-surface-container-high text-outline border border-outline-variant/30 font-semibold">
+                            Inactive
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <td class="py-3.5 px-4 text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <!-- Live Book Seats Page -->
+                            <a
+                                href="{% url 'book_seats' th.id %}"
+                                target="_blank"
+                                class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors"
+                                title="View Live Seating Map">
+                                <span class="material-symbols-outlined text-[18px]">event_seat</span>
+                            </a>
+
+                            <!-- Edit Theater -->
+                            <a
+                                href="{% url 'admin_theater_edit' th.id %}"
+                                class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-secondary transition-colors"
+                                title="Edit Theater Details">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                            </a>
+
+                            <!-- Toggle Status -->
+                            <form method="POST" action="{% url 'admin_theater_toggle_status' th.id %}" class="inline m-0" onsubmit="return confirm('Toggle status for {{ th.name|escapejs }}?');">
+                                {% csrf_token %}
+                                <button
+                                    type="submit"
+                                    class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container {% if th.is_active %}hover:text-warning{% else %}hover:text-emerald-400{% endif %} transition-colors"
+                                    title="{% if th.is_active %}Deactivate Theater{% else %}Activate Theater{% endif %}">
+                                    <span class="material-symbols-outlined text-[18px]">{% if th.is_active %}pause_circle{% else %}play_circle{% endif %}</span>
+                                </button>
+                            </form>
+
+                            <!-- Delete Theater -->
+                            <a
+                                href="{% url 'admin_theater_delete' th.id %}"
+                                class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-error transition-colors"
+                                title="Delete Theater">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="py-12 text-center text-on-surface-variant">
+                        <span class="material-symbols-outlined text-4xl mb-2 text-outline">theater_comedy</span>
+                        <p class="text-body-md font-body-md">No multiplexes found.</p>
+                        <a href="{% url 'admin_theater_create' %}" class="inline-flex items-center gap-1 text-secondary hover:underline text-label-md mt-2">
+                            <span>Register a new multiplex</span>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "components/pagination.html" with page_obj=theaters %}
+</div>
+{% endblock %}

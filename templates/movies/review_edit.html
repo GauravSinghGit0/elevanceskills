@@ -1,0 +1,125 @@
+{% extends "users/basic.html" %}
+
+{% block title %}Edit Review for {{ movie.title }} — Cineva{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-control, input[type="text"], input[type="number"], select, textarea {
+        background-color: #11131b !important;
+        border: 1px solid rgba(172, 136, 139, 0.25) !important;
+        color: #e1e1ed !important;
+        border-radius: 0.5rem !important;
+        padding: 0.625rem 0.875rem !important;
+        width: 100% !important;
+        font-size: 0.875rem !important;
+    }
+    .form-control:focus, input:focus, select:focus, textarea:focus {
+        border-color: #ffb2ba !important;
+        outline: none !important;
+        box-shadow: 0 0 0 1px rgba(255, 178, 186, 0.4) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-6 py-12">
+    <div class="p-8 rounded-3xl bg-surface-container-low border border-outline-variant/20 shadow-2xl cinematic-glow flex flex-col gap-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center border border-secondary/30">
+                    <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">edit_note</span>
+                </div>
+                <div>
+                    <h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">Edit Your Review</h1>
+                    <span class="text-label-sm font-label-sm text-on-surface-variant">Verified Viewer Experience</span>
+                </div>
+            </div>
+
+            <a href="{% url 'movie_detail' movie.slug %}" class="text-on-surface-variant hover:text-on-surface p-2 rounded-lg hover:bg-surface-container">
+                <span class="material-symbols-outlined">close</span>
+            </a>
+        </div>
+
+        <!-- Movie Context Card -->
+        <div class="flex items-center gap-4 p-4 rounded-2xl bg-surface border border-outline-variant/20">
+            <div class="w-14 aspect-[3/4] rounded-lg overflow-hidden bg-surface-container flex-shrink-0 shadow">
+                <img src="{{ movie.get_primary_poster_url }}" alt="{{ movie.title }}" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex flex-col">
+                <h3 class="text-title-md font-title-md font-bold text-on-surface">{{ movie.title }}</h3>
+                <span class="text-body-sm font-body-sm text-on-surface-variant">
+                    {{ movie.language.name }} • {{ movie.duration }} mins • {{ movie.age_certification }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Error Messages -->
+        {% if form.errors %}
+        <div class="p-4 rounded-xl bg-error-container/30 border border-error text-error text-body-sm">
+            <span class="font-bold">Please correct the following errors:</span>
+            <ul class="list-disc list-inside mt-1">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                    <li>{{ field|title }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Form -->
+        <form method="POST" class="flex flex-col gap-5">
+            {% csrf_token %}
+
+            <!-- Rating Input -->
+            <div class="flex flex-col gap-1.5">
+                <label for="{{ form.rating.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface flex items-center justify-between">
+                    <span>Your Rating (1 to 5 Stars) <span class="text-primary">*</span></span>
+                    <span class="text-secondary text-label-sm font-bold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                        <span>Auditorium Score</span>
+                    </span>
+                </label>
+                {{ form.rating }}
+                {% if form.rating.errors %}<span class="text-error text-label-sm">{{ form.rating.errors.0 }}</span>{% endif %}
+            </div>
+
+            <!-- Review Title -->
+            <div class="flex flex-col gap-1.5">
+                <label for="{{ form.title.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                    Review Headline / Title
+                </label>
+                {{ form.title }}
+                {% if form.title.errors %}<span class="text-error text-label-sm">{{ form.title.errors.0 }}</span>{% endif %}
+            </div>
+
+            <!-- Review Comment -->
+            <div class="flex flex-col gap-1.5">
+                <label for="{{ form.comment.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                    Detailed Review &amp; Commentary <span class="text-primary">*</span>
+                </label>
+                {{ form.comment }}
+                {% if form.comment.errors %}<span class="text-error text-label-sm">{{ form.comment.errors.0 }}</span>{% endif %}
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center justify-between gap-4 pt-4 border-t border-outline-variant/20">
+                <a
+                    href="{% url 'movie_detail' movie.slug %}"
+                    class="px-5 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-label-md font-label-md transition-colors flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    <span>Cancel</span>
+                </a>
+
+                <button
+                    type="submit"
+                    class="px-6 py-2.5 rounded-xl bg-primary-container text-on-primary-container hover:bg-primary font-label-md text-label-md font-bold shadow-lg shadow-primary-container/25 transition-all duration-150 active:scale-95 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">check</span>
+                    <span>Update Review</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

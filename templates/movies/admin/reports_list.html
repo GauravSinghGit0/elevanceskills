@@ -1,0 +1,273 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}Cineva Cinema Ops - Review &amp; Ratings Moderation Center{% endblock %}
+{% block breadcrumb_active %}Moderation Center{% endblock %}
+
+{% block top_stats_pill %}
+<span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-label-sm font-label-sm text-on-surface">
+    <span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+    <span>Pending Review Flags: <strong class="text-error">{{ pending_count }} Active</strong></span>
+</span>
+{% endblock %}
+
+{% block top_actions %}
+<a
+    href="{% url 'movie_admin_dashboard' %}"
+    class="flex items-center gap-1.5 h-10 px-4 rounded-lg bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    <span>Movies Catalog</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<!-- SECTION 1: MODERATION KPI CARDS -->
+<section aria-label="Key Performance Indicators" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+    <!-- KPI 1: Flagged Reports -->
+    <div class="p-5 rounded-xl bg-surface-container-low border border-outline-variant/20 relative overflow-hidden flex flex-col justify-between group shadow-lg">
+        <div class="flex items-center justify-between">
+            <span class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">Pending Reports</span>
+            <div class="w-9 h-9 rounded-lg bg-primary-container/20 border border-primary/30 flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-title-md {% if pending_count > 0 %}animate-pulse{% endif %}">report</span>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="flex items-baseline gap-2">
+                <span class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">{{ pending_count }}</span>
+                <span class="font-title-sm text-title-sm text-on-surface font-semibold">Triage Queue</span>
+            </div>
+            <div class="mt-2 flex items-center gap-1.5 text-primary text-label-sm font-label-sm font-bold">
+                <span class="w-2 h-2 rounded-full bg-primary-container"></span>
+                <span>{% if pending_count > 0 %}Immediate Action Recommended{% else %}Queue is Clean{% endif %}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI 2: Current Status View -->
+    <div class="p-5 rounded-xl bg-surface-container-low border border-outline-variant/20 flex flex-col justify-between group">
+        <div class="flex items-center justify-between">
+            <span class="font-label-md text-label-md text-on-surface-variant">Active Filter Tab</span>
+            <div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+                <span class="material-symbols-outlined text-title-md">filter_alt</span>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="flex items-baseline gap-2">
+                <span class="font-headline-md text-headline-md font-bold text-secondary tracking-tight capitalize">{{ current_status }}</span>
+            </div>
+            <p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">Filtered by report lifecycle status</p>
+        </div>
+    </div>
+
+    <!-- KPI 3: Queue Count -->
+    <div class="p-5 rounded-xl bg-surface-container-low border border-outline-variant/20 flex flex-col justify-between group">
+        <div class="flex items-center justify-between">
+            <span class="font-label-md text-label-md text-on-surface-variant">Reports in View</span>
+            <div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-tertiary">
+                <span class="material-symbols-outlined text-title-md">inventory_2</span>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="flex items-baseline gap-2">
+                <span class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">{{ reports.paginator.count }}</span>
+                <span class="font-title-sm text-title-sm text-on-surface-variant">incidents</span>
+            </div>
+            <p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">Logged in moderation audit trail</p>
+        </div>
+    </div>
+
+    <!-- KPI 4: Verified Viewer Shield -->
+    <div class="p-5 rounded-xl bg-surface-container-low border border-outline-variant/20 flex flex-col justify-between group">
+        <div class="flex items-center justify-between">
+            <span class="font-label-md text-label-md text-on-surface-variant">Integrity Protection</span>
+            <div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-emerald-400">
+                <span class="material-symbols-outlined text-title-md">verified</span>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="flex items-baseline gap-2">
+                <span class="font-headline-md text-headline-md font-bold text-emerald-400 tracking-tight">Active</span>
+            </div>
+            <p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">Only verified moviegoers can rate &amp; review</p>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 2: STATUS FILTER TABS -->
+<div class="flex items-center gap-2 border-b border-outline-variant/20 pb-4 overflow-x-auto">
+    <a
+        href="?status=pending"
+        class="flex items-center gap-2 px-4 py-2 rounded-xl text-label-lg font-label-lg font-bold transition-all {% if current_status == 'pending' %}bg-primary-container text-on-primary-container shadow-md shadow-primary-container/20{% else %}bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+        <span class="material-symbols-outlined text-[18px]">pending_actions</span>
+        <span>Pending Queue</span>
+        {% if pending_count > 0 %}
+        <span class="px-1.5 py-0.2 rounded-full bg-surface text-primary text-xs font-mono font-bold">{{ pending_count }}</span>
+        {% endif %}
+    </a>
+
+    <a
+        href="?status=reviewed"
+        class="flex items-center gap-2 px-4 py-2 rounded-xl text-label-lg font-label-lg font-bold transition-all {% if current_status == 'reviewed' %}bg-primary-container text-on-primary-container shadow-md shadow-primary-container/20{% else %}bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+        <span class="material-symbols-outlined text-[18px]">rule</span>
+        <span>Reviewed</span>
+    </a>
+
+    <a
+        href="?status=action_taken"
+        class="flex items-center gap-2 px-4 py-2 rounded-xl text-label-lg font-label-lg font-bold transition-all {% if current_status == 'action_taken' %}bg-primary-container text-on-primary-container shadow-md shadow-primary-container/20{% else %}bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+        <span class="material-symbols-outlined text-[18px]">visibility_off</span>
+        <span>Action Taken (Hidden)</span>
+    </a>
+
+    <a
+        href="?status=dismissed"
+        class="flex items-center gap-2 px-4 py-2 rounded-xl text-label-lg font-label-lg font-bold transition-all {% if current_status == 'dismissed' %}bg-primary-container text-on-primary-container shadow-md shadow-primary-container/20{% else %}bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+        <span class="material-symbols-outlined text-[18px]">done_all</span>
+        <span>Dismissed</span>
+    </a>
+</div>
+
+<!-- SECTION 3: REPORTS LIST -->
+<div class="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest overflow-hidden shadow-2xl">
+    <div class="divide-y divide-outline-variant/10">
+        {% for r in reports %}
+        <article class="p-6 bg-surface-container-low/50 hover:bg-surface-container-low transition-colors flex flex-col gap-4">
+            <!-- Top Row: Reporter and Status Meta -->
+            <div class="flex flex-wrap items-start justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary-container/20 border border-primary/30 flex items-center justify-center text-primary font-bold text-label-md">
+                        {{ r.reporter.username|slice:":2"|upper }}
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                            <span class="font-title-sm font-title-sm text-on-surface font-bold">Reported by: {{ r.reporter.username }}</span>
+                            <span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container font-mono text-outline">#{{ r.id }}</span>
+                        </div>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">Logged on {{ r.created_at|date:"M d, Y • H:i" }}</span>
+                    </div>
+                </div>
+
+                <!-- Status Badge -->
+                <div class="flex items-center gap-3">
+                    {% if r.status == 'pending' %}
+                    <span class="px-3 py-1 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container font-bold border border-error/30 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span>
+                        Action Required
+                    </span>
+                    {% elif r.status == 'action_taken' %}
+                    <span class="px-3 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-surface font-bold border border-outline-variant/30 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">visibility_off</span>
+                        Action Taken
+                    </span>
+                    {% elif r.status == 'dismissed' %}
+                    <span class="px-3 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant font-semibold border border-outline-variant/20 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">check</span>
+                        Dismissed
+                    </span>
+                    {% else %}
+                    <span class="px-3 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-surface font-bold">
+                        {{ r.get_status_display }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Movie & Review Context -->
+            <div class="p-4 rounded-xl bg-surface border border-outline-variant/20 flex flex-col gap-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-outline-variant/10">
+                    <div class="flex items-center gap-3">
+                        <a href="{% url 'movie_detail' r.review.movie.slug %}" target="_blank" class="font-title-md font-title-md text-primary hover:underline font-bold">
+                            {{ r.review.movie.title }}
+                        </a>
+                        <span class="text-outline-variant">•</span>
+                        <div class="flex items-center gap-1 text-secondary font-title-sm font-bold">
+                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span>{{ r.review.rating }} / 10</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="text-label-sm font-label-sm text-on-surface-variant">Review Author: <strong class="text-on-surface">{{ r.review.user.username }}</strong></span>
+                        {% if not r.review.is_approved %}
+                        <span class="px-2 py-0.5 rounded bg-error-container/30 border border-error/40 text-error text-label-sm font-bold">Hidden From Public</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Flag Reason Callout Banner -->
+                <div class="p-3 rounded-lg bg-surface-container-high/60 border border-outline-variant/30 flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">warning</span>
+                    <div class="flex-1">
+                        <p class="font-title-sm font-title-sm text-on-surface font-semibold">Violation Category: {{ r.get_reason_display }}</p>
+                        {% if r.details %}
+                        <p class="font-body-sm font-body-sm text-on-surface-variant mt-0.5">Reporter Note: "{{ r.details }}"</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Review Content -->
+                <div class="p-3.5 rounded-lg bg-surface-container-lowest border border-outline-variant/20">
+                    {% if r.review.title %}
+                    <h4 class="text-title-sm font-title-sm font-bold text-on-surface mb-1">{{ r.review.title }}</h4>
+                    {% endif %}
+                    <p class="font-body-md font-body-md text-on-surface-variant leading-relaxed">
+                        "{{ r.review.comment }}"
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-outline-variant/10">
+                <div class="flex items-center gap-2">
+                    <!-- Dismiss Report Form -->
+                    <form method="POST" action="{% url 'movie_admin_report_action' r.id %}" class="inline m-0">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="dismiss" />
+                        <button
+                            type="submit"
+                            class="h-9 px-4 rounded-lg bg-surface-container-highest hover:bg-surface-bright text-on-surface font-label-md text-label-md font-semibold flex items-center gap-1.5 transition-colors">
+                            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                            <span>Dismiss Report</span>
+                        </button>
+                    </form>
+
+                    <!-- Hide Review Form -->
+                    {% if r.review.is_approved %}
+                    <form method="POST" action="{% url 'movie_admin_report_action' r.id %}" class="inline m-0" onsubmit="return confirm('Hide this review from public view?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="hide_review" />
+                        <button
+                            type="submit"
+                            class="h-9 px-4 rounded-lg bg-primary-container text-on-primary-container hover:bg-primary font-label-md text-label-md font-bold flex items-center gap-1.5 transition-colors shadow-md shadow-primary-container/20">
+                            <span class="material-symbols-outlined text-[18px]">visibility_off</span>
+                            <span>Hide Review From Public</span>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+
+                <a
+                    href="{% url 'movie_detail' r.review.movie.slug %}#reviewsSection"
+                    target="_blank"
+                    class="text-label-sm font-label-sm text-secondary hover:underline flex items-center gap-1">
+                    <span>Inspect On Live Movie Page</span>
+                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                </a>
+            </div>
+        </article>
+        {% empty %}
+        <div class="py-16 text-center text-on-surface-variant flex flex-col items-center justify-center">
+            <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-emerald-400 mb-3 border border-outline-variant/20">
+                <span class="material-symbols-outlined text-3xl">verified_user</span>
+            </div>
+            <h3 class="text-title-lg font-title-lg font-bold text-on-surface">Queue is currently clear</h3>
+            <p class="text-body-sm font-body-sm text-on-surface-variant max-w-sm mt-1">
+                No review flags found under the "{{ current_status|title }}" filter tab.
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Reusable Pagination Controls -->
+    {% include "components/pagination.html" with page_obj=reports %}
+</div>
+{% endblock %}

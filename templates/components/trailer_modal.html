@@ -1,0 +1,94 @@
+{# Reusable YouTube Trailer Modal Component #}
+<div
+    id="globalTrailerModal"
+    class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-300"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="trailerModalTitle">
+
+    <div class="relative w-full max-w-4xl bg-surface-container-low rounded-2xl overflow-hidden border border-outline-variant/30 shadow-2xl flex flex-col">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-6 py-3.5 border-b border-outline-variant/20 bg-surface-container/60">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl">smart_display</span>
+                <h3 id="trailerModalTitle" class="text-title-md font-title-md font-bold text-on-surface truncate">
+                    Theatrical Trailer
+                </h3>
+            </div>
+            <button
+                type="button"
+                onclick="closeTrailerModal()"
+                class="text-on-surface-variant hover:text-on-surface p-1.5 rounded-lg hover:bg-surface-container transition-colors"
+                aria-label="Close trailer modal">
+                <span class="material-symbols-outlined text-xl">close</span>
+            </button>
+        </div>
+
+        <!-- Video Player Frame (16:9 Ratio) -->
+        <div class="relative w-full aspect-video bg-black">
+            <iframe
+                id="globalTrailerIframe"
+                class="w-full h-full"
+                src=""
+                title="Movie Trailer"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+function openTrailerModal(videoId, title) {
+    if (!videoId) return;
+    const modal = document.getElementById('globalTrailerModal');
+    const iframe = document.getElementById('globalTrailerIframe');
+    const titleElem = document.getElementById('trailerModalTitle');
+
+    if (titleElem && title) {
+        titleElem.textContent = title + ' — Official Trailer';
+    }
+    if (iframe) {
+        // Safe YouTube embed with origin parameter & autoplay
+        iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&modestbranding=1`;
+    }
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+}
+
+function closeTrailerModal() {
+    const modal = document.getElementById('globalTrailerModal');
+    const iframe = document.getElementById('globalTrailerIframe');
+
+    if (iframe) {
+        // Clear iframe src immediately to cease audio playback
+        iframe.src = '';
+    }
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+}
+
+// Close on clicking backdrop
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('globalTrailerModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeTrailerModal();
+            }
+        });
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeTrailerModal();
+        }
+    });
+});
+</script>

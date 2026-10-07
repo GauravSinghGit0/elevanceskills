@@ -1,0 +1,55 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}Delete Show Schedule — Cineva Ops{% endblock %}
+{% block breadcrumb_active %}Delete Show{% endblock %}
+
+{% block top_actions %}
+<a
+    href="{% url 'admin_shows_list' %}"
+    class="flex items-center gap-1.5 h-10 px-4 rounded-lg bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    <span>Back to Shows</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-xl mx-auto flex flex-col gap-6">
+    <div class="p-5 rounded-2xl bg-error-container/20 border border-error/40 flex items-start gap-4 shadow-xl">
+        <div class="w-12 h-12 rounded-xl bg-error/20 text-error flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-2xl">delete_forever</span>
+        </div>
+        <div class="flex flex-col">
+            <h1 class="text-title-lg font-bold text-error">Delete Screening Schedule</h1>
+            <p class="text-body-sm text-on-surface-variant mt-1">
+                Are you sure you want to remove this show schedule from the calendar?
+            </p>
+        </div>
+    </div>
+
+    <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-4 shadow-lg">
+        <div class="flex flex-col gap-2">
+            <span class="text-xs text-outline font-semibold uppercase tracking-wider">Screening Details</span>
+            <div class="text-headline-sm font-bold text-on-surface">{{ show.movie.title }}</div>
+            <div class="text-body-md text-secondary font-medium">{{ show.theater.name }} • {{ show.screen.name }} ({{ show.screen.screen_type }})</div>
+            <div class="text-body-sm font-mono text-on-surface-variant mt-1">
+                {{ show.start_time|date:"l, M d, Y" }} • {{ show.start_time|date:"h:i A" }} – {{ show.end_time|date:"h:i A" }}
+            </div>
+            <div class="text-title-sm font-bold text-on-surface mt-1">Ticket Price: ₹{{ show.price }}</div>
+        </div>
+
+        <form method="POST" class="pt-4 border-t border-outline-variant/20 flex flex-col sm:flex-row items-center gap-3 m-0">
+            {% csrf_token %}
+            <button
+                type="submit"
+                class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-error text-on-error hover:bg-error/90 font-label-md font-bold shadow-md transition-all active:scale-95 text-center">
+                Confirm &amp; Delete Show
+            </button>
+            <a
+                href="{% url 'admin_shows_list' %}"
+                class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-label-md text-center transition-colors">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

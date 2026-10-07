@@ -1,0 +1,145 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}{{ action_title }} — Cineva Ops{% endblock %}
+{% block breadcrumb_active %}{{ action_title }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-control, input[type="text"], input[type="number"], select, textarea {
+        background-color: #11131b !important;
+        border: 1px solid rgba(172, 136, 139, 0.25) !important;
+        color: #e1e1ed !important;
+        border-radius: 0.5rem !important;
+        padding: 0.625rem 0.875rem !important;
+        width: 100% !important;
+        font-size: 0.875rem !important;
+    }
+    .form-control:focus, input:focus, select:focus, textarea:focus {
+        border-color: #ffb2ba !important;
+        outline: none !important;
+        box-shadow: 0 0 0 1px rgba(255, 178, 186, 0.4) !important;
+    }
+    select option {
+        background-color: #1d1f28;
+        color: #e1e1ed;
+    }
+</style>
+{% endblock %}
+
+{% block top_actions %}
+<a
+    href="{% url 'admin_theaters_list' %}"
+    class="flex items-center gap-1.5 h-10 px-4 rounded-lg bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    <span>Back to Theaters</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-3xl mx-auto flex flex-col gap-6">
+    <div class="pb-2 border-b border-outline-variant/20">
+        <h1 class="text-headline-md font-headline-md font-bold text-on-surface">{{ action_title }}</h1>
+        <p class="text-body-sm font-body-sm text-on-surface-variant mt-1">Configure multiplex venue details, address, auditoriums, and screening status.</p>
+    </div>
+
+    {% if form.errors %}
+    <div class="p-4 rounded-xl bg-error-container/30 border border-error text-error shadow-lg">
+        <div class="flex items-center gap-2 font-bold mb-2">
+            <span class="material-symbols-outlined text-xl">error</span>
+            <span>Please correct the errors below:</span>
+        </div>
+        <ul class="list-disc list-inside space-y-1 text-sm pl-2">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                <li><strong>{{ field|title }}:</strong> {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="POST" class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-5 shadow-xl">
+        {% csrf_token %}
+
+        <!-- Theater Name -->
+        <div class="flex flex-col gap-1.5">
+            <label for="{{ form.name.id_for_label }}" class="text-title-sm font-semibold text-on-surface flex items-center justify-between">
+                <span>Multiplex / Venue Name <span class="text-primary">*</span></span>
+                <span class="text-xs text-outline">e.g., PVR Director's Cut, INOX Megaplex</span>
+            </label>
+            {{ form.name }}
+            {% if form.name.errors %}<span class="text-error text-xs">{{ form.name.errors.0 }}</span>{% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- City -->
+            <div class="flex flex-col gap-1.5">
+                <label for="{{ form.city.id_for_label }}" class="text-title-sm font-semibold text-on-surface">
+                    City / Metro <span class="text-primary">*</span>
+                </label>
+                {{ form.city }}
+                {% if form.city.errors %}<span class="text-error text-xs">{{ form.city.errors.0 }}</span>{% endif %}
+            </div>
+
+            {% if not theater %}
+            <!-- Auditoriums to generate -->
+            <div class="flex flex-col gap-1.5">
+                <label for="{{ form.num_screens.id_for_label }}" class="text-title-sm font-semibold text-on-surface">
+                    Auditoriums / Screens Count
+                </label>
+                {{ form.num_screens }}
+                <span class="text-xs text-outline">Auto-generates IMAX &amp; Atmos screens with 100+ seats</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Address -->
+        <div class="flex flex-col gap-1.5">
+            <label for="{{ form.address.id_for_label }}" class="text-title-sm font-semibold text-on-surface">
+                Venue Address &amp; Location Details
+            </label>
+            {{ form.address }}
+            {% if form.address.errors %}<span class="text-error text-xs">{{ form.address.errors.0 }}</span>{% endif %}
+        </div>
+
+        <!-- Default Movie -->
+        <div class="flex flex-col gap-1.5">
+            <label for="{{ form.movie.id_for_label }}" class="text-title-sm font-semibold text-on-surface flex items-center justify-between">
+                <span>Primary Screening Movie (Optional)</span>
+                <span class="text-xs text-outline">Can also be assigned per screen via schedules</span>
+            </label>
+            {{ form.movie }}
+            {% if form.movie.errors %}<span class="text-error text-xs">{{ form.movie.errors.0 }}</span>{% endif %}
+        </div>
+
+        <!-- Active Toggle -->
+        <label class="flex items-start gap-3 p-3.5 rounded-xl bg-surface border border-outline-variant/30 cursor-pointer hover:border-primary/40 transition-colors mt-2">
+            <div class="pt-0.5">
+                {{ form.is_active }}
+            </div>
+            <div class="flex flex-col">
+                <span class="text-title-sm font-bold text-on-surface">Operational &amp; Open for Bookings</span>
+                <span class="text-body-sm text-on-surface-variant text-xs mt-0.5">
+                    When active, audiences can browse showtimes and reserve tickets at this venue.
+                </span>
+            </div>
+        </label>
+
+        <!-- Submit Buttons -->
+        <div class="pt-4 border-t border-outline-variant/20 flex flex-col sm:flex-row items-center gap-3">
+            <button
+                type="submit"
+                class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-secondary-container text-on-secondary-container hover:bg-secondary font-label-lg font-bold shadow-md shadow-secondary-container/25 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">save</span>
+                <span>Save Multiplex Venue</span>
+            </button>
+
+            <a
+                href="{% url 'admin_theaters_list' %}"
+                class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-center transition-colors">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

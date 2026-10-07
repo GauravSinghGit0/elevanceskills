@@ -1,0 +1,32 @@
+{% load movie_tags %}
+{# Reusable Movie Recommendation Card (Horizontal / Compact) #}
+<a
+    href="{% url 'movie_detail' rec_movie.slug %}"
+    class="flex items-center gap-3 p-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 hover:border-primary/40 transition-all group">
+    <div class="w-12 h-16 rounded-lg overflow-hidden bg-surface-container-high flex-shrink-0 relative">
+        <img
+            src="{{ rec_movie.get_primary_poster_url }}"
+            alt="{{ rec_movie.title }}"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform"
+            loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=300&q=80'"
+        />
+    </div>
+
+    <div class="flex flex-col min-w-0 flex-1">
+        <span class="text-title-sm font-title-sm font-bold text-on-surface group-hover:text-primary transition-colors truncate">
+            {{ rec_movie.title }}
+        </span>
+        <div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant mt-0.5">
+            <span class="text-secondary font-bold flex items-center gap-0.5">
+                <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+                {{ rec_movie.rating|floatformat:1 }}
+            </span>
+            <span>•</span>
+            <span>{{ rec_movie.duration|duration_format }}</span>
+        </div>
+        <span class="text-label-sm text-on-surface-variant/70 truncate mt-0.5">
+            {{ rec_movie.language.name|default:"General" }}
+        </span>
+    </div>
+</a>

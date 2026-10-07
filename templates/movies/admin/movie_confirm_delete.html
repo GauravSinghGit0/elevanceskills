@@ -1,0 +1,148 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}Delete Movie: {{ movie.title }} — Cineva Ops{% endblock %}
+{% block breadcrumb_active %}Delete Movie{% endblock %}
+
+{% block top_actions %}
+<a
+    href="{% url 'movie_admin_dashboard' %}"
+    class="flex items-center gap-1.5 h-10 px-4 rounded-lg bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    <span>Back to Catalog</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-3xl mx-auto flex flex-col gap-6">
+    <!-- Warning Banner -->
+    <div class="p-5 rounded-2xl bg-error-container/20 border border-error/40 flex items-start gap-4 shadow-xl">
+        <div class="w-12 h-12 rounded-xl bg-error/20 text-error flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-2xl">warning</span>
+        </div>
+        <div class="flex flex-col">
+            <h1 class="text-title-lg font-title-lg font-bold text-error">Confirm Movie Removal / Deletion</h1>
+            <p class="text-body-sm font-body-sm text-on-surface-variant mt-1 leading-relaxed">
+                You are about to remove <strong class="text-on-surface font-semibold">"{{ movie.title }}"</strong> from Cineva Cinema Ops. Please review the operational dependencies below before proceeding.
+            </p>
+        </div>
+    </div>
+
+    <!-- Movie Snapshot Card -->
+    <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col sm:flex-row gap-6 shadow-lg">
+        <div class="w-32 h-44 rounded-xl overflow-hidden bg-surface-container border border-outline-variant/30 flex-shrink-0 shadow-md">
+            <img
+                src="{{ movie.get_primary_poster_url }}"
+                alt="{{ movie.title }}"
+                class="w-full h-full object-cover"
+                onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=400&q=80'"
+            />
+        </div>
+
+        <div class="flex-1 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-2">
+                    <h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">{{ movie.title }}</h2>
+                    <span class="px-2 py-0.5 rounded text-label-sm font-bold bg-surface-container text-on-surface-variant border border-outline-variant/30">{{ movie.age_certification }}</span>
+                </div>
+                <p class="text-body-sm text-on-surface-variant mt-1 line-clamp-2">{{ movie.short_description|default:movie.description|default:"No synopsis provided." }}</p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 pt-3 border-t border-outline-variant/15 text-label-sm">
+                    <div>
+                        <span class="text-outline block">Release Date:</span>
+                        <strong class="text-on-surface">{{ movie.release_date|date:"M d, Y"|default:"TBD" }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-outline block">Runtime:</span>
+                        <strong class="text-on-surface">{{ movie.duration }} minutes</strong>
+                    </div>
+                    <div>
+                        <span class="text-outline block">Status:</span>
+                        <strong class="{% if movie.is_active %}text-emerald-400{% else %}text-outline{% endif %}">
+                            {% if movie.is_active %}Publicly Active{% else %}Inactive{% endif %}
+                        </strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dependencies Summary Badges -->
+            <div class="flex flex-wrap gap-2 mt-4 pt-3 border-t border-outline-variant/15">
+                <span class="px-3 py-1 rounded-lg bg-surface-container text-label-sm font-medium text-on-surface flex items-center gap-1.5 border border-outline-variant/20">
+                    <span class="material-symbols-outlined text-[16px] text-secondary">theater_comedy</span>
+                    <span><strong>{{ assigned_theaters_count }}</strong> Assigned Theaters</span>
+                </span>
+                <span class="px-3 py-1 rounded-lg bg-surface-container text-label-sm font-medium text-on-surface flex items-center gap-1.5 border border-outline-variant/20">
+                    <span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+                    <span><strong>{{ shows_count }}</strong> Shows Scheduled</span>
+                </span>
+                <span class="px-3 py-1 rounded-lg bg-surface-container text-label-sm font-medium text-on-surface flex items-center gap-1.5 border border-outline-variant/20">
+                    <span class="material-symbols-outlined text-[16px] text-tertiary">confirmation_number</span>
+                    <span><strong>{{ bookings_count }}</strong> Customer Bookings</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Decision Form -->
+    <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-6 shadow-lg">
+        <h3 class="text-title-md font-title-md font-bold text-on-surface pb-2 border-b border-outline-variant/20">
+            Choose Removal Method
+        </h3>
+
+        <!-- Option 1: Soft Delete / Deactivate (Recommended) -->
+        <div class="p-5 rounded-xl bg-surface-container border border-secondary/30 hover:border-secondary/60 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex flex-col">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary text-xl">pause_circle</span>
+                    <h4 class="text-title-sm font-title-sm font-bold text-on-surface">Option A: Deactivate &amp; Remove from Public View (Recommended)</h4>
+                </div>
+                <p class="text-body-sm font-body-sm text-on-surface-variant mt-1 max-w-lg leading-relaxed">
+                    Immediately hides the movie from the homepage, search, and booking showtimes while keeping past customer booking tickets, audit histories, and receipts completely intact.
+                </p>
+            </div>
+            <form method="POST" class="m-0 flex-shrink-0">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="soft" />
+                <button
+                    type="submit"
+                    class="px-5 py-2.5 rounded-xl bg-secondary-container text-on-secondary-container hover:bg-secondary font-label-md font-bold transition-all shadow-md active:scale-95 whitespace-nowrap">
+                    Deactivate Movie
+                </button>
+            </form>
+        </div>
+
+        <!-- Option 2: Hard Delete -->
+        <div class="p-5 rounded-xl bg-surface-container border border-error/30 hover:border-error/60 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex flex-col">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-error text-xl">delete_forever</span>
+                    <h4 class="text-title-sm font-title-sm font-bold text-error">Option B: Permanently Delete Record</h4>
+                </div>
+                <p class="text-body-sm font-body-sm text-on-surface-variant mt-1 max-w-lg leading-relaxed">
+                    Permanently purges this movie record and its gallery from the database. Physical theaters are automatically detached and preserved safely.
+                    {% if bookings_count > 0 %}
+                    <span class="text-error font-semibold block mt-1">⚠️ Warning: {{ bookings_count }} customer bookings are linked to this movie.</span>
+                    {% endif %}
+                </p>
+            </div>
+            <form method="POST" class="m-0 flex-shrink-0" onsubmit="return confirm('CRITICAL: Are you absolutely certain you want to permanently delete \'{{ movie.title|escapejs }}\'? This cannot be undone.');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="hard" />
+                <button
+                    type="submit"
+                    class="px-5 py-2.5 rounded-xl bg-error text-on-error hover:bg-error/90 font-label-md font-bold transition-all shadow-md active:scale-95 whitespace-nowrap">
+                    Permanently Delete
+                </button>
+            </form>
+        </div>
+
+        <!-- Cancel Link -->
+        <div class="flex justify-end pt-2">
+            <a
+                href="{% url 'movie_admin_dashboard' %}"
+                class="px-5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface text-label-md font-label-md font-semibold transition-colors">
+                Cancel &amp; Keep Movie
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

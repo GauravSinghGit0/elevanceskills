@@ -1,0 +1,73 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}Delete Theater: {{ theater.name }} — Cineva Ops{% endblock %}
+{% block breadcrumb_active %}Delete Theater{% endblock %}
+
+{% block top_actions %}
+<a
+    href="{% url 'admin_theaters_list' %}"
+    class="flex items-center gap-1.5 h-10 px-4 rounded-lg bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    <span>Back to Theaters</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-2xl mx-auto flex flex-col gap-6">
+    <div class="p-5 rounded-2xl bg-error-container/20 border border-error/40 flex items-start gap-4 shadow-xl">
+        <div class="w-12 h-12 rounded-xl bg-error/20 text-error flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-2xl">warning</span>
+        </div>
+        <div class="flex flex-col">
+            <h1 class="text-title-lg font-bold text-error">Confirm Multiplex Removal</h1>
+            <p class="text-body-sm text-on-surface-variant mt-1">
+                You are removing <strong class="text-on-surface font-semibold">"{{ theater.name }}"</strong> ({{ theater.city }}).
+            </p>
+        </div>
+    </div>
+
+    <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-4 shadow-lg">
+        <h2 class="text-title-md font-bold text-on-surface pb-2 border-b border-outline-variant/20">Operational Summary</h2>
+        <div class="grid grid-cols-2 gap-4 text-body-sm">
+            <div class="p-3 rounded-lg bg-surface-container border border-outline-variant/20">
+                <span class="text-outline text-xs block">Active Screens:</span>
+                <strong class="text-on-surface text-lg">{{ theater.screens.count }} Auditoriums</strong>
+            </div>
+            <div class="p-3 rounded-lg bg-surface-container border border-outline-variant/20">
+                <span class="text-outline text-xs block">Customer Bookings:</span>
+                <strong class="text-on-surface text-lg">{{ bookings_count }} Reservations</strong>
+            </div>
+        </div>
+
+        <div class="pt-4 border-t border-outline-variant/20 flex flex-col gap-3">
+            <!-- Option 1: Deactivate -->
+            <form method="POST" class="m-0">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="soft" />
+                <button
+                    type="submit"
+                    class="w-full py-2.5 px-4 rounded-xl bg-secondary-container text-on-secondary-container hover:bg-secondary font-label-md font-bold transition-all shadow-md active:scale-95 text-center">
+                    Deactivate Venue (Keep Booking History Safe)
+                </button>
+            </form>
+
+            <!-- Option 2: Hard Delete -->
+            <form method="POST" class="m-0" onsubmit="return confirm('Permanently delete {{ theater.name|escapejs }} and its auditoriums? This cannot be undone.');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="hard" />
+                <button
+                    type="submit"
+                    class="w-full py-2.5 px-4 rounded-xl bg-error text-on-error hover:bg-error/90 font-label-md font-bold transition-all shadow-md active:scale-95 text-center">
+                    Permanently Delete Theater Record
+                </button>
+            </form>
+
+            <a
+                href="{% url 'admin_theaters_list' %}"
+                class="w-full py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-label-md text-center transition-colors">
+                Cancel
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

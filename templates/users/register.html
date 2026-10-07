@@ -1,114 +1,235 @@
 {% extends "users/basic.html" %}
 
-{% block content %}
-<div class="container py-5">
-  <div class="row justify-content-center">
-      <div class="col-md-8">
-          <div class="card shadow">
-              <div class="card-header bg-primary text-white">
-                  <h2 class="mb-0">
-                      <i class="fas fa-user-plus me-2"></i> Register
-                  </h2>
-              </div>
-              <div class="card-body">
-                  <form method="POST" novalidate>
-                      {% csrf_token %}
-                      {% for field in form %}
-                          <div class="mb-3">
-                              <label for="{{ field.id_for_label }}" class="form-label">
-                                  {{ field.label }}
-                                  {% if field.field.required %}
-                                      <span class="text-danger">*</span>
-                                  {% endif %}
-                              </label>
-                              <div class="input-group">
-                                  <span class="input-group-text">
-                                      <i class="fas fa-{% if field.name == 'username' %}user{% elif field.name == 'email' %}envelope{% elif field.name == 'password1' or field.name == 'password2' %}lock{% else %}info-circle{% endif %}"></i>
-                                  </span>
-                                  {{ field }}
-                              </div>
-                              {% if field.help_text %}
-                                  <small class="form-text text-muted">{{ field.help_text|safe }}</small>
-                              {% endif %}
-                              {% for error in field.errors %}
-                                  <div class="invalid-feedback d-block">{{ error }}</div>
-                              {% endfor %}
-                          </div>
-                      {% endfor %}
-                      <div class="d-grid gap-2">
-                          <button type="submit" class="btn btn-primary btn-lg">
-                              <i class="fas fa-user-plus me-2"></i> Register
-                          </button>
-                      </div>
-                  </form>
-              </div>
-              <div class="card-footer text-center">
-                  <p class="mb-0">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none">Log In</a></p>
-              </div>
-          </div>
-      </div>
-  </div>
-</div>
+{% block title %}Create Account — Cineva Atmospheric Cinema Portal{% endblock %}
 
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
+{% block extra_head %}
 <style>
-  .card {
-      border-radius: 1rem;
-  }
-  .card-header {
-      border-top-left-radius: 1rem;
-      border-top-right-radius: 1rem;
-  }
-  .input-group-text {
-      background-color: #f8f9fa;
-  }
-  .form-control:focus {
-      box-shadow: none;
-      border-color: #80bdff;
-  }
-  .invalid-feedback {
-      display: block;
-  }
+    .form-input {
+        background-color: #0c0e16 !important;
+        border: 1px solid rgba(172, 136, 139, 0.25) !important;
+        color: #e1e1ed !important;
+        border-radius: 0.75rem !important;
+        padding: 0.75rem 1rem 0.75rem 2.75rem !important;
+        width: 100% !important;
+        font-size: 0.875rem !important;
+        line-height: 1.25rem !important;
+        transition: all 0.2s ease-in-out !important;
+    }
+    .form-input:focus {
+        border-color: #ff4f73 !important;
+        outline: none !important;
+        box-shadow: 0 0 0 1px rgba(255, 79, 115, 0.4) !important;
+    }
 </style>
+{% endblock %}
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-      const form = document.querySelector('form');
-      const inputs = form.querySelectorAll('input');
-      
-      inputs.forEach(input => {
-          input.classList.add('form-control');
-          if (input.type === 'password') {
-              const toggleBtn = document.createElement('button');
-              toggleBtn.type = 'button';
-              toggleBtn.className = 'btn btn-outline-secondary';
-              toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
-              toggleBtn.onclick = function() {
-                  if (input.type === 'password') {
-                      input.type = 'text';
-                      this.innerHTML = '<i class="fas fa-eye-slash"></i>';
-                  } else {
-                      input.type = 'password';
-                      this.innerHTML = '<i class="fas fa-eye"></i>';
-                  }
-              };
-              input.parentNode.appendChild(toggleBtn);
-          }
-      });
-  });
-</script>
-  <!-- <div class="container mt-4">
-    <h2>Register</h2>
-    <form method="POST">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <div>
-        <button class="btn btn-primary mt-2" type="submit">Register</button>
-      </div>
-    </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Register here</a>.</p>
-    
-  </div> -->
+{% block content %}
+<div class="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto my-6">
+    <div class="w-full grid grid-cols-1 lg:grid-cols-12 rounded-3xl overflow-hidden bg-surface-container-low/80 backdrop-blur-2xl border border-outline-variant/20 shadow-2xl">
+        <!-- LEFT COLUMN: Registration Form -->
+        <div class="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between">
+            <div>
+                <!-- Upper Navigation: Role Switcher Segmented Control -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Portal Access</span>
+                        <span class="inline-flex items-center gap-1 font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary border border-outline-variant/30">
+                            <span class="material-symbols-outlined text-xs">local_activity</span>
+                            <span>New Member Enrollment</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Headline and Mode Switcher -->
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-outline-variant/15 pb-4 mb-6">
+                    <div>
+                        <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">Join Cineva</h1>
+                        <p class="font-body-md text-body-md text-on-surface-variant mt-1">Unlock verified reviews, festival premieres, and luxury cinema seating.</p>
+                    </div>
+                    <div class="flex items-center gap-1 bg-surface-container-high/60 p-1 rounded-lg border border-outline-variant/20 self-start sm:self-auto">
+                        <a href="{% url 'login' %}" class="px-3 py-1 rounded-md font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-all">Sign In</a>
+                        <span class="px-3 py-1 rounded-md font-label-sm text-label-sm text-primary bg-surface-container font-semibold">Register</span>
+                    </div>
+                </div>
+
+                <!-- Form Error Alerts -->
+                {% if form.errors %}
+                <div class="p-3.5 mb-5 rounded-xl bg-error-container/30 border border-error text-error text-body-sm">
+                    <span class="font-bold flex items-center gap-1 mb-1">
+                        <span class="material-symbols-outlined text-base">error</span>
+                        Registration Errors
+                    </span>
+                    <ul class="list-disc list-inside text-label-sm space-y-0.5">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                            <li>{{ field|title }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Registration Form -->
+                <form method="POST" action="{% url 'register' %}" class="space-y-4" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Username -->
+                    <div class="space-y-1.5">
+                        <label for="{{ form.username.id_for_label }}" class="block font-label-md text-label-md text-on-surface">Username</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3.5 top-3 text-on-surface-variant text-lg">account_circle</span>
+                            <input
+                                type="text"
+                                name="username"
+                                id="{{ form.username.id_for_label }}"
+                                class="form-input"
+                                placeholder="Choose a username"
+                                value="{{ form.username.value|default:'' }}"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="space-y-1.5">
+                        <label for="{{ form.email.id_for_label }}" class="block font-label-md text-label-md text-on-surface">Email Address</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3.5 top-3 text-on-surface-variant text-lg">mail</span>
+                            <input
+                                type="email"
+                                name="email"
+                                id="{{ form.email.id_for_label }}"
+                                class="form-input"
+                                placeholder="name@domain.com"
+                                value="{{ form.email.value|default:'' }}"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Password 1 -->
+                    <div class="space-y-1.5">
+                        <label for="{{ form.password1.id_for_label }}" class="block font-label-md text-label-md text-on-surface">Password</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3.5 top-3 text-on-surface-variant text-lg">lock</span>
+                            <input
+                                type="password"
+                                name="password1"
+                                id="{{ form.password1.id_for_label }}"
+                                class="form-input"
+                                placeholder="Create a strong password"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Password 2 -->
+                    <div class="space-y-1.5">
+                        <label for="{{ form.password2.id_for_label }}" class="block font-label-md text-label-md text-on-surface">Confirm Password</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3.5 top-3 text-on-surface-variant text-lg">lock_reset</span>
+                            <input
+                                type="password"
+                                name="password2"
+                                id="{{ form.password2.id_for_label }}"
+                                class="form-input"
+                                placeholder="Re-enter your password"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Terms Agreement Note -->
+                    <p class="text-label-sm font-label-sm text-on-surface-variant pt-1">
+                        By joining Cineva, you agree to our cinema terms of service and privacy standards.
+                    </p>
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        class="w-full mt-4 py-3.5 px-6 rounded-xl bg-gradient-to-r from-primary-container to-secondary-container text-on-primary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary-container/20 hover:brightness-110 active:scale-[0.99] transition-all duration-200">
+                        <span>Create Cineva Account</span>
+                        <span class="material-symbols-outlined text-xl">person_add</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Footer Compliance Info -->
+            <div class="pt-6 mt-6 border-t border-outline-variant/15 flex flex-wrap items-center justify-between gap-3 font-body-sm text-body-sm text-on-surface-variant">
+                <div class="flex items-center gap-2 text-label-sm font-label-sm">
+                    <span class="material-symbols-outlined text-sm text-primary">lock</span>
+                    <span>256-bit TLS Encrypted Session</span>
+                </div>
+                <div class="flex items-center gap-2 text-label-sm font-label-sm">
+                    <span>Already a member?</span>
+                    <a href="{% url 'login' %}" class="text-primary hover:underline font-semibold">Sign In</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Cinematic Media & Upcoming Perks Panel -->
+        <div class="lg:col-span-5 relative bg-surface-container p-6 sm:p-8 flex flex-col justify-between overflow-hidden border-t lg:border-t-0 lg:border-l border-outline-variant/20">
+            <div class="absolute inset-0 z-0">
+                <img
+                    class="w-full h-full object-cover opacity-35 filter brightness-75 contrast-125"
+                    src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80"
+                    alt="Cinema Auditorium"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container/80 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-surface-container/60 to-transparent"></div>
+            </div>
+
+            <div class="relative z-10 space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="px-3 py-1 rounded-full bg-primary-container/20 border border-primary-container/30 text-primary font-label-sm text-label-sm tracking-wide font-bold uppercase flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">stars</span>
+                        Cineva Premier Member
+                    </span>
+                    <span class="font-label-sm text-label-sm text-secondary font-bold">Atmospheric Hub</span>
+                </div>
+                <div>
+                    <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">The Future of Film Screening</h2>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Unlock 70mm IMAX premieres, verified audience reviews, and curated luxury cinema.</p>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <div class="p-3.5 rounded-2xl bg-surface-container-low/75 backdrop-blur-md border border-outline-variant/20 flex items-center gap-3.5 hover:border-primary-container/40 transition-all">
+                        <div class="w-10 h-10 rounded-xl bg-primary-container/20 border border-primary-container/30 flex items-center justify-center text-primary shrink-0">
+                            <span class="material-symbols-outlined text-lg">verified</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-title-sm text-title-sm text-on-surface truncate">Verified Viewer Reviews</h3>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Only confirmed ticket holders can submit movie ratings</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-surface-container-low/75 backdrop-blur-md border border-outline-variant/20 flex items-center gap-3.5 hover:border-secondary/40 transition-all">
+                        <div class="w-10 h-10 rounded-xl bg-secondary-container/20 border border-secondary-container/30 flex items-center justify-center text-secondary shrink-0">
+                            <span class="material-symbols-outlined text-lg">smart_display</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-title-sm text-title-sm text-on-surface truncate">4K Official Trailers</h3>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Sandboxed ultra-crisp theatrical trailers on all devices</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-surface-container-low/75 backdrop-blur-md border border-outline-variant/20 flex items-center gap-3.5 hover:border-tertiary/40 transition-all">
+                        <div class="w-10 h-10 rounded-xl bg-tertiary-container/20 border border-tertiary-container/30 flex items-center justify-center text-tertiary shrink-0">
+                            <span class="material-symbols-outlined text-lg">theater_comedy</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-title-sm text-title-sm text-on-surface truncate">Multi-Screen Theaters</h3>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Comprehensive showtimes with collision-proof scheduling</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative z-10 pt-6 border-t border-outline-variant/20 text-label-sm font-label-sm text-on-surface-variant/80 flex items-center justify-between">
+                <span>Cineva Protocol v2.4</span>
+                <span class="text-secondary font-mono">100% Verified System</span>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

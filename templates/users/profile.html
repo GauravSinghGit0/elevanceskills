@@ -1,157 +1,364 @@
-{% extends "users/basic.html" %} {% block content %}
+{% extends "users/basic.html" %}
 
-<div class="container py-5">
-  <div class="row">
-    <div class="col-lg-4 mb-4">
-      <!-- User Info Card -->
-      <div class="card shadow">
-        <div class="card-body text-center">
-          <div class="mb-3">
-            <i class="fas fa-user-circle fa-6x text-primary"></i>
-          </div>
-          <h3 class="card-title mb-0">{{ user.username }}</h3>
-          <p class="text-muted mb-3">{{ user.email }}</p>
-          <div class="d-flex justify-content-center">
-            <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-envelope me-2"></i>Message</a> 
-            <a href="{% url 'password_reset' %}" class="btn btn-outline-secondary"><i class="fas fa-key me-2"></i>Reset Password</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-lg-8">
-      <!-- Profile Update Form Card -->
-      <div class="card shadow mb-4">
-        <div class="card-header bg-primary text-white">
-          <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i> Update Profile</h4>
-        </div>
-        <div class="card-body">
-          <form method="POST">
-            {% csrf_token %}
-            {% for field in u_form %}
-              <div class="mb-3">
-                <label for="{{ field.id_for_label }}" class="form-label">
-                  <i class="fas fa-{% if field.name == 'username' %}user{% elif field.name == 'email' %}envelope{% else %}info-circle{% endif %} me-2"></i>
-                  {{ field.label }}
-                </label>
-                {{ field.errors }}
-                {{ field }}
-                {% if field.help_text %}
-                  <small class="form-text text-muted">{{ field.help_text }}</small>
-                {% endif %}
-              </div>
-            {% endfor %}
-            <button class="btn btn-primary w-100" type="submit"><i class="fas fa-save me-2"></i> Update Profile</button>
-          </form>
-        </div>
-      </div>
-      
-      <!-- Bookings Card -->
-      <div class="card shadow">
-        <div class="card-header bg-success text-white">
-          <h4 class="mb-0"><i class="fas fa-ticket-alt me-2"> </i> Your Bookings</h4>
-        </div>
-        <div class="card-body">
-          {% if bookings %}
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-              {% for booking in bookings %}
-                <div class="col">
-                  <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ booking.movie.name }}</h5>
-                      <p class="card-text">
-                        <i class="fas fa-film me-2 text-muted"> </i>  {{ booking.theater.name }}<br>
-                        <i class="fas fa-chair me-2 text-muted"> </i>  Seat: {{ booking.seat.seat_number }}<br>
-                        <i class="far fa-clock me-2 text-muted"> </i>  {{ booking.booked_at|date:"F d, Y H:i" }}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-          {% else %}
-            <div class="text-center py-5">
-              <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
-              <p class="lead mb-0">No bookings yet. Time to plan your next movie night!</p>
-            </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+{% block title %}My Profile &amp; Bookings — Cineva{% endblock %}
 
-<!-- Font Awesome CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-<!-- Custom CSS -->
+{% block extra_head %}
 <style>
-  body {
-    background-color: #f8f9fa;
-  }
-  .card {
-    border-radius: 15px;
-    border: none;
-    transition: transform 0.3s ease-in-out;
-  }
-  .card:hover {
-    transform: translateY(-5px);
-  }
-  .card-header {
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-  }
-  /* Style form fields */
-  form input, form select, form textarea {
-    display: block;
-    width: 100%;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #212529;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  }
-  form input:focus, form select:focus, form textarea:focus {
-    border-color: #86b7fe;
-    outline: 0;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-  }
-  @media (max-width: 767.98px) {
-    .card-body {
-      padding: 1rem;
+    .form-input {
+        background-color: #11131b !important;
+        border: 1px solid rgba(172, 136, 139, 0.25) !important;
+        color: #e1e1ed !important;
+        border-radius: 0.5rem !important;
+        padding: 0.625rem 0.875rem !important;
+        width: 100% !important;
+        font-size: 0.875rem !important;
     }
-  }
+    .form-input:focus {
+        border-color: #ff4f73 !important;
+        outline: none !important;
+        box-shadow: 0 0 0 1px rgba(255, 79, 115, 0.4) !important;
+    }
 </style>
-<!-- <div class="container mt-4">
-    <h2>Profile</h2>
-    <form method="POST">
-      {% csrf_token %}
-      {{ u_form.as_p }}
-      <div>
-        <button class="btn btn-primary mt-2" type="submit">Update Profile</button>
-      </div>
-    </form>
-   
-    <p>Want to change your password? <a href="{% url 'password_reset' %}">Reset it here</a>.</p>
+{% endblock %}
 
-    <h2>Booking</h2>
-    <ul>
-      {% for booking in bookings %}
-      <li>
-        movie:{{booking.movie.name}}<br>
-        theater:{{booking.theater.name}}<br>
-        seat:{{booking.seat.seat_number}}<br>
-        bookedat:{{booking.booked_at}}
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-10">
+    <!-- Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-outline-variant/20 mb-8">
+        <div>
+            <h1 class="text-headline-md font-headline-md font-bold text-on-surface tracking-tight">Member Profile &amp; Lounge</h1>
+            <p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+                Manage your account credentials, verified viewer privileges, and theatrical booking history.
+            </p>
+        </div>
 
-      </li>
-      {% empty %}
-      <li>no bookings yet</li>
-      {% endfor %}
-    </ul>
-  </div> -->
+        {% if user.is_staff %}
+        <a
+            href="{% url 'movie_admin_dashboard' %}"
+            class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary-container/20 border border-secondary/40 text-secondary hover:bg-secondary-container/30 font-label-md text-label-md font-bold transition-all">
+            <span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+            <span>Access Cinema Ops Console</span>
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- LEFT COLUMN: Profile Info & Update Form -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            <!-- User Identity Badge Card -->
+            <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col items-center text-center relative overflow-hidden">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary-container to-secondary-container flex items-center justify-center text-on-primary-container font-bold text-2xl mb-4 shadow-lg shadow-primary-container/20">
+                    {{ user.username|slice:":2"|upper }}
+                </div>
+                <h2 class="text-title-lg font-title-lg font-bold text-on-surface">{{ user.username }}</h2>
+                <span class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">{{ user.email|default:"No email registered" }}</span>
+
+                <div class="flex items-center gap-2 mt-3">
+                    <span class="px-2.5 py-0.5 rounded-full bg-primary-container/20 border border-primary/30 text-primary text-label-sm font-label-sm font-bold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">verified</span>
+                        <span>Verified Member</span>
+                    </span>
+                    {% if user.is_staff %}
+                    <span class="px-2.5 py-0.5 rounded-full bg-secondary-container/20 border border-secondary/30 text-secondary text-label-sm font-label-sm font-bold">
+                        Staff
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-outline-variant/20 w-full flex flex-col gap-2">
+                    <a
+                        href="{% url 'password_reset' %}"
+                        class="w-full py-2 px-3 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-label-sm font-label-sm transition-colors flex items-center justify-center gap-1.5">
+                        <span class="material-symbols-outlined text-base">key</span>
+                        <span>Reset Account Password</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Profile Edit Form Card -->
+            <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col gap-5">
+                <div class="flex items-center gap-2 pb-3 border-b border-outline-variant/20">
+                    <span class="material-symbols-outlined text-primary text-[20px]">edit</span>
+                    <h3 class="text-title-md font-title-md font-bold text-on-surface">Update Details</h3>
+                </div>
+
+                <form method="POST" class="flex flex-col gap-4">
+                    {% csrf_token %}
+
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ u_form.username.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Username
+                        </label>
+                        <input
+                            type="text"
+                            name="username"
+                            id="{{ u_form.username.id_for_label }}"
+                            class="form-input"
+                            value="{{ u_form.username.value|default:user.username }}"
+                            required
+                        />
+                        {% if u_form.username.errors %}<span class="text-error text-label-sm">{{ u_form.username.errors.0 }}</span>{% endif %}
+                    </div>
+
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ u_form.email.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Email Address
+                        </label>
+                        <input
+                            type="email"
+                            name="email"
+                            id="{{ u_form.email.id_for_label }}"
+                            class="form-input"
+                            value="{{ u_form.email.value|default:user.email }}"
+                            required
+                        />
+                        {% if u_form.email.errors %}<span class="text-error text-label-sm">{{ u_form.email.errors.0 }}</span>{% endif %}
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="w-full py-2.5 px-4 rounded-xl bg-primary-container text-on-primary-container hover:bg-primary font-label-md text-label-md font-bold transition-all shadow-md shadow-primary-container/20 active:scale-95 flex items-center justify-center gap-2 mt-2">
+                        <span class="material-symbols-outlined text-lg">save</span>
+                        <span>Save Profile Changes</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Bookings and Verified Review Eligibility -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col gap-6">
+                <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center border border-secondary/30">
+                            <span class="material-symbols-outlined text-2xl">confirmation_number</span>
+                        </div>
+                        <div>
+                            <h2 class="text-title-lg font-title-lg font-bold text-on-surface">Your Movie Bookings</h2>
+                            <p class="text-body-sm font-body-sm text-on-surface-variant">Confirmed screenings and verified review authorizations</p>
+                        </div>
+                    </div>
+                    <span class="text-label-sm font-label-sm px-3 py-1 rounded-full bg-surface-container text-secondary font-mono">
+                        {{ bookings.count }} Reservation{{ bookings.count|pluralize }}
+                    </span>
+                </div>
+
+                {% if bookings %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for b in bookings %}
+                    <div class="p-5 rounded-xl bg-surface border border-outline-variant/20 flex flex-col justify-between gap-4 hover:border-outline-variant/40 transition-colors shadow-lg">
+                        <div class="flex items-start gap-4">
+                            <div class="w-16 aspect-[3/4] rounded-lg overflow-hidden bg-surface-container flex-shrink-0 shadow">
+                                <img
+                                    src="{{ b.movie.get_primary_poster_url }}"
+                                    alt="{{ b.movie.title }}"
+                                    class="w-full h-full object-cover"
+                                    onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=400&q=80'"
+                                />
+                            </div>
+                            <div class="flex flex-col flex-1 min-w-0">
+                                <a href="{% url 'movie_detail' b.movie.slug %}" class="text-title-sm font-title-sm font-bold text-on-surface hover:text-primary transition-colors truncate">
+                                    {{ b.movie.title }}
+                                </a>
+                                <div class="mt-1 space-y-0.5 text-body-sm font-body-sm text-on-surface-variant">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-sm text-secondary">theater_comedy</span>
+                                        <span class="truncate">{{ b.theater.name }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-sm text-outline">event_seat</span>
+                                        <span>Seat {{ b.seat.seat_number }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 text-label-sm text-outline">
+                                        <span class="material-symbols-outlined text-xs">schedule</span>
+                                        <span>{{ b.booked_at|date:"M d, Y • H:i" }}</span>
+                                    </div>
+                                    {% if b.payment %}
+                                    <div class="flex items-center gap-1.5 text-label-sm text-outline font-mono">
+                                        <span class="material-symbols-outlined text-xs text-secondary">receipt_long</span>
+                                        <span>Ref: {{ b.payment.transaction_id|default:b.payment.order_id|truncatechars:18 }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Verified Review & Ticket Download Action Bar -->
+                        <div class="pt-3 border-t border-outline-variant/15 flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-label-sm font-label-sm text-emerald-400 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">verified</span>
+                                <span>Verified Viewer</span>
+                            </span>
+
+                            <div class="flex items-center gap-2">
+                                <a
+                                    href="{% url 'download_ticket' b.id %}"
+                                    class="px-2.5 py-1.5 rounded-lg bg-primary-container hover:bg-inverse-primary text-on-primary-container text-label-sm font-label-sm font-bold transition-colors flex items-center gap-1 shadow-sm"
+                                    title="Download Official PDF Ticket">
+                                    <span class="material-symbols-outlined text-[14px]">download</span>
+                                    <span>PDF Ticket</span>
+                                </a>
+
+                                <a
+                                    href="{% url 'movie_detail' b.movie.slug %}#reviewsSection"
+                                    class="px-2.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary hover:text-white text-label-sm font-label-sm font-semibold transition-colors flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">rate_review</span>
+                                    <span>Review</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="py-16 text-center text-on-surface-variant flex flex-col items-center justify-center">
+                    <span class="material-symbols-outlined text-5xl mb-3 text-outline">confirmation_number</span>
+                    <h3 class="text-title-lg font-title-lg font-bold text-on-surface">No Theatrical Bookings Yet</h3>
+                    <p class="text-body-sm font-body-sm text-on-surface-variant max-w-sm mt-1 mb-4">
+                        Reserve tickets to movies to experience them on the big screen and unlock verified review privileges!
+                    </p>
+                    <a
+                        href="{% url 'movie_list' %}"
+                        class="px-5 py-2.5 rounded-xl bg-primary-container text-on-primary-container hover:bg-primary font-label-md text-label-md font-bold transition-all shadow-md">
+                        Explore Premieres &amp; Movies
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- PAYMENT & TRANSACTION AUDIT TRAIL CARD -->
+            <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col gap-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant/20">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center border border-primary/30">
+                            <span class="material-symbols-outlined text-2xl">payments</span>
+                        </div>
+                        <div>
+                            <h2 class="text-title-lg font-title-lg font-bold text-on-surface">Payment &amp; Transaction History</h2>
+                            <p class="text-body-sm font-body-sm text-on-surface-variant">Real-time ledger of gateway transactions, status, and payment retries</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="px-3 py-1 rounded-xl bg-surface-container border border-outline-variant/20 text-xs text-on-surface-variant flex items-center gap-1.5 font-mono">
+                            <span>Total Confirmed:</span>
+                            <strong class="text-emerald-400 font-bold">₹{{ total_spent|floatformat:2 }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                {% if payments %}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-outline-variant/20 text-on-surface-variant font-mono uppercase tracking-wider">
+                                <th class="py-3 px-3">Order / Txn ID</th>
+                                <th class="py-3 px-3">Movie &amp; Theater</th>
+                                <th class="py-3 px-3">Seats</th>
+                                <th class="py-3 px-3">Amount</th>
+                                <th class="py-3 px-3">Method</th>
+                                <th class="py-3 px-3">Status</th>
+                                <th class="py-3 px-3">Date</th>
+                                <th class="py-3 px-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/10">
+                            {% for p in payments %}
+                            <tr class="hover:bg-surface-container/50 transition-colors">
+                                <td class="py-3.5 px-3">
+                                    <div class="font-mono font-bold text-on-surface text-xs">{{ p.order_id|truncatechars:16 }}</div>
+                                    {% if p.transaction_id %}
+                                    <div class="font-mono text-[11px] text-on-surface-variant mt-0.5">Txn: {{ p.transaction_id|truncatechars:16 }}</div>
+                                    {% endif %}
+                                </td>
+                                <td class="py-3.5 px-3">
+                                    <div class="font-semibold text-on-surface truncate max-w-[140px]">{{ p.movie.title }}</div>
+                                    <div class="text-[11px] text-on-surface-variant truncate max-w-[140px]">{{ p.theater.name }}</div>
+                                </td>
+                                <td class="py-3.5 px-3 font-mono font-medium text-secondary">
+                                    {{ p.seat_numbers|default:"-" }}
+                                </td>
+                                <td class="py-3.5 px-3 font-mono font-bold text-on-surface">
+                                    ₹{{ p.amount }}
+                                </td>
+                                <td class="py-3.5 px-3">
+                                    <span class="px-2 py-0.5 rounded-full bg-surface-container-high text-[10px] font-bold text-on-surface uppercase">
+                                        {{ p.get_payment_method_display|default:p.payment_method }}
+                                    </span>
+                                </td>
+                                <td class="py-3.5 px-3">
+                                    {% if p.status == 'SUCCESS' %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-semibold text-[11px]">
+                                        <span class="material-symbols-outlined text-xs">check_circle</span>
+                                        <span>Successful</span>
+                                    </span>
+                                    {% elif p.status == 'FAILED' %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error-container/25 border border-error text-error font-semibold text-[11px]">
+                                        <span class="material-symbols-outlined text-xs">cancel</span>
+                                        <span>Failed</span>
+                                    </span>
+                                    {% elif p.status == 'CANCELLED' %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container/25 border border-secondary text-secondary font-semibold text-[11px]">
+                                        <span class="material-symbols-outlined text-xs">close</span>
+                                        <span>Cancelled</span>
+                                    </span>
+                                    {% else %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-container/20 border border-primary/30 text-primary font-semibold text-[11px]">
+                                        <span class="material-symbols-outlined text-xs animate-spin">autorenew</span>
+                                        <span>Pending</span>
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="py-3.5 px-3 text-on-surface-variant font-mono text-[11px]">
+                                    {{ p.created_at|date:"M d, H:i" }}
+                                </td>
+                                <td class="py-3.5 px-3 text-right">
+                                    {% if p.status == 'FAILED' or p.status == 'PENDING' %}
+                                    <a
+                                        href="{% url 'payment_retry' %}?order_id={{ p.order_id }}"
+                                        class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-primary-container text-on-primary-container hover:bg-primary font-bold text-[11px] transition-all shadow">
+                                        <span class="material-symbols-outlined text-xs">refresh</span>
+                                        <span>Retry</span>
+                                    </a>
+                                    {% elif p.status == 'SUCCESS' %}
+                                    <div class="inline-flex items-center gap-1.5">
+                                        <a
+                                            href="{% url 'download_payment_tickets' p.id %}"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary-container text-on-primary-container hover:bg-inverse-primary font-bold text-[11px] transition-colors shadow"
+                                            title="Download PDF Tickets for this transaction">
+                                            <span class="material-symbols-outlined text-xs">download</span>
+                                            <span>Ticket PDF</span>
+                                        </a>
+                                        <a
+                                            href="{% url 'movie_detail' p.movie.slug %}"
+                                            class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-[11px] transition-colors">
+                                            <span>Movie</span>
+                                        </a>
+                                    </div>
+                                    {% else %}
+                                    <a
+                                        href="{% url 'book_seats' p.theater.id %}"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-[11px] transition-colors">
+                                        <span class="material-symbols-outlined text-xs">event_seat</span>
+                                        <span>Re-book</span>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="py-12 text-center text-on-surface-variant flex flex-col items-center justify-center">
+                    <span class="material-symbols-outlined text-4xl mb-2 text-outline">receipt_long</span>
+                    <h4 class="text-title-md font-bold text-on-surface">No Payment Records Yet</h4>
+                    <p class="text-body-sm text-on-surface-variant max-w-sm mt-1">
+                        When you book tickets through our secure Razorpay payment gateway, every verified transaction and receipt will appear here.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

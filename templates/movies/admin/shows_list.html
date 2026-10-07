@@ -1,0 +1,193 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}Show Schedules Management — Cineva Ops{% endblock %}
+{% block breadcrumb_active %}Show Schedules{% endblock %}
+
+{% block top_stats_pill %}
+<span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-label-sm font-label-sm text-on-surface">
+    <span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+    <span>Total Screenings: <strong class="text-primary">{{ total_shows }}</strong></span>
+</span>
+{% endblock %}
+
+{% block top_actions %}
+<a
+    href="{% url 'admin_show_create' %}"
+    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-primary-container text-on-primary-container hover:bg-primary font-label-lg text-label-lg font-bold shadow-md shadow-primary-container/25 transition-all duration-150 active:scale-95">
+    <span class="material-symbols-outlined text-[20px]">add</span>
+    <span class="whitespace-nowrap">Schedule Show</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<!-- Filters Toolbar -->
+<section class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 shadow">
+    <form method="GET" class="flex flex-wrap items-center gap-3">
+        <!-- Movie Filter -->
+        <div class="relative min-w-[200px] flex-1">
+            <select
+                name="movie"
+                class="w-full h-10 pl-3 pr-8 text-body-sm font-body-sm bg-surface border border-outline-variant/30 rounded-lg text-on-surface focus:border-primary focus:outline-none appearance-none cursor-pointer">
+                <option value="">All Movies</option>
+                {% for m in movies %}
+                <option value="{{ m.id }}" {% if selected_movie == m.id|stringformat:"s" %}selected{% endif %}>{{ m.title }}</option>
+                {% endfor %}
+            </select>
+            <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+        </div>
+
+        <!-- Theater Filter -->
+        <div class="relative min-w-[200px] flex-1">
+            <select
+                name="theater"
+                class="w-full h-10 pl-3 pr-8 text-body-sm font-body-sm bg-surface border border-outline-variant/30 rounded-lg text-on-surface focus:border-primary focus:outline-none appearance-none cursor-pointer">
+                <option value="">All Multiplexes</option>
+                {% for t in theaters %}
+                <option value="{{ t.id }}" {% if selected_theater == t.id|stringformat:"s" %}selected{% endif %}>{{ t.name }} ({{ t.city }})</option>
+                {% endfor %}
+            </select>
+            <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="relative min-w-[140px]">
+            <select
+                name="status"
+                class="w-full h-10 pl-3 pr-8 text-body-sm font-body-sm bg-surface border border-outline-variant/30 rounded-lg text-on-surface focus:border-primary focus:outline-none appearance-none cursor-pointer">
+                <option value="">All Statuses</option>
+                <option value="open" {% if selected_status == 'open' %}selected{% endif %}>Booking Open</option>
+                <option value="scheduled" {% if selected_status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+                <option value="cancelled" {% if selected_status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                <option value="completed" {% if selected_status == 'completed' %}selected{% endif %}>Completed</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+        </div>
+
+        <button type="submit" class="h-10 px-5 rounded-lg bg-surface-container-highest hover:bg-surface-bright text-on-surface font-label-md font-bold transition-colors">
+            Filter Shows
+        </button>
+
+        {% if selected_movie or selected_theater or selected_status %}
+        <a href="{% url 'admin_shows_list' %}" class="h-10 px-4 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface text-label-md flex items-center transition-colors">
+            Clear
+        </a>
+        {% endif %}
+    </form>
+</section>
+
+<!-- Show Schedules Table -->
+<div class="rounded-xl border border-outline-variant/20 bg-surface-container-lowest overflow-hidden shadow-2xl">
+    <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="border-b border-outline-variant/20 bg-surface-container-low text-label-sm font-label-sm uppercase tracking-wider text-outline">
+                    <th class="py-3.5 px-4">Movie Title</th>
+                    <th class="py-3.5 px-4">Multiplex / Theater</th>
+                    <th class="py-3.5 px-4">Screen / Audi</th>
+                    <th class="py-3.5 px-4">Start Time</th>
+                    <th class="py-3.5 px-4">End Time</th>
+                    <th class="py-3.5 px-4">Base Price</th>
+                    <th class="py-3.5 px-4">Status</th>
+                    <th class="py-3.5 px-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10 text-body-sm font-body-sm">
+                {% for s in shows %}
+                <tr class="hover:bg-surface-container-high/30 transition-colors group">
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-11 rounded overflow-hidden bg-surface-container flex-shrink-0 border border-outline-variant/20">
+                                <img src="{{ s.movie.get_primary_poster_url }}" alt="{{ s.movie.title }}" class="w-full h-full object-cover" />
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-on-surface">{{ s.movie.title }}</span>
+                                <span class="text-xs text-outline">{{ s.movie.duration }} min • {{ s.movie.age_certification }}</span>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="py-3.5 px-4">
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-on-surface">{{ s.theater.name }}</span>
+                            <span class="text-xs text-secondary">{{ s.theater.city }}</span>
+                        </div>
+                    </td>
+
+                    <td class="py-3.5 px-4">
+                        <span class="px-2 py-0.5 rounded bg-surface-container text-label-sm font-medium border border-outline-variant/20">
+                            {{ s.screen.name }} ({{ s.screen.screen_type }})
+                        </span>
+                    </td>
+
+                    <td class="py-3.5 px-4 font-mono font-semibold text-on-surface">
+                        {{ s.start_time|date:"M d, Y" }} <br/>
+                        <span class="text-secondary">{{ s.start_time|date:"h:i A" }}</span>
+                    </td>
+
+                    <td class="py-3.5 px-4 font-mono text-outline">
+                        {{ s.end_time|date:"h:i A" }}
+                    </td>
+
+                    <td class="py-3.5 px-4 font-bold text-on-surface">
+                        ₹{{ s.price }}
+                    </td>
+
+                    <td class="py-3.5 px-4">
+                        {% if s.status == 'open' %}
+                        <span class="px-2.5 py-1 rounded-full text-label-sm bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                            Booking Open
+                        </span>
+                        {% elif s.status == 'scheduled' %}
+                        <span class="px-2.5 py-1 rounded-full text-label-sm bg-surface-container text-on-surface-variant border border-outline-variant/25 font-bold">
+                            Scheduled
+                        </span>
+                        {% elif s.status == 'cancelled' %}
+                        <span class="px-2.5 py-1 rounded-full text-label-sm bg-error-container/20 text-error border border-error/30 font-bold">
+                            Cancelled
+                        </span>
+                        {% else %}
+                        <span class="px-2.5 py-1 rounded-full text-label-sm bg-surface-container text-outline border border-outline-variant/20">
+                            {{ s.get_status_display }}
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <td class="py-3.5 px-4 text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <a
+                                href="{% url 'admin_show_edit' s.id %}"
+                                class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-secondary transition-colors"
+                                title="Edit Show">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                            </a>
+                            <form method="POST" action="{% url 'admin_show_delete' s.id %}" class="inline m-0" onsubmit="return confirm('Delete this show schedule?');">
+                                {% csrf_token %}
+                                <button
+                                    type="submit"
+                                    class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-error transition-colors"
+                                    title="Delete Show">
+                                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="py-12 text-center text-on-surface-variant">
+                        <span class="material-symbols-outlined text-4xl mb-2 text-outline">schedule</span>
+                        <p class="text-body-md">No show schedules found matching criteria.</p>
+                        <a href="{% url 'admin_show_create' %}" class="inline-flex items-center gap-1 text-primary hover:underline text-label-md mt-2">
+                            <span>Create a new show screening</span>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "components/pagination.html" with page_obj=shows %}
+</div>
+{% endblock %}

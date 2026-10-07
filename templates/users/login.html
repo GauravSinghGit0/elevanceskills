@@ -1,91 +1,241 @@
 {% extends "users/basic.html" %}
 
+{% block title %}Sign In — Cineva Atmospheric Cinema Portal{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-input {
+        background-color: #0c0e16 !important;
+        border: 1px solid rgba(172, 136, 139, 0.25) !important;
+        color: #e1e1ed !important;
+        border-radius: 0.75rem !important;
+        padding: 0.75rem 1rem 0.75rem 2.75rem !important;
+        width: 100% !important;
+        font-size: 0.875rem !important;
+        line-height: 1.25rem !important;
+        transition: all 0.2s ease-in-out !important;
+    }
+    .form-input:focus {
+        border-color: #ff4f73 !important;
+        outline: none !important;
+        box-shadow: 0 0 0 1px rgba(255, 79, 115, 0.4) !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="modal-title mb-0" id="loginModalLabel">
-                        <i class="fas fa-sign-in-alt me-2"></i> Log In
-                    </h5>
+<div class="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto my-6">
+    <div class="w-full grid grid-cols-1 lg:grid-cols-12 rounded-3xl overflow-hidden bg-surface-container-low/80 backdrop-blur-2xl border border-outline-variant/20 shadow-2xl">
+        <!-- LEFT COLUMN: Authentication Form -->
+        <div class="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between">
+            <div>
+                <!-- Upper Navigation: Role Switcher Segmented Control -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Portal Access</span>
+                        <span class="inline-flex items-center gap-1 font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary border border-outline-variant/30">
+                            <span class="material-symbols-outlined text-xs">local_activity</span>
+                            <span>Secure Verification</span>
+                        </span>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form method="POST" action="{% url 'login' %}">
-                        {% csrf_token %}
-                        <!-- Username Input -->
-                        <div class="mb-3">
-                            <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fas fa-user"></i>
-                                </span>
-                                {{ form.username }}
-                            </div>
-                        </div>
 
-                        <!-- Password Input -->
-                        <div class="mb-3">
-                            <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fas fa-lock"></i>
-                                </span>
-                                {{ form.password }}
-                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                    <i class="fas fa-eye" id="toggleIcon"></i>
-                                </button>
-                            </div>
-                        </div>
+                <!-- Headline and Mode Switcher -->
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-outline-variant/15 pb-4 mb-6">
+                    <div>
+                        <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">Welcome Back</h1>
+                        <p class="font-body-md text-body-md text-on-surface-variant mt-1">Immerse yourself in reserved seats, verified reviews &amp; cinema experiences.</p>
+                    </div>
+                    <div class="flex items-center gap-1 bg-surface-container-high/60 p-1 rounded-lg border border-outline-variant/20 self-start sm:self-auto">
+                        <span class="px-3 py-1 rounded-md font-label-sm text-label-sm text-primary bg-surface-container font-semibold">Sign In</span>
+                        <a href="{% url 'register' %}" class="px-3 py-1 rounded-md font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-all">Register</a>
+                    </div>
+                </div>
 
-                        <!-- Submit Button -->
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-sign-in-alt me-2"></i> Login
+                <!-- Form Error Alerts -->
+                {% if form.errors %}
+                <div class="p-3.5 mb-5 rounded-xl bg-error-container/30 border border-error text-error text-body-sm">
+                    <span class="font-bold flex items-center gap-1 mb-1">
+                        <span class="material-symbols-outlined text-base">error</span>
+                        Authentication Failed
+                    </span>
+                    <p class="text-error/90 text-label-sm">Please check your username and password.</p>
+                </div>
+                {% endif %}
+
+                <!-- Login Form -->
+                <form method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="space-y-4">
+                    {% csrf_token %}
+                    {% if request.GET.next %}
+                    <input type="hidden" name="next" value="{{ request.GET.next }}" />
+                    {% endif %}
+
+                    <!-- Username Field -->
+                    <div class="space-y-1.5">
+                        <label for="{{ form.username.id_for_label }}" class="block font-label-md text-label-md text-on-surface">Username</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3.5 top-3 text-on-surface-variant text-lg">account_circle</span>
+                            <input
+                                type="text"
+                                name="username"
+                                id="{{ form.username.id_for_label }}"
+                                class="form-input"
+                                placeholder="Enter your username"
+                                required
+                                autofocus
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <label for="{{ form.password.id_for_label }}" class="block font-label-md text-label-md text-on-surface">Password</label>
+                            <a class="font-label-sm text-label-sm text-primary hover:underline" href="{% url 'password_reset' %}">Forgot password?</a>
+                        </div>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3.5 top-3 text-on-surface-variant text-lg">lock</span>
+                            <input
+                                type="password"
+                                name="password"
+                                id="{{ form.password.id_for_label }}"
+                                class="form-input pr-11"
+                                placeholder="••••••••••••"
+                                required
+                            />
+                            <button
+                                class="absolute right-3.5 top-2.5 text-on-surface-variant hover:text-on-surface p-0.5"
+                                type="button"
+                                id="togglePasswordBtn">
+                                <span class="material-symbols-outlined text-lg" id="passwordIcon">visibility</span>
                             </button>
                         </div>
-                    </form>
+                    </div>
+
+                    <!-- Options Row: Remember Me -->
+                    <div class="flex items-center justify-between pt-1">
+                        <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                            <input
+                                class="w-4 h-4 rounded bg-surface-container-lowest border-outline-variant/40 text-primary-container focus:ring-primary-container/30 focus:ring-offset-0"
+                                type="checkbox"
+                                name="remember_me"
+                                checked
+                            />
+                            <span class="font-body-sm text-body-sm text-on-surface">Keep me signed in</span>
+                        </label>
+                        <span class="text-label-sm font-label-sm text-on-surface-variant">Verified Member Access</span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        class="w-full mt-4 py-3.5 px-6 rounded-xl bg-gradient-to-r from-primary-container to-secondary-container text-on-primary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary-container/20 hover:brightness-110 active:scale-[0.99] transition-all duration-200">
+                        <span>Authenticate &amp; Enter Cineva</span>
+                        <span class="material-symbols-outlined text-xl">arrow_forward</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Footer Compliance Info -->
+            <div class="pt-6 mt-6 border-t border-outline-variant/15 flex flex-wrap items-center justify-between gap-3 font-body-sm text-body-sm text-on-surface-variant">
+                <div class="flex items-center gap-2 text-label-sm font-label-sm">
+                    <span class="material-symbols-outlined text-sm text-primary">lock</span>
+                    <span>256-bit TLS Encrypted Session</span>
                 </div>
-                <div class="card-footer text-center">
-                    <a href="{% url 'password_reset' %}" class="text-decoration-none">Forgot Password?</a>
-                    <hr>
-                    <p class="mb-0">Don't have an account? <a href="{% url 'register' %}" class="text-decoration-none">Sign Up</a></p>
+                <div class="flex items-center gap-2 text-label-sm font-label-sm">
+                    <span>Don't have an account?</span>
+                    <a href="{% url 'register' %}" class="text-primary hover:underline font-semibold">Join Cineva</a>
                 </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Cinematic Media & Upcoming Perks Panel -->
+        <div class="lg:col-span-5 relative bg-surface-container p-6 sm:p-8 flex flex-col justify-between overflow-hidden border-t lg:border-t-0 lg:border-l border-outline-variant/20">
+            <!-- Background Artwork -->
+            <div class="absolute inset-0 z-0">
+                <img
+                    class="w-full h-full object-cover opacity-35 filter brightness-75 contrast-125"
+                    src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80"
+                    alt="Cinema Auditorium"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container/80 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-surface-container/60 to-transparent"></div>
+            </div>
+
+            <!-- Upper Panel Details: Premiere Pass Showcase -->
+            <div class="relative z-10 space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="px-3 py-1 rounded-full bg-primary-container/20 border border-primary-container/30 text-primary font-label-sm text-label-sm tracking-wide font-bold uppercase flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">stars</span>
+                        Cineva Premiere Member
+                    </span>
+                    <span class="font-label-sm text-label-sm text-secondary font-bold">Atmospheric Hub</span>
+                </div>
+                <div>
+                    <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">The Future of Film Screening</h2>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Unlock 70mm IMAX premieres, verified audience reviews, and curated luxury cinema.</p>
+                </div>
+
+                <!-- Feature Mini-Cards -->
+                <div class="space-y-3 pt-2">
+                    <div class="p-3.5 rounded-2xl bg-surface-container-low/75 backdrop-blur-md border border-outline-variant/20 flex items-center gap-3.5 hover:border-primary-container/40 transition-all">
+                        <div class="w-10 h-10 rounded-xl bg-primary-container/20 border border-primary-container/30 flex items-center justify-center text-primary shrink-0">
+                            <span class="material-symbols-outlined text-lg">verified</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-title-sm text-title-sm text-on-surface truncate">Verified Viewer Reviews</h3>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Only confirmed ticket holders can submit movie ratings</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-surface-container-low/75 backdrop-blur-md border border-outline-variant/20 flex items-center gap-3.5 hover:border-secondary/40 transition-all">
+                        <div class="w-10 h-10 rounded-xl bg-secondary-container/20 border border-secondary-container/30 flex items-center justify-center text-secondary shrink-0">
+                            <span class="material-symbols-outlined text-lg">smart_display</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-title-sm text-title-sm text-on-surface truncate">4K Official Trailers</h3>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Sandboxed ultra-crisp theatrical trailers on all devices</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-surface-container-low/75 backdrop-blur-md border border-outline-variant/20 flex items-center gap-3.5 hover:border-tertiary/40 transition-all">
+                        <div class="w-10 h-10 rounded-xl bg-tertiary-container/20 border border-tertiary-container/30 flex items-center justify-center text-tertiary shrink-0">
+                            <span class="material-symbols-outlined text-lg">theater_comedy</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-title-sm text-title-sm text-on-surface truncate">Multi-Screen Theaters</h3>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Comprehensive showtimes with collision-proof scheduling</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lower Badge -->
+            <div class="relative z-10 pt-6 border-t border-outline-variant/20 text-label-sm font-label-sm text-on-surface-variant/80 flex items-center justify-between">
+                <span>Cineva Protocol v2.4</span>
+                <span class="text-secondary font-mono">100% Verified System</span>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-    .card {
-        border-radius: 1rem;
-    }
-    .card-header {
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
-    }
-    .input-group-text {
-        background-color: #f8f9fa;
-    }
-    .form-control:focus {
-        box-shadow: none;
-        border-color: #80bdff;
-    }
-</style>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordField = document.getElementById('{{ form.password.id_for_label }}');
-        const toggleIcon = document.getElementById('toggleIcon');
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('togglePasswordBtn');
+    const pwdInput = document.getElementById('{{ form.password.id_for_label }}');
+    const icon = document.getElementById('passwordIcon');
 
-        togglePassword.addEventListener('click', function() {
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-            toggleIcon.classList.toggle('fa-eye');
-            toggleIcon.classList.toggle('fa-eye-slash');
+    if (toggleBtn && pwdInput) {
+        toggleBtn.addEventListener('click', function() {
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                icon.textContent = 'visibility_off';
+            } else {
+                pwdInput.type = 'password';
+                icon.textContent = 'visibility';
+            }
         });
-    });
+    }
+});
 </script>
-
 {% endblock %}

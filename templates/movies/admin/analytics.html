@@ -1,0 +1,666 @@
+{% extends "movies/admin/base_admin.html" %}
+{% load movie_tags %}
+
+{% block title %}Executive Analytics &amp; Business Intelligence — Cineva Ops{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-8 pb-16">
+
+    <!-- Page Header & Global Date Range Filtering Bar -->
+    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6 pb-6 border-b border-outline-variant/20">
+        <div>
+            <div class="flex items-center gap-2 text-primary text-xs font-mono font-bold uppercase tracking-widest">
+                <span class="material-symbols-outlined text-sm">insights</span>
+                <span>Executive Command Center</span>
+            </div>
+            <h1 class="text-headline-md font-headline-md font-bold text-on-surface tracking-tight mt-1">
+                Business Intelligence &amp; Analytics
+            </h1>
+            <p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+                Real-time financial telemetry, theater occupancy rates, audience acquisition, and operational throughput.
+            </p>
+        </div>
+
+        <!-- Export Actions & Preset Date Range Selector -->
+        <div class="flex flex-wrap items-center gap-3">
+            <!-- CSV Export Dropdown -->
+            <div class="relative inline-block text-left" id="export-dropdown-wrapper">
+                <button
+                    type="button"
+                    id="export-dropdown-btn"
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/30 text-on-surface font-label-md text-label-md font-semibold transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-secondary text-lg">download</span>
+                    <span>Export CSV Report</span>
+                    <span class="material-symbols-outlined text-xs text-on-surface-variant">arrow_drop_down</span>
+                </button>
+                <div
+                    id="export-dropdown-menu"
+                    class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-surface-container-low border border-outline-variant/30 shadow-2xl z-50 p-2 space-y-1">
+                    <a
+                        href="{% url 'admin_analytics_export_csv' %}?report=summary&amp;preset={{ active_preset }}&amp;start_date={{ start_date_str }}&amp;end_date={{ end_date_str }}"
+                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-on-surface hover:bg-surface-container hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-sm text-primary">assessment</span>
+                        <span class="font-medium">Executive KPI Brief</span>
+                    </a>
+                    <a
+                        href="{% url 'admin_analytics_export_csv' %}?report=theaters&amp;preset={{ active_preset }}&amp;start_date={{ start_date_str }}&amp;end_date={{ end_date_str }}"
+                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-on-surface hover:bg-surface-container hover:text-secondary transition-colors">
+                        <span class="material-symbols-outlined text-sm text-secondary">theater_comedy</span>
+                        <span class="font-medium">Theater Occupancy Report</span>
+                    </a>
+                    <a
+                        href="{% url 'admin_analytics_export_csv' %}?report=movies&amp;preset={{ active_preset }}&amp;start_date={{ start_date_str }}&amp;end_date={{ end_date_str }}"
+                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-on-surface hover:bg-surface-container hover:text-tertiary transition-colors">
+                        <span class="material-symbols-outlined text-sm text-tertiary">movie</span>
+                        <span class="font-medium">Movies Box Office Performance</span>
+                    </a>
+                    <a
+                        href="{% url 'admin_analytics_export_csv' %}?report=hourly&amp;preset={{ active_preset }}&amp;start_date={{ start_date_str }}&amp;end_date={{ end_date_str }}"
+                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-on-surface hover:bg-surface-container hover:text-emerald-400 transition-colors">
+                        <span class="material-symbols-outlined text-sm text-emerald-400">schedule</span>
+                        <span class="font-medium">Peak Hourly Distribution</span>
+                    </a>
+                    <a
+                        href="{% url 'admin_analytics_export_csv' %}?report=transactions&amp;preset={{ active_preset }}&amp;start_date={{ start_date_str }}&amp;end_date={{ end_date_str }}"
+                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-on-surface hover:bg-surface-container hover:text-primary transition-colors border-t border-outline-variant/15 pt-2">
+                        <span class="material-symbols-outlined text-sm text-primary">receipt_long</span>
+                        <span class="font-medium">Full Transactions Audit Ledger</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Custom Date Filter Trigger -->
+            <button
+                type="button"
+                id="toggle-custom-date-btn"
+                class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors">
+                <span class="material-symbols-outlined text-sm">calendar_month</span>
+                <span>{{ date_label }}</span>
+                <span class="material-symbols-outlined text-xs">tune</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Date Range Preset Pills & Custom Date Filter Collapsible Form -->
+    <div class="space-y-3">
+        <!-- Preset Filter Pills -->
+        <div class="flex flex-wrap items-center gap-2 text-xs font-medium">
+            <span class="text-on-surface-variant/70 font-mono text-[11px] uppercase mr-1">Time Horizon:</span>
+            <a href="?preset=today" class="px-3 py-1.5 rounded-lg border transition-all {% if active_preset == 'today' %}bg-primary-container text-on-primary-container border-primary font-bold shadow-md shadow-primary/20{% else %}bg-surface-container border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+                Today
+            </a>
+            <a href="?preset=yesterday" class="px-3 py-1.5 rounded-lg border transition-all {% if active_preset == 'yesterday' %}bg-primary-container text-on-primary-container border-primary font-bold shadow-md shadow-primary/20{% else %}bg-surface-container border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+                Yesterday
+            </a>
+            <a href="?preset=7days" class="px-3 py-1.5 rounded-lg border transition-all {% if active_preset == '7days' %}bg-primary-container text-on-primary-container border-primary font-bold shadow-md shadow-primary/20{% else %}bg-surface-container border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+                Last 7 Days
+            </a>
+            <a href="?preset=30days" class="px-3 py-1.5 rounded-lg border transition-all {% if active_preset == '30days' %}bg-primary-container text-on-primary-container border-primary font-bold shadow-md shadow-primary/20{% else %}bg-surface-container border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+                Last 30 Days
+            </a>
+            <a href="?preset=this_month" class="px-3 py-1.5 rounded-lg border transition-all {% if active_preset == 'this_month' %}bg-primary-container text-on-primary-container border-primary font-bold shadow-md shadow-primary/20{% else %}bg-surface-container border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+                This Month
+            </a>
+            <a href="?preset=this_year" class="px-3 py-1.5 rounded-lg border transition-all {% if active_preset == 'this_year' %}bg-primary-container text-on-primary-container border-primary font-bold shadow-md shadow-primary/20{% else %}bg-surface-container border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+                This Year
+            </a>
+            <a href="?preset=all" class="px-3 py-1.5 rounded-lg border transition-all {% if active_preset == 'all' %}bg-primary-container text-on-primary-container border-primary font-bold shadow-md shadow-primary/20{% else %}bg-surface-container border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high{% endif %}">
+                All Time
+            </a>
+        </div>
+
+        <!-- Custom Date Range Form (Hidden by default unless custom preset active) -->
+        <div id="custom-date-form-wrapper" class="{% if active_preset != 'custom' %}hidden{% endif %} p-4 rounded-2xl bg-surface-container border border-outline-variant/30 shadow-xl max-w-2xl">
+            <form method="GET" class="flex flex-wrap items-end gap-3 text-xs">
+                <input type="hidden" name="preset" value="custom" />
+                <div class="flex flex-col gap-1">
+                    <label class="font-bold text-on-surface-variant">Start Date</label>
+                    <input
+                        type="date"
+                        name="start_date"
+                        value="{{ start_date_str }}"
+                        class="px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-on-surface font-mono text-xs focus:border-primary focus:outline-none"
+                        required
+                    />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="font-bold text-on-surface-variant">End Date</label>
+                    <input
+                        type="date"
+                        name="end_date"
+                        value="{{ end_date_str }}"
+                        class="px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-on-surface font-mono text-xs focus:border-primary focus:outline-none"
+                        required
+                    />
+                </div>
+                <button
+                    type="submit"
+                    class="px-4 py-2 rounded-lg bg-primary text-on-primary font-bold hover:bg-primary/90 transition-all shadow">
+                    Apply Filter
+                </button>
+                <a href="?preset=30days" class="px-3 py-2 text-on-surface-variant hover:text-on-surface transition-colors">
+                    Reset
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <!-- 1. TOP 4 HIGH-IMPACT KPI METRIC CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+        <!-- Filtered Period Gross Revenue -->
+        <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -right-8 -top-8 w-24 h-24 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold uppercase tracking-wider text-on-surface-variant">Period Gross Revenue</span>
+                <span class="w-8 h-8 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-base">payments</span>
+                </span>
+            </div>
+            <div class="mt-4">
+                <div class="text-3xl font-bold text-on-surface font-headline-md tracking-tight">
+                    ₹{{ revenue.period_revenue|floatformat:2 }}
+                </div>
+                <div class="mt-2 flex items-center justify-between text-xs text-on-surface-variant">
+                    <span>{{ revenue.period_orders }} successful orders</span>
+                    <span class="font-mono text-secondary">AOV: ₹{{ revenue.aov|floatformat:2 }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Period Tickets Booked -->
+        <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -right-8 -top-8 w-24 h-24 bg-secondary/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold uppercase tracking-wider text-on-surface-variant">Tickets Booked</span>
+                <span class="w-8 h-8 rounded-lg bg-secondary-container/20 text-secondary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-base">confirmation_number</span>
+                </span>
+            </div>
+            <div class="mt-4">
+                <div class="text-3xl font-bold text-on-surface font-headline-md tracking-tight">
+                    {{ revenue.period_tickets }}
+                </div>
+                <div class="mt-2 flex items-center justify-between text-xs text-on-surface-variant">
+                    <span>Active Screenings</span>
+                    <span class="font-mono text-emerald-400 font-semibold">{{ theaters|length }} Audis</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Average Occupancy Rate -->
+        <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -right-8 -top-8 w-24 h-24 bg-tertiary/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold uppercase tracking-wider text-on-surface-variant">Network Occupancy</span>
+                <span class="w-8 h-8 rounded-lg bg-tertiary-container/20 text-tertiary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-base">chair</span>
+                </span>
+            </div>
+            <div class="mt-4">
+                <div class="flex items-baseline gap-2">
+                    <div class="text-3xl font-bold text-on-surface font-headline-md tracking-tight">
+                        {{ avg_occupancy }}%
+                    </div>
+                    <span class="text-xs text-on-surface-variant font-mono">Live</span>
+                </div>
+                <!-- Progress bar -->
+                <div class="w-full bg-surface-container h-2 rounded-full mt-3 overflow-hidden">
+                    <div class="bg-secondary h-full rounded-full transition-all duration-500" style="width: {{ avg_occupancy }}%;"></div>
+                </div>
+                <div class="mt-2 flex justify-between text-[11px] text-on-surface-variant font-mono">
+                    <span>{{ total_network_booked }} Booked</span>
+                    <span>{{ total_network_seats }} Capacity</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Gateway Health & Conversion -->
+        <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -right-8 -top-8 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold uppercase tracking-wider text-on-surface-variant">Payment Success Rate</span>
+                <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-base">verified</span>
+                </span>
+            </div>
+            <div class="mt-4">
+                <div class="text-3xl font-bold text-emerald-400 font-headline-md tracking-tight">
+                    {{ attrition.success_rate }}%
+                </div>
+                <div class="mt-2 flex items-center justify-between text-xs text-on-surface-variant">
+                    <span>{{ attrition.success_count }} of {{ attrition.total_transactions }} txns</span>
+                    <span class="text-error font-mono text-[11px]">{{ attrition.cancellation_rate }}% dropoff</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MULTI-HORIZON REVENUE BREAKDOWN (Daily, Weekly, Monthly, Yearly) -->
+    <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl space-y-5">
+        <div class="flex items-center justify-between border-b border-outline-variant/15 pb-4">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-primary text-xl">account_balance_wallet</span>
+                <h3 class="font-title-lg text-title-lg font-bold text-on-surface">Revenue Telemetry by Interval</h3>
+            </div>
+            <span class="text-xs font-mono text-on-surface-variant">Lifetime Revenue: <strong class="text-on-surface font-bold">₹{{ revenue.all_time_revenue|floatformat:2 }}</strong></span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Today's Revenue -->
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 space-y-2">
+                <div class="flex items-center justify-between text-xs text-on-surface-variant font-mono">
+                    <span>Today</span>
+                    {% if revenue.dod_growth >= 0 %}
+                    <span class="text-emerald-400 font-bold flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-xs">trending_up</span>+{{ revenue.dod_growth }}%
+                    </span>
+                    {% else %}
+                    <span class="text-error font-bold flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-xs">trending_down</span>{{ revenue.dod_growth }}%
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="text-2xl font-bold text-on-surface font-headline-sm">
+                    ₹{{ revenue.today_revenue|floatformat:2 }}
+                </div>
+                <div class="text-[11px] text-on-surface-variant">
+                    Yesterday: ₹{{ revenue.yesterday_revenue|floatformat:2 }} ({{ revenue.today_orders }} orders today)
+                </div>
+            </div>
+
+            <!-- This Week's Revenue -->
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 space-y-2">
+                <div class="flex items-center justify-between text-xs text-on-surface-variant font-mono">
+                    <span>This Week</span>
+                    <span class="text-secondary font-bold">{{ revenue.week_orders }} orders</span>
+                </div>
+                <div class="text-2xl font-bold text-on-surface font-headline-sm">
+                    ₹{{ revenue.week_revenue|floatformat:2 }}
+                </div>
+                <div class="text-[11px] text-on-surface-variant">
+                    Calendar week from Monday
+                </div>
+            </div>
+
+            <!-- This Month's Revenue -->
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 space-y-2">
+                <div class="flex items-center justify-between text-xs text-on-surface-variant font-mono">
+                    <span>This Month</span>
+                    <span class="text-primary font-bold">{{ revenue.month_orders }} orders</span>
+                </div>
+                <div class="text-2xl font-bold text-on-surface font-headline-sm">
+                    ₹{{ revenue.month_revenue|floatformat:2 }}
+                </div>
+                <div class="text-[11px] text-on-surface-variant">
+                    Current billing calendar month
+                </div>
+            </div>
+
+            <!-- This Year's Revenue -->
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 space-y-2">
+                <div class="flex items-center justify-between text-xs text-on-surface-variant font-mono">
+                    <span>This Year</span>
+                    <span class="text-tertiary font-bold">{{ revenue.year_orders }} orders</span>
+                </div>
+                <div class="text-2xl font-bold text-on-surface font-headline-sm">
+                    ₹{{ revenue.year_revenue|floatformat:2 }}
+                </div>
+                <div class="text-[11px] text-on-surface-variant">
+                    Year-to-Date (YTD) Box Office
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. BOOKING & REVENUE TIME-SERIES TRENDS -->
+    <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-outline-variant/15 pb-4">
+            <div>
+                <h3 class="font-title-lg text-title-lg font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary">show_chart</span>
+                    <span>Daily Booking &amp; Revenue Trends</span>
+                </h3>
+                <p class="text-body-sm text-on-surface-variant text-xs mt-0.5">
+                    Aggregated daily box office throughput for {{ date_label }}
+                </p>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-mono">
+                <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded bg-primary"></span>
+                    <span class="text-on-surface-variant">Gross Revenue</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded bg-secondary"></span>
+                    <span class="text-on-surface-variant">Ticket Orders</span>
+                </div>
+            </div>
+        </div>
+
+        {% if booking_trends %}
+        <!-- CSS-based High Performance Responsive Bar Chart -->
+        <div class="overflow-x-auto pb-4 custom-scrollbar">
+            <div class="min-w-[600px] h-56 flex items-end gap-2 pt-6 px-2 border-b border-outline-variant/20">
+                {% for t in booking_trends %}
+                <div class="flex-1 flex flex-col items-center h-full justify-end group relative">
+                    <!-- Tooltip Hover Bubble -->
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-12 z-20 pointer-events-none bg-surface-container-highest border border-outline-variant/40 px-2.5 py-1.5 rounded-lg text-[10px] font-mono shadow-xl whitespace-nowrap text-center">
+                        <div class="font-bold text-on-surface">{{ t.label }}</div>
+                        <div class="text-primary font-bold">₹{{ t.revenue|floatformat:2 }}</div>
+                        <div class="text-secondary">{{ t.bookings }} booking{{ t.bookings|pluralize }}</div>
+                    </div>
+                    <!-- Bar -->
+                    <div
+                        class="w-full max-w-[28px] bg-gradient-to-t from-primary/60 to-primary hover:from-primary hover:to-primary-container rounded-t-md transition-all duration-300"
+                        style="height: {{ t.height_pct }}%; min-height: 4px;">
+                    </div>
+                    <!-- Date Label below bar -->
+                    <span class="text-[9px] font-mono text-on-surface-variant/70 mt-2 truncate w-full text-center">
+                        {{ t.label }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="py-12 text-center text-on-surface-variant text-body-sm bg-surface-container/30 rounded-xl border border-dashed border-outline-variant/20">
+            No transaction records found within this selected time window.
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 4. THEATER AUDITORIUM OCCUPANCY BREAKDOWN (TABLE & PROGRESS) -->
+    <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-outline-variant/15 pb-4">
+            <div>
+                <h3 class="font-title-lg text-title-lg font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">meeting_room</span>
+                    <span>Auditorium Occupancy &amp; Venue Performance</span>
+                </h3>
+                <p class="text-body-sm text-on-surface-variant text-xs mt-0.5">
+                    Real-time physical seat occupancy rates across all multiplex screens
+                </p>
+            </div>
+            <a
+                href="{% url 'admin_analytics_export_csv' %}?report=theaters&amp;preset={{ active_preset }}&amp;start_date={{ start_date_str }}&amp;end_date={{ end_date_str }}"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 text-xs text-on-surface font-semibold transition-colors">
+                <span class="material-symbols-outlined text-sm text-secondary">download</span>
+                <span>Export Theater CSV</span>
+            </a>
+        </div>
+
+        {% if theaters %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                    <tr class="border-b border-outline-variant/20 text-on-surface-variant font-mono uppercase tracking-wider">
+                        <th class="py-3 px-3">Theater &amp; City</th>
+                        <th class="py-3 px-3">Screening Film</th>
+                        <th class="py-3 px-3">Capacity</th>
+                        <th class="py-3 px-3">Live Occupancy Rate</th>
+                        <th class="py-3 px-3">Period Tickets</th>
+                        <th class="py-3 px-3 text-right">Period Revenue</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant/10">
+                    {% for th in theaters %}
+                    <tr class="hover:bg-surface-container/50 transition-colors">
+                        <td class="py-3.5 px-3">
+                            <div class="font-bold text-on-surface">{{ th.name }}</div>
+                            <div class="text-[11px] text-on-surface-variant font-mono">{{ th.city }}</div>
+                        </td>
+                        <td class="py-3.5 px-3">
+                            {% if th.movie_slug %}
+                            <a href="{% url 'movie_detail' th.movie_slug %}" class="text-primary hover:underline font-semibold">
+                                {{ th.movie_title }}
+                            </a>
+                            {% else %}
+                            <span class="text-on-surface-variant">{{ th.movie_title }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3.5 px-3 font-mono">
+                            {{ th.booked_seats }} / {{ th.total_seats }}
+                        </td>
+                        <td class="py-3.5 px-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-32 bg-surface-container h-2 rounded-full overflow-hidden">
+                                    <div
+                                        class="h-full rounded-full transition-all {% if th.occupancy_percentage >= 70 %}bg-emerald-400{% elif th.occupancy_percentage >= 30 %}bg-secondary{% else %}bg-outline-variant{% endif %}"
+                                        style="width: {{ th.occupancy_percentage }}%;">
+                                    </div>
+                                </div>
+                                <span class="font-mono font-bold text-xs {% if th.occupancy_percentage >= 70 %}text-emerald-400{% elif th.occupancy_percentage >= 30 %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+                                    {{ th.occupancy_percentage }}%
+                                </span>
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-3 font-mono font-bold text-secondary">
+                            {{ th.period_tickets }}
+                        </td>
+                        <td class="py-3.5 px-3 font-mono font-bold text-on-surface text-right">
+                            ₹{{ th.period_revenue|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="py-8 text-center text-on-surface-variant text-body-sm">
+            No theaters registered in the system.
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 5. TWO-COLUMN: MOST BOOKED MOVIES & PEAK BOOKING HOURS -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Most Booked Movies (7 Cols) -->
+        <div class="lg:col-span-7 p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl space-y-5">
+            <div class="flex items-center justify-between border-b border-outline-variant/15 pb-4">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-xl">star</span>
+                    <h3 class="font-title-lg text-title-lg font-bold text-on-surface">Most Booked Movies</h3>
+                </div>
+                <a
+                    href="{% url 'admin_analytics_export_csv' %}?report=movies&amp;preset={{ active_preset }}&amp;start_date={{ start_date_str }}&amp;end_date={{ end_date_str }}"
+                    class="text-xs text-secondary hover:underline font-mono">
+                    Export Movies CSV
+                </a>
+            </div>
+
+            {% if top_movies %}
+            <div class="space-y-3 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
+                {% for m in top_movies %}
+                <div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-outline-variant/40 transition-colors gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <img
+                            src="{{ m.poster_url }}"
+                            alt="{{ m.title }}"
+                            class="w-10 h-14 object-cover rounded-lg flex-shrink-0 shadow"
+                            onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=200&q=80'"
+                        />
+                        <div class="min-w-0">
+                            <a href="{% url 'movie_detail' m.slug %}" class="font-bold text-sm text-on-surface hover:text-primary transition-colors truncate block">
+                                {{ m.title }}
+                            </a>
+                            <div class="flex items-center gap-2 text-[11px] text-on-surface-variant mt-0.5">
+                                <span class="text-secondary font-bold flex items-center gap-0.5">
+                                    ★ {{ m.rating|floatformat:1 }}
+                                </span>
+                                <span>•</span>
+                                <span>{{ m.duration }}m</span>
+                                <span>•</span>
+                                <span class="truncate max-w-[120px]">{{ m.genres_str }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                        <div class="font-bold text-primary text-sm font-mono">₹{{ m.period_revenue|floatformat:2 }}</div>
+                        <div class="text-[11px] text-secondary font-mono">{{ m.period_tickets }} ticket{{ m.period_tickets|pluralize }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="py-8 text-center text-on-surface-variant text-body-sm">
+                No movie booking data available.
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Peak Booking Hours & Temporal Density (5 Cols) -->
+        <div class="lg:col-span-5 p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl space-y-5">
+            <div class="flex items-center justify-between border-b border-outline-variant/15 pb-4">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary text-xl">schedule</span>
+                    <h3 class="font-title-lg text-title-lg font-bold text-on-surface">Peak Booking Hours</h3>
+                </div>
+                <span class="text-[11px] font-mono text-primary font-bold">24-Hour Cycle</span>
+            </div>
+
+            <!-- Prime Peak Rush Window Highlight Card -->
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/30 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono tracking-wider">Prime Peak Window</span>
+                    <div class="text-lg font-bold text-primary mt-0.5">{{ peak_hours.peak_window }}</div>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono tracking-wider">Busiest Hour</span>
+                    <div class="text-lg font-bold text-secondary mt-0.5">{{ peak_hours.peak_hour_label }}</div>
+                </div>
+            </div>
+
+            <!-- Hourly Bar Chart -->
+            <div class="space-y-1.5 max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
+                {% for h in peak_hours.hours %}
+                <div class="flex items-center gap-3 text-xs">
+                    <span class="w-12 font-mono text-on-surface-variant text-[11px]">{{ h.label }}</span>
+                    <div class="flex-1 bg-surface-container h-3.5 rounded-full overflow-hidden">
+                        <div
+                            class="bg-gradient-to-r from-secondary/70 to-secondary h-full rounded-full transition-all"
+                            style="width: {{ h.height_pct }}%;">
+                        </div>
+                    </div>
+                    <span class="w-10 font-mono text-[11px] text-right text-on-surface font-semibold">
+                        {{ h.count }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. TWO-COLUMN: TRANSACTION ATTRITION & USER GROWTH REPORTS -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Cancellations, Failures & Refund Telemetry (6 Cols) -->
+        <div class="lg:col-span-6 p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl space-y-5">
+            <div class="flex items-center justify-between border-b border-outline-variant/15 pb-4">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-error text-xl">heart_broken</span>
+                    <h3 class="font-title-lg text-title-lg font-bold text-on-surface">Cancellation &amp; Attrition Stats</h3>
+                </div>
+                <span class="text-xs font-mono text-on-surface-variant">{{ attrition.total_transactions }} Attempted</span>
+            </div>
+
+            <!-- Health Bar -->
+            <div class="space-y-1.5">
+                <div class="w-full h-3 rounded-full overflow-hidden flex bg-surface-container">
+                    <div class="bg-emerald-500 h-full" style="width: {{ attrition.success_rate }}%;" title="Success: {{ attrition.success_rate }}%"></div>
+                    <div class="bg-secondary h-full" style="width: {{ attrition.cancellation_rate }}%;" title="Cancelled: {{ attrition.cancellation_rate }}%"></div>
+                    <div class="bg-error h-full" style="width: {{ attrition.failure_rate }}%;" title="Failed: {{ attrition.failure_rate }}%"></div>
+                </div>
+                <div class="flex justify-between text-[11px] font-mono text-on-surface-variant">
+                    <span class="text-emerald-400">Success: {{ attrition.success_rate }}%</span>
+                    <span class="text-secondary">Cancelled: {{ attrition.cancellation_rate }}%</span>
+                    <span class="text-error">Failed: {{ attrition.failure_rate }}%</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <div class="p-3 rounded-xl bg-surface-container border border-outline-variant/20 space-y-1">
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono">Cancelled Payments</span>
+                    <div class="text-lg font-bold text-secondary font-mono">{{ attrition.cancelled_count }} txns</div>
+                    <div class="text-[11px] text-on-surface-variant">Lost: ₹{{ attrition.cancelled_amount|floatformat:2 }}</div>
+                </div>
+                <div class="p-3 rounded-xl bg-surface-container border border-outline-variant/20 space-y-1">
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono">Failed Transactions</span>
+                    <div class="text-lg font-bold text-error font-mono">{{ attrition.failed_count }} txns</div>
+                    <div class="text-[11px] text-on-surface-variant">Lost: ₹{{ attrition.failed_amount|floatformat:2 }}</div>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-error-container/10 border border-error/30 flex items-center justify-between text-xs">
+                <span class="text-on-surface-variant">Total Lost Revenue from Dropoffs:</span>
+                <span class="font-bold text-error font-mono text-sm">₹{{ attrition.lost_revenue|floatformat:2 }}</span>
+            </div>
+        </div>
+
+        <!-- User Growth & Audience Acquisition (6 Cols) -->
+        <div class="lg:col-span-6 p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 shadow-xl space-y-5">
+            <div class="flex items-center justify-between border-b border-outline-variant/15 pb-4">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-xl">group_add</span>
+                    <h3 class="font-title-lg text-title-lg font-bold text-on-surface">User Growth &amp; Engagement</h3>
+                </div>
+                <span class="text-xs font-mono text-primary font-bold">{{ user_growth.total_members }} Total Users</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <div class="p-3 rounded-xl bg-surface-container border border-outline-variant/20 space-y-1">
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono">Total Members</span>
+                    <div class="text-xl font-bold text-on-surface font-mono">{{ user_growth.total_members }}</div>
+                </div>
+                <div class="p-3 rounded-xl bg-surface-container border border-outline-variant/20 space-y-1">
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono">New Signups</span>
+                    <div class="text-xl font-bold text-primary font-mono">+{{ user_growth.new_members_in_period }}</div>
+                </div>
+                <div class="p-3 rounded-xl bg-surface-container border border-outline-variant/20 space-y-1">
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono">Active Bookers</span>
+                    <div class="text-xl font-bold text-secondary font-mono">{{ user_growth.active_bookers }}</div>
+                </div>
+            </div>
+
+            <!-- Conversion Rate Card -->
+            <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/30 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono tracking-wider">Member-to-Booker Conversion</span>
+                    <div class="text-lg font-bold text-on-surface mt-0.5">{{ user_growth.conversion_rate }}%</div>
+                </div>
+                <span class="material-symbols-outlined text-3xl text-secondary">trending_up</span>
+            </div>
+
+            <p class="text-[11px] text-on-surface-variant">
+                Users are tracked securely via Django's authentication system. Verified viewers unlock review badges upon screening conclusion.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Dropdown & Date Form Toggle Scripts -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const exportBtn = document.getElementById('export-dropdown-btn');
+    const exportMenu = document.getElementById('export-dropdown-menu');
+    const toggleCustomBtn = document.getElementById('toggle-custom-date-btn');
+    const customDateForm = document.getElementById('custom-date-form-wrapper');
+
+    if (exportBtn && exportMenu) {
+        exportBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            exportMenu.classList.toggle('hidden');
+        });
+        document.addEventListener('click', function(e) {
+            if (!exportMenu.contains(e.target) && e.target !== exportBtn) {
+                exportMenu.classList.add('hidden');
+            }
+        });
+    }
+
+    if (toggleCustomBtn && customDateForm) {
+        toggleCustomBtn.addEventListener('click', function() {
+            customDateForm.classList.toggle('hidden');
+        });
+    }
+});
+</script>
+{% endblock %}

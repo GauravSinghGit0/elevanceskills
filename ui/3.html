@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Chronicles of Dune: Oblivion | Cineva Premium Cinema Experience</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols Outlined -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS with custom plugins -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Tailwind Config as specified in design system -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#5c3f42",
+                        "on-tertiary-fixed": "#07006c",
+                        "surface": "#11131b",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#5b3800",
+                        "on-primary-fixed-variant": "#910030",
+                        "inverse-primary": "#bd0042",
+                        "on-secondary-fixed": "#2a1700",
+                        "outline": "#ac888b",
+                        "surface-variant": "#33343d",
+                        "surface-container": "#1d1f28",
+                        "primary-fixed-dim": "#ffb2ba",
+                        "secondary-container": "#ee9800",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "inverse-on-surface": "#2e3039",
+                        "on-tertiary-container": "#0d0096",
+                        "secondary-fixed": "#ffddb8",
+                        "on-primary": "#670020",
+                        "surface-container-low": "#191b23",
+                        "primary-container": "#ff4f73",
+                        "surface-container-high": "#282a32",
+                        "on-primary-container": "#5a001b",
+                        "primary": "#ffb2ba",
+                        "on-secondary": "#472a00",
+                        "on-surface-variant": "#e5bdc0",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-bright": "#373942",
+                        "surface-tint": "#ffb2ba",
+                        "background": "#11131b",
+                        "tertiary-fixed": "#e1e0ff",
+                        "secondary": "#ffb95f",
+                        "surface-container-lowest": "#0c0e16",
+                        "on-tertiary-fixed-variant": "#2f2ebe",
+                        "tertiary": "#c0c1ff",
+                        "tertiary-fixed-dim": "#c0c1ff",
+                        "surface-dim": "#11131b",
+                        "error-container": "#93000a",
+                        "tertiary-container": "#8083ff",
+                        "surface-container-highest": "#33343d",
+                        "on-surface": "#e1e1ed",
+                        "on-error-container": "#ffdad6",
+                        "inverse-surface": "#e1e1ed",
+                        "primary-fixed": "#ffd9dc",
+                        "on-primary-fixed": "#400011",
+                        "on-background": "#e1e1ed",
+                        "on-tertiary": "#1000a9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "space-xl": "2.5rem",
+                        "space-sm": "0.5rem",
+                        "space-xs": "0.25rem",
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "margin": "2rem",
+                        "space-md": "1rem",
+                        "gutter-mobile": "1rem",
+                        "space-lg": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "display-md": ["Outfit"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "display-md-mobile": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Outfit"],
+                        "title-lg": ["Plus Jakarta Sans"],
+                        "title-md": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Outfit"],
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+                        "display-md": ["44px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "display-md-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "title-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "title-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+
+        .material-symbols-outlined.fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        /* Ambient Glows and Cinema Effects */
+        .glow-aura {
+            box-shadow: 0 0 24px -2px rgba(255, 79, 115, 0.45);
+        }
+
+        .glow-aura-sm {
+            box-shadow: 0 0 16px -2px rgba(255, 79, 115, 0.35);
+        }
+
+        .glass-panel {
+            background: rgba(29, 31, 40, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .screen-arc {
+            border-top: 3px solid #ffb2ba;
+            border-radius: 50% / 100% 100% 0 0;
+            box-shadow: 0 -8px 24px -4px rgba(255, 178, 186, 0.4);
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface text-on-surface font-body-md min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+    <!-- ================= TOP NAVIGATION BAR (Anchored Shared Component) ================= -->
+    <header
+        class="bg-surface/90 dark:bg-surface/90 backdrop-blur-md shadow-2xl dark:shadow-2xl border-b border-outline-variant/20 dark:border-outline-variant/20 sticky top-0 z-50">
+        <div class="w-full max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+            <!-- Brand & Global Nav Links -->
+            <div class="flex items-center gap-10">
+                <a class="text-headline-md font-headline-md font-bold tracking-tight text-primary dark:text-primary flex items-center gap-2"
+                    href="#">
+                    <span class="material-symbols-outlined text-primary text-3xl"
+                        data-icon="local_movies">local_movies</span>
+                    <span>Cineva</span>
+                </a>
+                <!-- Desktop Navigation: "Movies" is active for movie details -->
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-primary dark:text-primary font-label-lg text-label-lg border-b-2 border-primary pb-1 transition-all duration-200 ease-out active:scale-95"
+                        href="#">Movies</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-label-lg text-label-lg transition-colors hover:text-primary dark:hover:text-primary hover:bg-surface-container-high/40 dark:hover:bg-surface-container-high/40 px-2 py-1 rounded transition-all duration-200 ease-out active:scale-95"
+                        href="#">Stream</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-label-lg text-label-lg transition-colors hover:text-primary dark:hover:text-primary hover:bg-surface-container-high/40 dark:hover:bg-surface-container-high/40 px-2 py-1 rounded transition-all duration-200 ease-out active:scale-95"
+                        href="#">Experiences</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-label-lg text-label-lg transition-colors hover:text-primary dark:hover:text-primary hover:bg-surface-container-high/40 dark:hover:bg-surface-container-high/40 px-2 py-1 rounded transition-all duration-200 ease-out active:scale-95"
+                        href="#">Events</a>
+                </nav>
+            </div>
+            <!-- Right Action Cluster: Location, Search, Actions -->
+            <div class="flex items-center gap-4">
+                <!-- Search Input Bar (on right) -->
+                <div class="hidden lg:flex items-center relative">
+                    <span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-lg"
+                        data-icon="search">search</span>
+                    <input
+                        class="h-10 pl-9 pr-4 py-2 w-64 bg-surface-container text-on-surface placeholder:text-on-surface-variant/60 font-body-sm text-body-sm rounded-lg border border-outline-variant/30 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                        placeholder="Search movies, theaters, genres..." type="text" />
+                </div>
+                <!-- Trailing Secondary: Location -->
+                <button
+                    class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-primary font-label-md text-label-md transition-colors border border-outline-variant/20">
+                    <span class="material-symbols-outlined text-sm text-secondary"
+                        data-icon="location_on">location_on</span>
+                    <span>Location: New York</span>
+                </button>
+                <!-- Trailing Icon Actions -->
+                <div class="flex items-center gap-1 text-on-surface-variant">
+                    <button
+                        class="p-2 rounded-full hover:bg-surface-container-high hover:text-primary transition-colors"
+                        title="My Bookings">
+                        <span class="material-symbols-outlined text-xl"
+                            data-icon="confirmation_number">confirmation_number</span>
+                    </button>
+                    <button
+                        class="p-2 rounded-full hover:bg-surface-container-high hover:text-primary transition-colors relative"
+                        title="Notifications">
+                        <span class="material-symbols-outlined text-xl" data-icon="notifications">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary-container"></span>
+                    </button>
+                </div>
+                <!-- Trailing Primary Action: Sign In / User Profile -->
+                <div class="flex items-center gap-3 pl-2 border-l border-outline-variant/30">
+                    <button
+                        class="hidden sm:inline-flex px-4 py-2 bg-primary-container hover:bg-inverse-primary text-on-primary font-label-md text-label-md rounded-lg transition-all duration-200 glow-aura-sm active:scale-95">
+                        Sign In
+                    </button>
+                    <div
+                        class="w-9 h-9 rounded-full overflow-hidden border border-outline-variant/40 ring-1 ring-primary/20">
+                        <img alt="Cineva User Profile Avatar" class="w-full h-full object-cover"
+                            data-alt="Close up portrait photograph of a young urban movie enthusiast smiling softly in a dimly lit theater setting, rim lit by warm amber and radiant crimson neon auditorium glow. Clean cinematic aesthetic."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZrvxPdEOePVLTRnWbQQEg_q9511UzOd3GxRUkm55te1AcuMQj2v42qhQ3itrg3_Xv0HIzQKKPNmGEoxKKMJCj34TGGBr_23E5UmLf6vi5yY6ewyLI95T6ynLud29tDpoy9uyjwoOkgVRaq9cFwaFwc6bBdRF7urSM_KEsCiGb-SBaPLBnS0xdgcsJBCs2Lo1wH7sOkS7pkoBRMTutZg7uoQwjRHu1JLLeIci79t2Vl_k5IgBK8fnMQg" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ================= IMMERSIVE BACKDROP HERO SECTION ================= -->
+    <section class="relative w-full overflow-hidden bg-surface-container-lowest">
+        <!-- Ambient Cinematic Backdrop Layer -->
+        <div class="absolute inset-0 z-0">
+            <div class="w-full h-full bg-cover bg-center filter brightness-[0.38] contrast-125 transform scale-105"
+                data-alt="Epic wide cinematic sci-fi movie still capturing a sprawling alien desert landscape under two gargantuan moons and a shimmering interstellar nebula. In the foreground, cloaked silhouettes stand on towering obsidian sand dunes with high-tech glowing weaponry and dust swirled by supersonic harvesters. Vibrant warm amber and crimson cinematic tones, atmospheric cinematic dark aesthetic."
+                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAnU-cW1YwTqY_czNA0Z4MOdlD6SPxhmc93NJPM6kK5p6DHuGYvIyvxYVMpf3bMgfAFnXmjFCQri71sSWc6OPqgezSiHZyBeLJPx0rvZgKQ5xjKs49d8FYi6XIybFtzCHpeXNMLktKcKd0kYfCguK8W1plBMcWuZZj2ohSc3SGfgtLYPSGrxE1ZkWXR-DW9BPOBY3DmMDYb2ZSEOh8rBF0iMFGHl2vvTmKT4kG2ZS1_ks2K0hN__nwlyA')">
+            </div>
+            <!-- Complex Gradient Vignettes for Theater Darkness -->
+            <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-surface via-surface/60 to-transparent"></div>
+        </div>
+        <!-- Hero Content Container -->
+        <div class="relative z-10 max-w-7xl mx-auto px-6 pt-10 pb-16">
+            <!-- Breadcrumb Navigation -->
+            <nav class="flex items-center gap-2 mb-6 font-label-md text-label-md text-on-surface-variant/80">
+                <a class="hover:text-primary transition-colors" href="#">Movies</a>
+                <span class="material-symbols-outlined text-xs" data-icon="chevron_right">chevron_right</span>
+                <a class="hover:text-primary transition-colors" href="#">Sci-Fi &amp; Action</a>
+                <span class="material-symbols-outlined text-xs" data-icon="chevron_right">chevron_right</span>
+                <span class="text-on-surface">Chronicles of Dune: Oblivion</span>
+            </nav>
+            <!-- Grid: Left Poster Artwork + Right Narrative Metadata -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                <!-- Left: Poster Column (3:4 Ratio Glass Enclosure) -->
+                <div class="lg:col-span-4 xl:col-span-3 flex flex-col items-center">
+                    <div
+                        class="relative w-full max-w-[320px] rounded-xl overflow-hidden border border-outline-variant/30 shadow-2xl group">
+                        <img alt="Chronicles of Dune: Oblivion Official Theatrical Poster"
+                            class="w-full aspect-[3/4] object-cover transition-transform duration-500 group-hover:scale-105"
+                            data-alt="Official high-contrast theatrical release movie poster for Chronicles of Dune Oblivion. Features a brooding cinematic warrior in textured futuristic desert armor with piercing neon blue eyes standing against towering monolithic dune temples and crimson eclipse sky. Typography is bold and elegant, with amber sand particles floating in zero gravity."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8Jc8ec2NpsBbhzBFGQ_0YT8fU59rQCNgznpVPN2vgHXtDPGHskUNEYv6KaJm1CCkAD-02RQnl5kudZ2NFxxmqoCY10amYvYsitDKN4PjYf216P6QuOWxk-84wcchHsBkVHIyhrE7Bnqs7EmTy83iU3jdGoJr3AQNVU0bknS4QiKRbckXiC__2rzae3sTM4vWimmKwiSfXB4hgQH2BVINmWuMYgLVueQgZUChkkInD9K07WrvAPDRWLA" />
+                        <div
+                            class="absolute top-3 right-3 bg-surface-container-highest/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-outline-variant/40 flex items-center gap-1 text-secondary font-label-sm text-label-sm">
+                            <span class="material-symbols-outlined text-sm fill-icon" data-icon="grade"
+                                data-weight="fill">grade</span>
+                            <span>9.4 SCORE</span>
+                        </div>
+                        <div
+                            class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-on-surface-variant font-label-sm bg-surface-container-lowest/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-outline-variant/20">
+                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm"
+                                    data-icon="volume_up">volume_up</span> Dolby Atmos</span>
+                            <span class="text-primary font-semibold">IMAX Laser 3D</span>
+                        </div>
+                    </div>
+                    <!-- Quick Share & Wishlist buttons underneath poster -->
+                    <div class="w-full max-w-[320px] flex items-center justify-between mt-4 gap-2">
+                        <button
+                            class="flex-1 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm flex items-center justify-center gap-1.5 border border-outline-variant/30 transition-colors">
+                            <span class="material-symbols-outlined text-sm" data-icon="bookmark_add">bookmark_add</span>
+                            <span>Add Watchlist</span>
+                        </button>
+                        <button
+                            class="p-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors"
+                            title="Share movie">
+                            <span class="material-symbols-outlined text-base" data-icon="share">share</span>
+                        </button>
+                        <button
+                            class="p-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors"
+                            title="Download Screening Presskit">
+                            <span class="material-symbols-outlined text-base" data-icon="download">download</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Right: Title, Badges, Metrics & Primary CTA Area -->
+                <div class="lg:col-span-8 xl:col-span-9 flex flex-col justify-between">
+                    <div>
+                        <!-- Badges Row -->
+                        <div class="flex flex-wrap items-center gap-2.5 mb-3">
+                            <span
+                                class="px-2.5 py-0.5 rounded bg-primary-container/20 text-primary border border-primary/30 font-label-sm text-label-sm uppercase tracking-wider">
+                                Now Showing in Theaters
+                            </span>
+                            <span
+                                class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant border border-outline-variant/30 font-label-sm text-label-sm">
+                                PG-13
+                            </span>
+                            <span
+                                class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant border border-outline-variant/30 font-label-sm text-label-sm flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs" data-icon="schedule">schedule</span> 2h
+                                45m
+                            </span>
+                            <span
+                                class="px-2 py-0.5 rounded bg-surface-container-highest text-secondary border border-secondary/30 font-label-sm text-label-sm">
+                                2024
+                            </span>
+                        </div>
+                        <!-- Movie Headline Title -->
+                        <h1 class="font-display-lg text-display-lg text-on-surface tracking-tight mb-3">
+                            Chronicles of Dune: <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary">Oblivion</span>
+                        </h1>
+                        <!-- Meta: Genres, Audio & Languages -->
+                        <div
+                            class="flex flex-wrap items-center gap-y-2 gap-x-6 text-on-surface-variant font-label-md text-label-md mb-6">
+                            <div class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-secondary text-sm"
+                                    data-icon="category">category</span>
+                                <span class="text-on-surface font-semibold">Genres:</span>
+                                <span>Sci-Fi, Action, Adventure, Epic Space Opera</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-primary text-sm"
+                                    data-icon="translate">translate</span>
+                                <span class="text-on-surface font-semibold">Languages:</span>
+                                <span>English (Original), Spanish, French Subtitles</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-secondary-fixed text-sm"
+                                    data-icon="surround_sound">surround_sound</span>
+                                <span class="text-on-surface font-semibold">Experience Formats:</span>
+                                <span>Dolby Atmos 7.1 • IMAX Laser 3D • 4DX Recliner</span>
+                            </div>
+                        </div>
+                        <!-- User & Critics Rating Showcase Block (Glassmorphism Bento Panel) -->
+                        <div
+                            class="glass-panel p-5 rounded-xl grid grid-cols-1 md:grid-cols-12 gap-6 mb-8 items-center">
+                            <!-- Cineva Verified Score -->
+                            <div
+                                class="md:col-span-4 flex items-center gap-4 border-b md:border-b-0 md:border-r border-outline-variant/20 pb-4 md:pb-0 pr-2">
+                                <div
+                                    class="w-16 h-16 rounded-xl bg-primary-container/20 border border-primary/40 flex flex-col items-center justify-center text-primary glow-aura-sm">
+                                    <span class="font-display-md text-3xl leading-none font-bold">9.4</span>
+                                    <span
+                                        class="font-label-sm text-[9px] uppercase tracking-tighter text-on-surface-variant">Cineva</span>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-1 text-secondary">
+                                        <span class="material-symbols-outlined text-base fill-icon" data-icon="star"
+                                            data-weight="fill">star</span>
+                                        <span class="material-symbols-outlined text-base fill-icon" data-icon="star"
+                                            data-weight="fill">star</span>
+                                        <span class="material-symbols-outlined text-base fill-icon" data-icon="star"
+                                            data-weight="fill">star</span>
+                                        <span class="material-symbols-outlined text-base fill-icon" data-icon="star"
+                                            data-weight="fill">star</span>
+                                        <span class="material-symbols-outlined text-base fill-icon"
+                                            data-icon="star_half" data-weight="fill">star_half</span>
+                                    </div>
+                                    <p class="font-title-sm text-title-sm text-on-surface font-semibold mt-0.5">
+                                        Exceptional Cinema</p>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant">58,420 Verified Ratings
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Critics Rotten Style Popcorn Meter -->
+                            <div
+                                class="md:col-span-4 flex items-center gap-4 border-b md:border-b-0 md:border-r border-outline-variant/20 pb-4 md:pb-0 pr-2">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-secondary-container/20 border border-secondary/40 flex items-center justify-center text-secondary text-2xl font-bold">
+                                    96%
+                                </div>
+                                <div>
+                                    <p class="font-title-sm text-title-sm text-on-surface flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-error text-lg"
+                                            data-icon="local_fire_department">local_fire_department</span>
+                                        <span>Certified Fresh</span>
+                                    </p>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant">348 Top Film Critics
+                                        Consensus</p>
+                                </div>
+                            </div>
+                            <!-- Star Histogram Breakdown & Rate Trigger -->
+                            <div class="md:col-span-4 flex flex-col justify-between">
+                                <div class="space-y-1">
+                                    <!-- 5 star bar -->
+                                    <div class="flex items-center gap-2 text-xs">
+                                        <span class="text-on-surface-variant w-3">5★</span>
+                                        <div
+                                            class="flex-1 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                                            <div class="h-full bg-primary rounded-full" style="width: 82%;"></div>
+                                        </div>
+                                        <span class="text-on-surface-variant/80 text-[10px] w-6">82%</span>
+                                    </div>
+                                    <!-- 4 star bar -->
+                                    <div class="flex items-center gap-2 text-xs">
+                                        <span class="text-on-surface-variant w-3">4★</span>
+                                        <div
+                                            class="flex-1 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                                            <div class="h-full bg-secondary rounded-full" style="width: 14%;"></div>
+                                        </div>
+                                        <span class="text-on-surface-variant/80 text-[10px] w-6">14%</span>
+                                    </div>
+                                    <!-- 3 star bar -->
+                                    <div class="flex items-center gap-2 text-xs">
+                                        <span class="text-on-surface-variant w-3">3★</span>
+                                        <div
+                                            class="flex-1 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                                            <div class="h-full bg-surface-bright rounded-full" style="width: 3%;"></div>
+                                        </div>
+                                        <span class="text-on-surface-variant/80 text-[10px] w-6">3%</span>
+                                    </div>
+                                </div>
+                                <button
+                                    class="mt-3 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-label-sm rounded-lg border border-outline-variant/30 transition-colors"
+                                    onclick="document.getElementById('rate-modal').classList.remove('hidden')">
+                                    <span class="material-symbols-outlined text-sm"
+                                        data-icon="edit_note">edit_note</span>
+                                    <span>Rate This Movie</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- PRIMARY ACTION AREA: Book CTA & Watch Trailer Button -->
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <!-- Book Tickets CTA (Smooth scroll to showtimes) -->
+                        <a class="px-8 py-4 bg-primary-container hover:bg-inverse-primary text-on-primary font-title-md text-title-md rounded-lg font-bold flex items-center gap-3 transition-all duration-200 glow-aura hover:scale-[1.02] active:scale-95"
+                            href="#showtimes-section">
+                            <span class="material-symbols-outlined text-2xl"
+                                data-icon="confirmation_number">confirmation_number</span>
+                            <span>Book Tickets</span>
+                        </a>
+                        <!-- Watch Official Trailer Button (Triggers trailer preview) -->
+                        <a class="px-6 py-4 bg-surface-container-high/80 hover:bg-surface-bright text-on-surface font-title-md text-title-md rounded-lg font-semibold flex items-center gap-2.5 border border-outline-variant/30 backdrop-blur-md transition-all duration-200 hover:border-primary/50"
+                            href="#trailer-preview">
+                            <span class="material-symbols-outlined text-primary text-2xl"
+                                data-icon="play_circle">play_circle</span>
+                            <span>Watch Official Trailer (3:12)</span>
+                        </a>
+                        <div class="ml-auto hidden xl:flex items-center gap-2 text-xs text-on-surface-variant">
+                            <span class="material-symbols-outlined text-base text-secondary"
+                                data-icon="verified">verified</span>
+                            <span>Direct Cinema Seating Guaranteed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ================= MAIN CONTENT CANVAS ================= -->
+    <main class="max-w-7xl mx-auto px-6 py-12 space-y-16">
+        <!-- 1. TRAILER SECTION & STORYLINE / CAST BENTO -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- Synopsis & Visual Storyline (7 Columns) -->
+            <section class="lg:col-span-7 space-y-8">
+                <!-- Storyline Block -->
+                <div class="glass-panel p-6 sm:p-8 rounded-xl relative overflow-hidden">
+                    <div
+                        class="flex items-center gap-2 text-primary font-label-md text-label-md uppercase tracking-wider mb-2">
+                        <span class="material-symbols-outlined text-base" data-icon="auto_stories">auto_stories</span>
+                        <span>The Odyssey Continues</span>
+                    </div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Official Synopsis</h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed mb-6">
+                        Beyond the burning dunes of Arrakis, a silent cosmic catastrophe unravels. Paul Atreides
+                        confronts the shadowed prophecies of the deep void as ancient guild machines awaken from
+                        centuries of cryo-sleep. With the universe on the edge of extinction, fractured alliances across
+                        desolate star systems must choose between ultimate imperial subjugation or complete oblivion.
+                        Shot natively with IMAX 70mm digital optics.
+                    </p>
+                    <!-- Directors & Production Key Credits -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 border-t border-outline-variant/20">
+                        <div>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Directed By</p>
+                            <p class="font-title-sm text-title-sm text-on-surface font-semibold mt-0.5">Denis V. Laurent
+                            </p>
+                        </div>
+                        <div>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Screenplay By</p>
+                            <p class="font-title-sm text-title-sm text-on-surface font-semibold mt-0.5">Jon Spaihts
+                                &amp; Eric R.</p>
+                        </div>
+                        <div>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Musical Score</p>
+                            <p class="font-title-sm text-title-sm text-secondary font-semibold mt-0.5">Hans Z. Studio
+                                Live</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Visual Cast Carousel Section -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-secondary" data-icon="groups">groups</span>
+                            <h3 class="font-headline-sm text-headline-sm text-on-surface">Top Billed Cast</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="p-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors"
+                                title="Previous Cast">
+                                <span class="material-symbols-outlined text-sm" data-icon="arrow_back">arrow_back</span>
+                            </button>
+                            <button
+                                class="p-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors"
+                                title="Next Cast">
+                                <span class="material-symbols-outlined text-sm"
+                                    data-icon="arrow_forward">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Cast Avatar Cards Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <!-- Cast Item 1 -->
+                        <div
+                            class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 hover:border-primary/40 transition-colors text-center flex flex-col items-center group">
+                            <div
+                                class="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-outline-variant/40 group-hover:border-primary transition-colors">
+                                <img alt="Timothée V. as Paul Atreides" class="w-full h-full object-cover"
+                                    data-alt="Close up dramatic studio portrait of lead actor Timothée V playing Paul Atreides with sharp cheekbones and piercing gaze, lit with low key warm cinematic amber lighting on deep obsidian background. Premium film casting photography style."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCK89CswuQQVP67Ozr3YyNbTXEQGhODGq95biGB51zWUF5Br0QWNceBLB9Mu2qE5hrBtJzC38pWdYfO6orRluso9tz1XvNujQvKqN9sx8pjKgZ3IFxAPUtqRGItyNOytvqbjiklQ90ci-UaIFzltxAr-LOrdu8-wAtXusHrlm9_PwMxqw07hPpZV-C02Dfc6k6_mE3wYzP45y5_FElO16bPh8dg2MJrG3UzO7rV7A9jwwgn3AclcnYNTQ" />
+                            </div>
+                            <h4 class="font-title-sm text-title-sm text-on-surface font-semibold">Timothée V.</h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Paul Atreides</p>
+                        </div>
+                        <!-- Cast Item 2 -->
+                        <div
+                            class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 hover:border-primary/40 transition-colors text-center flex flex-col items-center group">
+                            <div
+                                class="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-outline-variant/40 group-hover:border-primary transition-colors">
+                                <img alt="Florence P. as Princess Irulan" class="w-full h-full object-cover"
+                                    data-alt="Editorial portrait of lead actress Florence P in regal aristocratic cinematic robes with braided golden hair, soft ambient crimson theater backlight and subtle lens flare. Atmospheric cinematic lighting."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0TEnHCv_MoQpdQpJRKNwpPOz8rTt9AG3LIzjioClgxse_m8aSEzOfDl-5BiaWGFUJuJx4LIQVoaJlu1CasQIDsGD17drgHP_9_X_nARFFx7ttihc5dpG-Z_wgDaB7vVDWNf0z9_NszyWZSH7X80tKMjWGmcGdyLUgDdxGrKAXdIxy9NEkSx_ZjmR-7bMqj_jy0VwOcY75UALpE8FuBDeifsnvv8ngpSMeVlZ6C7FFXqPgcJIsNtMwYw" />
+                            </div>
+                            <h4 class="font-title-sm text-title-sm text-on-surface font-semibold">Florence P.</h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Princess Irulan</p>
+                        </div>
+                        <!-- Cast Item 3 -->
+                        <div
+                            class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 hover:border-primary/40 transition-colors text-center flex flex-col items-center group">
+                            <div
+                                class="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-outline-variant/40 group-hover:border-primary transition-colors">
+                                <img alt="Oscar I. as Duke Leto" class="w-full h-full object-cover"
+                                    data-alt="Dramatic studio portrait of veteran actor Oscar I portraying Duke Leto with distinguished silver temples and an intense battle-worn expression, lit by high-contrast side key light and soft shadows."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9h5Yr9lM1-7geX4TBtN9vnN2HLW7RDdx4eoeT_e9di0_mMkDHYukmWxYwmNdSqpSmWcyIweJic4FkeJYjYKBhnirAeKwGRccG9SaFlgE-Xy9HmnLZuLzDUWwx9bwsJQdtl5vgXCAU6LHSl6HvX_fSXnV199oPUPGb14R_9eTRTmhfEW2yaFsHbh0EIhL3FUH1qGS97modeNfbKOTJvVR5SLdIhxA1JxFpJZAb_4D2O4sPXy4KAItSIA" />
+                            </div>
+                            <h4 class="font-title-sm text-title-sm text-on-surface font-semibold">Oscar I.</h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Duke Leto</p>
+                        </div>
+                        <!-- Cast Item 4 -->
+                        <div
+                            class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 hover:border-primary/40 transition-colors text-center flex flex-col items-center group">
+                            <div
+                                class="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-outline-variant/40 group-hover:border-primary transition-colors">
+                                <img alt="Zendaya as Chani" class="w-full h-full object-cover"
+                                    data-alt="Moody cinematic portrait of actress Zendaya in Fremen desert survival gear with vivid glowing spice-blue irises, dusty atmospheric particles floating across the foreground. Rich dark cinematic tones."
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoeHBfy10XbUV2Ry4FCEKL6AjoCNwf0gId4jByY-YuI6GA29OrsscsAu-rj52blzSh-BTKRGeuGwE46Mb-5jJNGOZKAPoHxwnl_KBepmGLRnCL5KOoqrCAAnnuaNti2z-Kiv-Wk2OC_qfEI_dmZWqTZqQpKBJFqFJzEVZR2OkpFghMY1NEMR-njZeDKSH6QfSOwexfTpKvGpy3HSR3Br-6f6IUGHEsVKDNwu-4x0iqmOb3xud--Twg-Q" />
+                            </div>
+                            <h4 class="font-title-sm text-title-sm text-on-surface font-semibold">Zendaya C.</h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Chani Kynes</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Video Trailer Player Showcase (5 Columns) -->
+            <section class="lg:col-span-5 space-y-4" id="trailer-preview">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary"
+                            data-icon="smart_display">smart_display</span>
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface">Official Trailer 2 (4K Ultra-HD)
+                        </h3>
+                    </div>
+                    <span
+                        class="font-label-sm text-label-sm text-secondary px-2 py-0.5 rounded bg-secondary/10 border border-secondary/20">Dolby
+                        5.1 Preview</span>
+                </div>
+                <!-- Interactive Trailer Thumbnail Container -->
+                <div
+                    class="relative w-full aspect-video rounded-xl overflow-hidden border border-outline-variant/30 shadow-2xl group cursor-pointer bg-surface-container-lowest">
+                    <img alt="Trailer Still Frame: Starship Descending"
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter brightness-90"
+                        data-alt="High quality film still trailer preview showing a monolithic starship descending through stormy crimson sandstorms over a colossal desert trench on Arrakis, with laser tracer fire illuminating the canyon walls. High production value science fiction cinema frame."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpZqWV6TCviMAvagx2XufQk9RGpqnqfDVVFbKSXHlXmm_Mj95wZ_bnkZqVfZlesfL7KcZoN1ddwT4NB7Ub9lhzICY5OnMUA2xR0g0tf_fvh2WaoQijsYlnRFQX23ihIzb-6QnMtBSGEl5W7Qpo-fNPztgBZ1MX-bnkFfhe9757si8ly2ozRrE6oZgichC46AxdLIIoeOFtoqLuGDJE9ffXisBhxmQmGZgOvNYTOvs4Tm5H7eDKyXsAjQ" />
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-transparent to-black/30">
+                    </div>
+                    <!-- Big Play Trigger -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div
+                            class="w-16 h-16 rounded-full bg-primary-container text-on-primary flex items-center justify-center glow-aura transition-all duration-300 group-hover:scale-110">
+                            <span class="material-symbols-outlined text-3xl" data-icon="play_arrow">play_arrow</span>
+                        </div>
+                    </div>
+                    <!-- Video Badges Bottom Bar -->
+                    <div
+                        class="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs font-label-md text-on-surface">
+                        <span class="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded">
+                            <span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+                            IMAX Exclusive Preview
+                        </span>
+                        <span class="bg-black/60 backdrop-blur-md px-2 py-1 rounded font-mono">03:12</span>
+                    </div>
+                </div>
+                <!-- Additional Exclusive Content Pills -->
+                <div class="grid grid-cols-2 gap-3 pt-1">
+                    <div
+                        class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/20 hover:border-primary/40 transition-colors flex items-center gap-3 cursor-pointer">
+                        <span class="material-symbols-outlined text-primary text-xl"
+                            data-icon="movie_edit">movie_edit</span>
+                        <div>
+                            <p class="font-title-sm text-title-sm text-on-surface font-semibold">Behind The Sound</p>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">4 min featurette</p>
+                        </div>
+                    </div>
+                    <div
+                        class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/20 hover:border-primary/40 transition-colors flex items-center gap-3 cursor-pointer">
+                        <span class="material-symbols-outlined text-secondary text-xl"
+                            data-icon="theater_comedy">theater_comedy</span>
+                        <div>
+                            <p class="font-title-sm text-title-sm text-on-surface font-semibold">Director Interview</p>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Exclusive Q&amp;A</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- ================= 2. FUTURE-READY SHOWTIME & THEATER SELECTION AREA ================= -->
+        <section class="pt-6" id="showtimes-section">
+            <!-- Section Header with Screen Arc Motif -->
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <div class="w-32 h-2 mx-auto screen-arc mb-4"></div>
+                <div
+                    class="flex items-center justify-center gap-2 text-primary font-label-md text-label-md uppercase tracking-wider mb-2">
+                    <span class="material-symbols-outlined text-base"
+                        data-icon="confirmation_number">confirmation_number</span>
+                    <span>Reserve Auditorium Seating</span>
+                </div>
+                <h2 class="font-display-md text-display-md text-on-surface">Select Showtime &amp; Theater</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-2">
+                    Experience the epic film in world-class acoustic laser theaters with verified seat booking.
+                </p>
+            </div>
+            <!-- Date Selector Pill Strip -->
+            <div
+                class="flex items-center justify-start sm:justify-center gap-3 overflow-x-auto pb-4 mb-6 scrollbar-none">
+                <!-- Active Date Pill (Fri 24 May) -->
+                <button
+                    class="px-5 py-3 rounded-xl bg-primary-container text-on-primary font-title-sm text-title-sm font-semibold flex flex-col items-center min-w-[100px] glow-aura-sm transition-transform active:scale-95">
+                    <span class="font-label-sm text-[11px] uppercase tracking-wider text-on-primary/80">Today</span>
+                    <span class="text-base font-bold">Fri 24 May</span>
+                </button>
+                <!-- Sat 25 May -->
+                <button
+                    class="px-5 py-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-title-sm text-title-sm font-semibold flex flex-col items-center min-w-[100px] border border-outline-variant/20 hover:border-primary/40 transition-colors">
+                    <span
+                        class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant">Tomorrow</span>
+                    <span class="text-base">Sat 25 May</span>
+                </button>
+                <!-- Sun 26 May -->
+                <button
+                    class="px-5 py-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-title-sm text-title-sm font-semibold flex flex-col items-center min-w-[100px] border border-outline-variant/20 hover:border-primary/40 transition-colors">
+                    <span
+                        class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant">Sunday</span>
+                    <span class="text-base">Sun 26 May</span>
+                </button>
+                <!-- Mon 27 May -->
+                <button
+                    class="px-5 py-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-title-sm text-title-sm font-semibold flex flex-col items-center min-w-[100px] border border-outline-variant/20 hover:border-primary/40 transition-colors">
+                    <span
+                        class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant">Holiday</span>
+                    <span class="text-base">Mon 27 May</span>
+                </button>
+                <!-- Tue 28 May -->
+                <button
+                    class="px-5 py-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-title-sm text-title-sm font-semibold flex flex-col items-center min-w-[100px] border border-outline-variant/20 hover:border-primary/40 transition-colors">
+                    <span
+                        class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant">Tuesday</span>
+                    <span class="text-base">Tue 28 May</span>
+                </button>
+            </div>
+            <!-- Format Filter Tabs -->
+            <div class="flex flex-wrap items-center justify-between gap-4 py-4 border-y border-outline-variant/20 mb-8">
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Active Filter -->
+                    <button
+                        class="px-4 py-1.5 rounded-full bg-surface-container-highest text-primary border border-primary/40 font-label-md text-label-md flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-primary"></span>
+                        All Formats
+                    </button>
+                    <button
+                        class="px-4 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors border border-outline-variant/20">
+                        IMAX 3D Laser
+                    </button>
+                    <button
+                        class="px-4 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors border border-outline-variant/20">
+                        Dolby Cinema
+                    </button>
+                    <button
+                        class="px-4 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors border border-outline-variant/20">
+                        Standard 2D
+                    </button>
+                    <button
+                        class="px-4 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors border border-outline-variant/20">
+                        Subtitled
+                    </button>
+                </div>
+                <!-- Legend -->
+                <div class="flex items-center gap-4 text-xs font-label-sm text-on-surface-variant">
+                    <span class="flex items-center gap-1.5"><span
+                            class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Available</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+                        Filling Fast</span>
+                    <span class="flex items-center gap-1.5"><span
+                            class="w-2.5 h-2.5 rounded-full bg-outline-variant"></span> Sold Out</span>
+                </div>
+            </div>
+            <!-- Theater Cards Stack -->
+            <div class="space-y-6">
+                <!-- THEATER 1: AMC Empire 25 & Cineva IMAX -->
+                <div
+                    class="glass-panel p-6 sm:p-8 rounded-xl relative overflow-hidden transition-all duration-200 hover:border-primary/30">
+                    <div
+                        class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-outline-variant/20">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="material-symbols-outlined text-primary text-xl"
+                                    data-icon="theater_comedy">theater_comedy</span>
+                                <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">AMC Empire 25
+                                    &amp; Cineva IMAX - Times Square</h3>
+                            </div>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2">
+                                <span>234 West 42nd Street, New York, NY 10036</span>
+                                <span>•</span>
+                                <span class="text-secondary font-semibold">0.8 miles away</span>
+                                <span>•</span>
+                                <span class="text-on-surface/80">Heated Luxury Recliners Available</span>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button
+                                class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm border border-outline-variant/20 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm" data-icon="directions">directions</span>
+                                <span>Map &amp; Parking</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Auditorium Screens in Theater 1 -->
+                    <div class="pt-6 space-y-6">
+                        <!-- Screen 1: IMAX Laser -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="px-2 py-0.5 rounded bg-primary-container/20 text-primary border border-primary/30 font-label-sm text-label-sm font-bold uppercase">
+                                        Auditorium 1 • IMAX Laser
+                                    </span>
+                                    <span class="text-xs text-on-surface-variant font-label-sm">Laser Projection •
+                                        12-Channel Immersive Audio</span>
+                                </div>
+                                <span class="font-title-sm text-title-sm text-on-surface font-semibold">$24.50 <span
+                                        class="text-xs font-normal text-on-surface-variant">/ ticket</span></span>
+                            </div>
+                            <!-- Showtime Pills -->
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <!-- 12:30 PM -->
+                                <button
+                                    class="p-3 rounded-lg bg-surface-container-low hover:bg-primary-container hover:text-on-primary text-on-surface font-label-lg text-label-lg flex flex-col items-center justify-center border border-outline-variant/20 transition-all group active:scale-95"
+                                    onclick="selectShowtime('AMC Times Sq', 'Auditorium 1 (IMAX)', '12:30 PM', '$24.50')">
+                                    <span class="font-bold">12:30 PM</span>
+                                    <span
+                                        class="text-[11px] text-emerald-400 group-hover:text-on-primary flex items-center gap-1 mt-0.5">
+                                        <span
+                                            class="w-1.5 h-1.5 rounded-full bg-emerald-400 group-hover:bg-on-primary"></span>
+                                        72 Seats Open
+                                    </span>
+                                </button>
+                                <!-- 03:45 PM -->
+                                <button
+                                    class="p-3 rounded-lg bg-surface-container-low hover:bg-primary-container hover:text-on-primary text-on-surface font-label-lg text-label-lg flex flex-col items-center justify-center border border-outline-variant/20 transition-all group active:scale-95"
+                                    onclick="selectShowtime('AMC Times Sq', 'Auditorium 1 (IMAX)', '03:45 PM', '$24.50')">
+                                    <span class="font-bold">03:45 PM</span>
+                                    <span
+                                        class="text-[11px] text-emerald-400 group-hover:text-on-primary flex items-center gap-1 mt-0.5">
+                                        <span
+                                            class="w-1.5 h-1.5 rounded-full bg-emerald-400 group-hover:bg-on-primary"></span>
+                                        44 Seats Open
+                                    </span>
+                                </button>
+                                <!-- 07:15 PM (Filling Fast) -->
+                                <button
+                                    class="p-3 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-on-primary text-on-surface font-label-lg text-label-lg flex flex-col items-center justify-center border border-secondary/40 transition-all group active:scale-95 ring-1 ring-secondary/30"
+                                    onclick="selectShowtime('AMC Times Sq', 'Auditorium 1 (IMAX)', '07:15 PM', '$24.50')">
+                                    <span class="font-bold text-secondary group-hover:text-on-primary">07:15 PM</span>
+                                    <span
+                                        class="text-[11px] text-secondary group-hover:text-on-primary flex items-center gap-1 mt-0.5 font-medium">
+                                        <span
+                                            class="w-1.5 h-1.5 rounded-full bg-secondary group-hover:bg-on-primary"></span>
+                                        Filling Fast (8 left)
+                                    </span>
+                                </button>
+                                <!-- 10:30 PM -->
+                                <button
+                                    class="p-3 rounded-lg bg-surface-container-low hover:bg-primary-container hover:text-on-primary text-on-surface font-label-lg text-label-lg flex flex-col items-center justify-center border border-outline-variant/20 transition-all group active:scale-95"
+                                    onclick="selectShowtime('AMC Times Sq', 'Auditorium 1 (IMAX)', '10:30 PM', '$24.50')">
+                                    <span class="font-bold">10:30 PM</span>
+                                    <span
+                                        class="text-[11px] text-emerald-400 group-hover:text-on-primary flex items-center gap-1 mt-0.5">
+                                        <span
+                                            class="w-1.5 h-1.5 rounded-full bg-emerald-400 group-hover:bg-on-primary"></span>
+                                        88 Seats Open
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Screen 4: Dolby Cinema -->
+                        <div class="space-y-3 pt-3 border-t border-outline-variant/10">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface border border-outline-variant/30 font-label-sm text-label-sm font-bold uppercase">
+                                        Auditorium 4 • Dolby Cinema
+                                    </span>
+                                    <span class="text-xs text-on-surface-variant font-label-sm">Dolby Vision HDR •
+                                        Moving Audio</span>
+                                </div>
+                                <span class="font-title-sm text-title-sm text-on-surface font-semibold">$19.00 <span
+                                        class="text-xs font-normal text-on-surface-variant">/ ticket</span></span>
+                            </div>
+                            <!-- Showtime Pills -->
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <!-- 01:15 PM -->
+                                <button
+                                    class="p-3 rounded-lg bg-surface-container-low hover:bg-primary-container hover:text-on-primary text-on-surface font-label-lg text-label-lg flex flex-col items-center justify-center border border-outline-variant/20 transition-all group active:scale-95"
+                                    onclick="selectShowtime('AMC Times Sq', 'Auditorium 4 (Dolby)', '01:15 PM', '$19.00')">
+                                    <span class="font-bold">01:15 PM</span>
+                                    <span
+                                        class="text-[11px] text-emerald-400 group-hover:text-on-primary flex items-center gap-1 mt-0.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Available
+                                    </span>
+                                </button>
+                                <!-- 05:00 PM -->
+                                <button
+                                    class="p-3 rounded-lg bg-surface-container-low hover:bg-primary-container hover:text-on-primary text-on-surface font-label-lg text-label-lg flex flex-col items-center justify-center border border-outline-variant/20 transition-all group active:scale-95"
+                                    onclick="selectShowtime('AMC Times Sq', 'Auditorium 4 (Dolby)', '05:00 PM', '$19.00')">
+                                    <span class="font-bold">05:00 PM</span>
+                                    <span
+                                        class="text-[11px] text-emerald-400 group-hover:text-on-primary flex items-center gap-1 mt-0.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Available
+                                    </span>
+                                </button>
+                                <!-- 08:45 PM -->
+                                <button
+                                    class="p-3 rounded-lg bg-surface-container-low hover:bg-primary-container hover:text-on-primary text-on-surface font-label-lg text-label-lg flex flex-col items-center justify-center border border-outline-variant/20 transition-all group active:scale-95"
+                                    onclick="selectShowtime('AMC Times Sq', 'Auditorium 4 (Dolby)', '08:45 PM', '$19.00')">
+                                    <span class="font-bold">08:45 PM</span>
+                                    <span
+                                        class="text-[11px] text-emerald-400 group-hover:text-on-primary flex items-center gap-1 mt-0.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Available
+                                    </span>
+                                </button>
+                                <!-- 11:30 PM (Sold Out) -->
+                                <div
+                                    class="p-3 rounded-lg bg-surface-container-lowest/50 text-on-surface-variant/40 font-label-lg text-label-lg flex flex-col items-center justify-center border border-outline-variant/10 cursor-not-allowed">
+                                    <span class="font-bold line-through">11:30 PM</span>
+                                    <span class="text-[11px] flex items-center gap-1 mt-0.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span> Sold Out
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- THEATER 2: Regal Union Square 4DX & Cineva ScreenX -->
+                <div
+                    class="glass-panel p-6 sm:p-8 rounded-xl relative overflow-hidden transition-all duration-200 hover:border-primary/30">
+                    <div
+                        class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-outline-variant/20">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="material-symbols-outlined text-primary text-xl"
+                                    data-icon="theater_comedy">theater_comedy</span>
+                                <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Regal Union
+                                    Square 4DX &amp; Cineva ScreenX</h3>
+                            </div>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2">
+                                <span>850 Broadway, New York, NY 10003</span>
+                                <span>•</span>
+                                <span class="text-secondary font-semibold">1.4 miles away</span>
+                                <span>•</span>
+                                <span class="text-on-surface/80">Motion Seating &amp; 270° Panoramic Screen</span>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button
+                                class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm border border-outline-variant/20 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm" data-icon="directions">directions</span>
+                                <span>Map &amp; Directions</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Auditorium Showtimes -->
+                    <div class="pt-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-secondary/20 text-secondary border border-secondary/30 font-label-sm text-label-sm font-bold uppercase">
+                                    Auditorium 7 • 4DX Motion
+                                </span>
+                                <span class="text-xs text-on-surface-variant font-label-sm">Synchronized Motion Seats •
+                                    Atmospheric Fog &amp; Wind FX</span>
+                            </div>
+                            <span class="font-title-sm text-title-sm text-on-surface font-semibold">$27.00 <span
+                                    class="text-xs font-normal text-on-surface-variant">/ ticket</span></span>
+                        </div>
+                        <!-- Showtime Pills -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <!-- 02:00 PM -->
+                            <button
+                                class="p-3 rounded-lg bg-surface-container-low hover:bg-primary-container hover:text-on-primary text-on-surface font-label-lg text-label-lg flex flex-col items-center justify-center border border-outline-variant/20 transition-all group active:scale-95"
+                                onclick="selectShowtime('Regal Union Sq', 'Auditorium 7 (4DX)', '02:00 PM', '$27.00')">
+                                <span class="font-bold">02:00 PM</span>
+                                <span
+                                    class="text-[11px] text-emerald-400 group-hover:text-on-primary flex items-center gap-1 mt-0.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Available (34)
+                                </span>
+                            </button>
+                            <!-- 06:15 PM -->
+                            <button
+                                class="p-3 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-on-primary text-on-surface font-label-lg text-label-lg flex flex-col items-center justify-center border border-secondary/40 transition-all group active:scale-95 ring-1 ring-secondary/30"
+                                onclick="selectShowtime('Regal Union Sq', 'Auditorium 7 (4DX)', '06:15 PM', '$27.00')">
+                                <span class="font-bold text-secondary group-hover:text-on-primary">06:15 PM</span>
+                                <span
+                                    class="text-[11px] text-secondary group-hover:text-on-primary flex items-center gap-1 mt-0.5 font-medium">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Filling Fast (6 left)
+                                </span>
+                            </button>
+                            <!-- 09:30 PM -->
+                            <button
+                                class="p-3 rounded-lg bg-surface-container-low hover:bg-primary-container hover:text-on-primary text-on-surface font-label-lg text-label-lg flex flex-col items-center justify-center border border-outline-variant/20 transition-all group active:scale-95"
+                                onclick="selectShowtime('Regal Union Sq', 'Auditorium 7 (4DX)', '09:30 PM', '$27.00')">
+                                <span class="font-bold">09:30 PM</span>
+                                <span
+                                    class="text-[11px] text-emerald-400 group-hover:text-on-primary flex items-center gap-1 mt-0.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Available (52)
+                                </span>
+                            </button>
+                            <!-- 12:15 AM -->
+                            <div
+                                class="p-3 rounded-lg bg-surface-container-lowest/50 text-on-surface-variant/40 font-label-lg text-label-lg flex flex-col items-center justify-center border border-outline-variant/10 cursor-not-allowed">
+                                <span class="font-bold line-through">12:15 AM</span>
+                                <span class="text-[11px] flex items-center gap-1 mt-0.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span> Sold Out
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Seat Selection Preview Teaser Banner -->
+            <div class="mt-8 p-6 rounded-xl bg-surface-container-highest/60 border border-primary/30 flex flex-col md:flex-row items-center justify-between gap-6 glow-aura-sm"
+                id="seat-map-teaser">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-2xl" data-icon="event_seat">event_seat</span>
+                    </div>
+                    <div>
+                        <h4 class="font-title-md text-title-md text-on-surface font-bold">Interactive Seat Map Preview
+                            Ready</h4>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">
+                            Interactive seat map with real-time reservation opens automatically upon showtime selection.
+                            Recliner pods, wheelchair bays, and VIP lounge seats supported.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:flex items-center gap-2 text-xs text-on-surface-variant">
+                        <span class="w-4 h-4 rounded bg-primary"></span> <span>Selected</span>
+                        <span class="w-4 h-4 rounded bg-surface-container-high border border-white/20"></span>
+                        <span>Available</span>
+                        <span class="w-4 h-4 rounded bg-[#6366F1]"></span> <span>VIP Lounger</span>
+                    </div>
+                    <button
+                        class="px-5 py-2.5 bg-primary-container hover:bg-inverse-primary text-on-primary font-label-md text-label-md rounded-lg font-semibold transition-all"
+                        onclick="triggerSeatMapModal()">
+                        Launch Seat Grid
+                    </button>
+                </div>
+            </div>
+        </section>
+        <!-- ================= 3. VERIFIED VIEWER REVIEWS & RATINGS SECTION ================= -->
+        <section class="pt-6 space-y-8">
+            <!-- Section Top Header & Review Actions -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div
+                        class="flex items-center gap-2 text-secondary font-label-md text-label-md uppercase tracking-wider mb-1">
+                        <span class="material-symbols-outlined text-base" data-icon="rate_review">rate_review</span>
+                        <span>Audience Reactions</span>
+                    </div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Verified Viewer Reviews</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- Write a Review Button -->
+                    <button
+                        class="px-4 py-2.5 bg-surface-container hover:bg-surface-container-high text-primary border border-primary/40 font-label-md text-label-md rounded-lg flex items-center gap-2 transition-colors"
+                        onclick="document.getElementById('write-review-modal').classList.remove('hidden')">
+                        <span class="material-symbols-outlined text-base" data-icon="rate_review">rate_review</span>
+                        <span>Write a Review</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Filter Reviews By Tab Bar -->
+            <div class="flex flex-wrap items-center gap-2 border-b border-outline-variant/20 pb-3">
+                <button
+                    class="px-3.5 py-1.5 rounded-lg bg-surface-container-highest text-primary font-label-sm text-label-sm">
+                    All Reviews (1,248)
+                </button>
+                <button
+                    class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm transition-colors">
+                    Verified Ticket Buyers (982)
+                </button>
+                <button
+                    class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm transition-colors">
+                    Critical Acclaim
+                </button>
+                <button
+                    class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm transition-colors">
+                    Recent
+                </button>
+            </div>
+            <!-- Review Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Review Card 1 -->
+                <div class="glass-panel p-6 rounded-xl flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/40">
+                                    <img alt="Marcus Reed Reviewer Avatar" class="w-full h-full object-cover"
+                                        data-alt="Avatar portrait of a cinema reviewer with stylish glasses smiling against a clean dark studio background with subtle cool cinematic fill light."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmrhguGkml87PLoEMZ9OYmiTstrcoMnIBi1fnQF78unyOpww4IC5JQuVoaPShRgKop_EIMuo3Ufc06T-NiON5dVGWaZbayMcsWNon7FAMzgxewFj9FrcbXj-rR47lQpng25Z1xF6wdBnGM2zUG8RF39uLFvN0KgG2CW8UiO8BzBSFsme0UZxXZjr4vrEo_LMxlJeHU7t7YClFFKENa8XoebpI99vQLsp9NpgK7qafudgBUsFSL4Vek9g" />
+                                </div>
+                                <div>
+                                    <h4 class="font-title-sm text-title-sm text-on-surface font-semibold">Marcus Vance
+                                    </h4>
+                                    <!-- Verified Green Badge -->
+                                    <span
+                                        class="inline-flex items-center gap-1 font-label-sm text-[10px] text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded-full mt-0.5">
+                                        <span class="material-symbols-outlined text-xs"
+                                            data-icon="verified">verified</span>
+                                        Verified Booking • IMAX Times Sq
+                                    </span>
+                                </div>
+                            </div>
+                            <!-- Rating Score -->
+                            <div
+                                class="flex items-center gap-1 bg-surface-container px-2.5 py-1 rounded-lg border border-outline-variant/20 text-secondary font-bold text-sm">
+                                <span class="material-symbols-outlined text-base fill-icon" data-icon="star"
+                                    data-weight="fill">star</span>
+                                <span>10 / 10</span>
+                            </div>
+                        </div>
+                        <!-- Review Text -->
+                        <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                            "The scale of this film in genuine 70mm IMAX is physically staggering. The sound design
+                            during the third act battle sequence shakes the entire hall. Denis Laurent has crafted one
+                            of the finest sci-fi conclusions since Blade Runner 2049. Do not miss it in laser
+                            projection."
+                        </p>
+                    </div>
+                    <!-- Helpful Footer & Flag Action -->
+                    <div
+                        class="flex items-center justify-between pt-3 border-t border-outline-variant/10 text-xs text-on-surface-variant">
+                        <div class="flex items-center gap-4">
+                            <span class="text-on-surface-variant/70">Was this review helpful?</span>
+                            <button class="flex items-center gap-1 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-sm" data-icon="thumb_up">thumb_up</span> 142
+                            </button>
+                            <button class="flex items-center gap-1 hover:text-error transition-colors">
+                                <span class="material-symbols-outlined text-sm" data-icon="thumb_down">thumb_down</span>
+                                3
+                            </button>
+                        </div>
+                        <button class="hover:text-error transition-colors flex items-center gap-1"
+                            title="Report Review">
+                            <span class="material-symbols-outlined text-sm" data-icon="flag">flag</span> Report
+                        </button>
+                    </div>
+                </div>
+                <!-- Review Card 2 -->
+                <div class="glass-panel p-6 rounded-xl flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/40">
+                                    <img alt="Elena Rostova Reviewer Avatar" class="w-full h-full object-cover"
+                                        data-alt="Avatar portrait of a modern woman film critic looking into camera with natural expression in low key moody theater light with warm amber reflections."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPWAt61v3CUe9Wpv1TdzOYqX5hI4fIyjGZOr7HaPFE6QMr82A9KUGYwWYPdEDUXDQOoLq3jgvpojXXYg6vwq28_QWBnG4p-0-WmWA58FvsaPyvirxH1hW9f-fj5fqE4_eJ2JAcIv3m63vi48hBxcMeejYefDJDYN3cnYD-tw3mwjizw9RhtflchPItn93qNftIv85E8hu5ijOgVTq5-AbPa0WvHGX_t2vSpH2t6FYEZ6GzCgkkEZeExQ" />
+                                </div>
+                                <div>
+                                    <h4 class="font-title-sm text-title-sm text-on-surface font-semibold">Elena Rostova
+                                    </h4>
+                                    <span
+                                        class="inline-flex items-center gap-1 font-label-sm text-[10px] text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded-full mt-0.5">
+                                        <span class="material-symbols-outlined text-xs"
+                                            data-icon="verified">verified</span>
+                                        Verified Booking • Dolby Cinema
+                                    </span>
+                                </div>
+                            </div>
+                            <!-- Rating Score -->
+                            <div
+                                class="flex items-center gap-1 bg-surface-container px-2.5 py-1 rounded-lg border border-outline-variant/20 text-secondary font-bold text-sm">
+                                <span class="material-symbols-outlined text-base fill-icon" data-icon="star"
+                                    data-weight="fill">star</span>
+                                <span>9 / 10</span>
+                            </div>
+                        </div>
+                        <!-- Review Text -->
+                        <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                            "Visually impeccable. Florence Pugh gives an extraordinary performance that brings immense
+                            human depth to what could easily have been mere special effects showcase. The pacing in the
+                            mid-section is deliberate, but every frame is pure cinema artwork."
+                        </p>
+                    </div>
+                    <!-- Helpful Footer & Flag Action -->
+                    <div
+                        class="flex items-center justify-between pt-3 border-t border-outline-variant/10 text-xs text-on-surface-variant">
+                        <div class="flex items-center gap-4">
+                            <span class="text-on-surface-variant/70">Was this review helpful?</span>
+                            <button class="flex items-center gap-1 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-sm" data-icon="thumb_up">thumb_up</span> 89
+                            </button>
+                            <button class="flex items-center gap-1 hover:text-error transition-colors">
+                                <span class="material-symbols-outlined text-sm" data-icon="thumb_down">thumb_down</span>
+                                1
+                            </button>
+                        </div>
+                        <button class="hover:text-error transition-colors flex items-center gap-1"
+                            title="Report Review">
+                            <span class="material-symbols-outlined text-sm" data-icon="flag">flag</span> Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ================= 4. SIMILAR & RECOMMENDED MOVIES CAROUSEL ================= -->
+        <section class="pt-6 space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div
+                        class="flex items-center gap-2 text-primary font-label-md text-label-md uppercase tracking-wider mb-1">
+                        <span class="material-symbols-outlined text-base" data-icon="recommend">recommend</span>
+                        <span>Curated For You</span>
+                    </div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Similar &amp; Recommended Films</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button
+                        class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors"
+                        title="Previous Recommendations">
+                        <span class="material-symbols-outlined text-base" data-icon="chevron_left">chevron_left</span>
+                    </button>
+                    <button
+                        class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors"
+                        title="Next Recommendations">
+                        <span class="material-symbols-outlined text-base" data-icon="chevron_right">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Movie Posters Carousel Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+                <!-- Rec 1: Interstellar Resurgence -->
+                <div
+                    class="group rounded-xl overflow-hidden bg-surface-container-low border border-outline-variant/20 hover:border-primary/50 transition-all duration-300">
+                    <div class="relative aspect-[2/3] overflow-hidden">
+                        <img alt="Interstellar Resurgence Poster"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            data-alt="Futuristic sci-fi film poster of an astronaut floating beside a luminous gargantuan accretion disk black hole, with starlight reflecting off the golden visor. Deep cosmic dark aesthetic."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnwLCua6NJeQ0BwyREMXJurpi3N1kdmroNGZzmXqhXFPMCNOWeI-WJd-qLhD7DNDua__J7bLmeHGRjRvZjfrCEw8AQls3Is8aGkX7yPnvnGln_du09EcdErwUJ_SZSv3VKAGNnOt1TH8LyYdYfXx5iD2rh3ZFpcgrAL5n3wy1L35dPeA3O--4PRD6HumMaewc7EThxQLdTP_QIKGFWGOBoMMLMq3ticv_m6RKGvmWBrMlvWsNhPYGhUg" />
+                        <div
+                            class="absolute top-2 right-2 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-xs text-secondary font-bold flex items-center gap-0.5">
+                            <span class="material-symbols-outlined text-xs fill-icon" data-icon="star"
+                                data-weight="fill">star</span> 9.1
+                        </div>
+                        <div
+                            class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-surface-container-highest/90 text-[10px] font-bold text-on-surface">
+                            IMAX</div>
+                    </div>
+                    <div class="p-3">
+                        <h4
+                            class="font-title-sm text-title-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">
+                            Interstellar Resurgence</h4>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Sci-Fi • 2h 50m</p>
+                    </div>
+                </div>
+                <!-- Rec 2: Solar Echoes -->
+                <div
+                    class="group rounded-xl overflow-hidden bg-surface-container-low border border-outline-variant/20 hover:border-primary/50 transition-all duration-300">
+                    <div class="relative aspect-[2/3] overflow-hidden">
+                        <img alt="Solar Echoes Poster"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            data-alt="Theatrical movie poster displaying an abandoned terraforming station on Mars bathed in dramatic radioactive crimson sunrise, with deep obsidian shadows and solar flares in orbit."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhWH7OHBTcZO9b6022W6-wrtv5h2jMPfjuel0HNBDP9LgUOQAHuJeT1h7TgS4iTKsazHKcOA38D6Pha-x5Y0iJHPUFzw6EHEp5SK9BMXYAYXFui7e0beLt3QvsGnmr3SD8gsLwC63BPtGh9MxXIQW6WYqSWFbznIi5xsYwCvVmg0uCB7AJk9XvJwJUfjUQA4Aq4FhGMcuffh3wVPYWZgQudQBsnbNp8lMIWU91Zamtckq-hhncbAqeOA" />
+                        <div
+                            class="absolute top-2 right-2 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-xs text-secondary font-bold flex items-center gap-0.5">
+                            <span class="material-symbols-outlined text-xs fill-icon" data-icon="star"
+                                data-weight="fill">star</span> 8.8
+                        </div>
+                        <div
+                            class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-surface-container-highest/90 text-[10px] font-bold text-on-surface">
+                            Dolby 3D</div>
+                    </div>
+                    <div class="p-3">
+                        <h4
+                            class="font-title-sm text-title-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">
+                            Solar Echoes</h4>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Thriller • 2h 12m</p>
+                    </div>
+                </div>
+                <!-- Rec 3: Cybernetic Horizon -->
+                <div
+                    class="group rounded-xl overflow-hidden bg-surface-container-low border border-outline-variant/20 hover:border-primary/50 transition-all duration-300">
+                    <div class="relative aspect-[2/3] overflow-hidden">
+                        <img alt="Cybernetic Horizon Poster"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            data-alt="Cyberpunk sci-fi cinema poster featuring a robotic humanoid silhouette framed against neon drenched rain slick skyscraper alleys with floating holoscreens in Tokyo cyberpunk style."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaN516bYL63_gsEV-DoxeGN6FIs59xn9c1jwI0IzIIZhK9AsqROhWIxWjsNUHVcrRX--nVS9g519Hvnh0PqhTvEiReBtztt-Z4sLgCBVUD-Tx-TWu30vuaeeVYCh6-axI-w6DyzxZe777CLHl7DWl8BaOlJAX53Kosxl6Y4pSGwJvsEzL6zdL3jJhQD1NrQdqqewrro9vsoW0AeETSPmuauPOQDmXgVnx3elHXtNHSPI-JL-hBa9ActQ" />
+                        <div
+                            class="absolute top-2 right-2 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-xs text-secondary font-bold flex items-center gap-0.5">
+                            <span class="material-symbols-outlined text-xs fill-icon" data-icon="star"
+                                data-weight="fill">star</span> 8.9
+                        </div>
+                        <div
+                            class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-surface-container-highest/90 text-[10px] font-bold text-on-surface">
+                            Laser 2D</div>
+                    </div>
+                    <div class="p-3">
+                        <h4
+                            class="font-title-sm text-title-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">
+                            Cybernetic Horizon</h4>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Action • 2h 28m</p>
+                    </div>
+                </div>
+                <!-- Rec 4: The Void Wanderer -->
+                <div
+                    class="group rounded-xl overflow-hidden bg-surface-container-low border border-outline-variant/20 hover:border-primary/50 transition-all duration-300">
+                    <div class="relative aspect-[2/3] overflow-hidden">
+                        <img alt="The Void Wanderer Poster"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            data-alt="Cinematic movie poster with an ancient crystalline alien monolith discovered in Arctic snow under emerald aurora borealis lights, mysterious sci-fi thriller theme."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsKkzrnE7fFVFxlbYRPcB8eGaLVb-ESPUdxu525kzhRkPXMt0QRN2CKuOEevT9nFnStFt_vG6w1FTEj9s9d2s-KHM6PNApCOku9BepHHS3KasUw4S3GbyngkDM0fJNgS8RfcapUTMCjs8Vaa4QTV19pIDCFWTo1jRkeCk_M9AC_9crR1a5dwu_XLaMO2EvMU1mFCA7SQkSbUjVsWGBs-bIH4dSSztunTeSgpar3qW8n12uKSkJWraSWA" />
+                        <div
+                            class="absolute top-2 right-2 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-xs text-secondary font-bold flex items-center gap-0.5">
+                            <span class="material-symbols-outlined text-xs fill-icon" data-icon="star"
+                                data-weight="fill">star</span> 9.3
+                        </div>
+                        <div
+                            class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-surface-container-highest/90 text-[10px] font-bold text-on-surface">
+                            ScreenX</div>
+                    </div>
+                    <div class="p-3">
+                        <h4
+                            class="font-title-sm text-title-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">
+                            The Void Wanderer</h4>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Mystery • 2h 35m</p>
+                    </div>
+                </div>
+                <!-- Rec 5: Chrono Protocol -->
+                <div
+                    class="hidden lg:block group rounded-xl overflow-hidden bg-surface-container-low border border-outline-variant/20 hover:border-primary/50 transition-all duration-300">
+                    <div class="relative aspect-[2/3] overflow-hidden">
+                        <img alt="Chrono Protocol Poster"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            data-alt="Action thriller movie poster showing time dilation ripples breaking through a futuristic steel metropolis with shattered hourglass glass particles floating in deep indigo space."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEs2FVElFWjvOV-laAcbUQko_PE5_y9-zOOQULE92T_oIFaN0SJcyAg30dnEF85SpmyOcPdNNglwZETReWusuQUWbJFJz2YmvZXYOym0fwU3Zu5kmNMGIVeT1iHXTAUkdozIohYyaX0fbljJDmpX2dZ2-Wwi1_xrXvzciGJwHD64VFArmcORKLIqweze44ClyjckroGeAZuqVKVDGG9F8tmkZipJU2ugCL7yJKCE7rjQuKuJpYjKQN1A" />
+                        <div
+                            class="absolute top-2 right-2 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-xs text-secondary font-bold flex items-center gap-0.5">
+                            <span class="material-symbols-outlined text-xs fill-icon" data-icon="star"
+                                data-weight="fill">star</span> 8.7
+                        </div>
+                        <div
+                            class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-surface-container-highest/90 text-[10px] font-bold text-on-surface">
+                            4DX</div>
+                    </div>
+                    <div class="p-3">
+                        <h4
+                            class="font-title-sm text-title-sm text-on-surface font-semibold truncate group-hover:text-primary transition-colors">
+                            Chrono Protocol</h4>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Sci-Fi • 2h 05m</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- ================= INTERACTIVE SEAT SELECTION MODAL ================= -->
+    <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden"
+        id="seat-modal">
+        <div
+            class="bg-surface-container-low border border-outline-variant/30 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-outline-variant/20 flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-primary font-bold text-xs uppercase tracking-wider">Interactive Auditorium
+                            Map</span>
+                        <span class="text-on-surface-variant text-xs">•</span>
+                        <span class="text-secondary font-semibold text-xs" id="modal-showtime-meta">AMC Times Sq - 07:15
+                            PM</span>
+                    </div>
+                    <h3 class="font-headline-sm text-headline-sm text-on-surface mt-1">Select Seats - Chronicles of
+                        Dune: Oblivion</h3>
+                </div>
+                <button
+                    class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors"
+                    onclick="document.getElementById('seat-modal').classList.add('hidden')">
+                    <span class="material-symbols-outlined" data-icon="close">close</span>
+                </button>
+            </div>
+            <!-- Seat Map Canvas Viewport -->
+            <div class="p-6 overflow-y-auto flex-1 flex flex-col items-center">
+                <!-- Screen Arc Graphic -->
+                <div class="w-3/4 max-w-md screen-arc py-3 text-center mb-8">
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant/80">IMAX
+                        Laser Screen Direction</span>
+                </div>
+                <!-- Seat Grid Representation -->
+                <div class="space-y-3 w-full max-w-lg mb-8">
+                    <!-- Row A (Front) -->
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-xs text-on-surface-variant/60 w-4">A</span>
+                        <div class="flex gap-2">
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface-variant/30 flex items-center justify-center text-[10px] cursor-not-allowed">✕</button>
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface-variant/30 flex items-center justify-center text-[10px] cursor-not-allowed">✕</button>
+                            <div class="w-6"></div> <!-- aisle -->
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                        </div>
+                        <span class="text-xs text-on-surface-variant/60 w-4 text-right">A</span>
+                    </div>
+                    <!-- Row B (Middle with selected seats) -->
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-xs text-on-surface-variant/60 w-4">B</span>
+                        <div class="flex gap-2">
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                            <!-- Selected seats -->
+                            <button
+                                class="w-8 h-8 rounded bg-primary text-on-primary font-bold flex items-center justify-center text-[10px] glow-aura-sm">B3</button>
+                            <button
+                                class="w-8 h-8 rounded bg-primary text-on-primary font-bold flex items-center justify-center text-[10px] glow-aura-sm">B4</button>
+                            <div class="w-6"></div> <!-- aisle -->
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface-variant/30 flex items-center justify-center text-[10px] cursor-not-allowed">✕</button>
+                            <button
+                                class="w-8 h-8 rounded bg-surface-container-high border border-white/10 hover:border-primary flex items-center justify-center text-[10px]"></button>
+                        </div>
+                        <span class="text-xs text-on-surface-variant/60 w-4 text-right">B</span>
+                    </div>
+                    <!-- Row C (VIP Loungers) -->
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-xs text-secondary font-bold w-4">C</span>
+                        <div class="flex gap-2">
+                            <button
+                                class="w-8 h-8 rounded bg-[#6366F1]/20 border border-[#6366F1] text-secondary flex items-center justify-center text-[10px]">★</button>
+                            <button
+                                class="w-8 h-8 rounded bg-[#6366F1]/20 border border-[#6366F1] text-secondary flex items-center justify-center text-[10px]">★</button>
+                            <button
+                                class="w-8 h-8 rounded bg-[#6366F1]/20 border border-[#6366F1] text-secondary flex items-center justify-center text-[10px]">★</button>
+                            <button
+                                class="w-8 h-8 rounded bg-[#6366F1]/20 border border-[#6366F1] text-secondary flex items-center justify-center text-[10px]">★</button>
+                            <div class="w-6"></div> <!-- aisle -->
+                            <button
+                                class="w-8 h-8 rounded bg-[#6366F1]/20 border border-[#6366F1] text-secondary flex items-center justify-center text-[10px]">★</button>
+                            <button
+                                class="w-8 h-8 rounded bg-[#6366F1]/20 border border-[#6366F1] text-secondary flex items-center justify-center text-[10px]">★</button>
+                            <button
+                                class="w-8 h-8 rounded bg-[#6366F1]/20 border border-[#6366F1] text-secondary flex items-center justify-center text-[10px]">★</button>
+                            <button
+                                class="w-8 h-8 rounded bg-[#6366F1]/20 border border-[#6366F1] text-secondary flex items-center justify-center text-[10px]">★</button>
+                        </div>
+                        <span class="text-xs text-secondary font-bold w-4 text-right">C</span>
+                    </div>
+                </div>
+                <!-- Legend Pill -->
+                <div
+                    class="flex flex-wrap items-center justify-center gap-4 text-xs font-label-sm text-on-surface-variant bg-surface-container px-4 py-2 rounded-full border border-outline-variant/20">
+                    <span class="flex items-center gap-1.5"><span
+                            class="w-3 h-3 rounded bg-surface-container-high border border-white/20"></span>
+                        Available</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-primary"></span> Selected
+                        (B3, B4)</span>
+                    <span class="flex items-center gap-1.5"><span
+                            class="w-3 h-3 rounded bg-[#6366F1] text-[8px] text-white flex items-center justify-center">★</span>
+                        VIP Lounger (+$4)</span>
+                    <span class="flex items-center gap-1.5"><span
+                            class="w-3 h-3 rounded bg-surface-container-lowest text-[8px] text-on-surface-variant flex items-center justify-center">✕</span>
+                        Reserved</span>
+                </div>
+            </div>
+            <!-- Modal Footer Action Bar -->
+            <div
+                class="p-6 bg-surface-container-lowest border-t border-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Selected 2 Seats (B3, B4)
+                    </p>
+                    <p class="font-headline-sm text-headline-sm text-on-surface font-bold">$49.00 <span
+                            class="font-body-sm text-xs font-normal text-on-surface-variant">+ $3.50 booking fee</span>
+                    </p>
+                </div>
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <button
+                        class="flex-1 sm:flex-none px-4 py-3 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors"
+                        onclick="document.getElementById('seat-modal').classList.add('hidden')">
+                        Cancel
+                    </button>
+                    <button
+                        class="flex-1 sm:flex-none px-6 py-3 rounded-lg bg-primary-container hover:bg-inverse-primary text-on-primary font-label-md text-label-md font-bold glow-aura transition-all"
+                        onclick="confirmBooking()">
+                        Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ================= RATE THIS MOVIE MODAL ================= -->
+    <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden"
+        id="rate-modal">
+        <div
+            class="bg-surface-container border border-outline-variant/30 rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl">
+            <div class="flex items-center justify-between">
+                <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Rate This Movie</h3>
+                <button class="p-1 rounded-lg text-on-surface-variant hover:text-on-surface"
+                    onclick="document.getElementById('rate-modal').classList.add('hidden')">
+                    <span class="material-symbols-outlined" data-icon="close">close</span>
+                </button>
+            </div>
+            <div class="text-center space-y-3">
+                <p class="font-body-sm text-body-sm text-on-surface-variant">How was your theatrical experience for
+                    Chronicles of Dune: Oblivion?</p>
+                <!-- Interactive Star Selector -->
+                <div class="flex items-center justify-center gap-2 text-secondary py-2" id="star-rating-stars">
+                    <button class="material-symbols-outlined text-3xl fill-icon transition-transform hover:scale-125"
+                        data-icon="star" data-weight="fill" onclick="setRating(1)">star</button>
+                    <button class="material-symbols-outlined text-3xl fill-icon transition-transform hover:scale-125"
+                        data-icon="star" data-weight="fill" onclick="setRating(2)">star</button>
+                    <button class="material-symbols-outlined text-3xl fill-icon transition-transform hover:scale-125"
+                        data-icon="star" data-weight="fill" onclick="setRating(3)">star</button>
+                    <button class="material-symbols-outlined text-3xl fill-icon transition-transform hover:scale-125"
+                        data-icon="star" data-weight="fill" onclick="setRating(4)">star</button>
+                    <button class="material-symbols-outlined text-3xl fill-icon transition-transform hover:scale-125"
+                        data-icon="star" data-weight="fill" onclick="setRating(5)">star</button>
+                </div>
+                <p class="font-label-md text-label-md text-primary font-semibold" id="rating-label">5 Stars -
+                    Masterpiece</p>
+            </div>
+            <div>
+                <label class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1 block">Quick Note
+                    (Optional)</label>
+                <textarea
+                    class="w-full h-24 p-3 rounded-lg bg-surface-container-low border border-outline-variant/30 text-on-surface text-body-sm focus:border-primary focus:outline-none"
+                    placeholder="What stood out to you? Audio, visual effects, story..."></textarea>
+            </div>
+            <button
+                class="w-full py-3 bg-primary-container text-on-primary font-label-md text-label-md font-bold rounded-lg glow-aura-sm transition-all"
+                onclick="submitRating()">
+                Submit Rating
+            </button>
+        </div>
+    </div>
+    <!-- ================= WRITE REVIEW MODAL ================= -->
+    <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden"
+        id="write-review-modal">
+        <div
+            class="bg-surface-container border border-outline-variant/30 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-outline-variant/20 pb-3">
+                <h3 class="font-title-lg text-title-lg text-on-surface font-bold">Write a Verified Review</h3>
+                <button class="p-1 rounded-lg text-on-surface-variant hover:text-on-surface"
+                    onclick="document.getElementById('write-review-modal').classList.add('hidden')">
+                    <span class="material-symbols-outlined" data-icon="close">close</span>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1 block">Your Overall
+                        Rating</label>
+                    <div class="flex items-center gap-2 text-secondary">
+                        <span class="material-symbols-outlined text-2xl fill-icon" data-icon="star"
+                            data-weight="fill">star</span>
+                        <span class="material-symbols-outlined text-2xl fill-icon" data-icon="star"
+                            data-weight="fill">star</span>
+                        <span class="material-symbols-outlined text-2xl fill-icon" data-icon="star"
+                            data-weight="fill">star</span>
+                        <span class="material-symbols-outlined text-2xl fill-icon" data-icon="star"
+                            data-weight="fill">star</span>
+                        <span class="material-symbols-outlined text-2xl fill-icon" data-icon="star_half"
+                            data-weight="fill">star_half</span>
+                        <span class="text-sm font-bold text-on-surface ml-2">9 / 10</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1 block">Review
+                        Headline</label>
+                    <input
+                        class="w-full p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-on-surface text-body-sm focus:border-primary focus:outline-none"
+                        placeholder="e.g., A monumental cinematic landmark" type="text" />
+                </div>
+                <div>
+                    <label class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1 block">Review
+                        Commentary</label>
+                    <textarea
+                        class="w-full h-28 p-3 rounded-lg bg-surface-container-low border border-outline-variant/30 text-on-surface text-body-sm focus:border-primary focus:outline-none"
+                        placeholder="Share your experience regarding sound, direction, projection format, and performance..."></textarea>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input class="rounded border-outline-variant/40 text-primary-container focus:ring-primary"
+                        id="spoiler-check" type="checkbox" />
+                    <label class="text-xs text-on-surface-variant" for="spoiler-check">This review contains plot
+                        spoilers</label>
+                </div>
+            </div>
+            <div class="pt-3 border-t border-outline-variant/20 flex gap-3">
+                <button
+                    class="flex-1 py-2.5 rounded-lg bg-surface-container-low text-on-surface font-label-md text-label-md"
+                    onclick="document.getElementById('write-review-modal').classList.add('hidden')">
+                    Cancel
+                </button>
+                <button
+                    class="flex-1 py-2.5 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-semibold glow-aura-sm"
+                    onclick="document.getElementById('write-review-modal').classList.add('hidden')">
+                    Publish Review
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- ================= FOOTER (Anchored Shared Component) ================= -->
+    <footer
+        class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/20 dark:border-outline-variant/20 w-full block mt-20">
+        <div class="w-full max-w-7xl mx-auto px-6 py-12 flex flex-col gap-8">
+            <!-- Top Footer Row: Brand Logo + Navigation Links -->
+            <div
+                class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-outline-variant/10 pb-8">
+                <a class="text-headline-sm font-headline-sm font-bold text-primary dark:text-primary flex items-center gap-2"
+                    href="#">
+                    <span class="material-symbols-outlined text-primary text-2xl"
+                        data-icon="local_movies">local_movies</span>
+                    <span>Cineva</span>
+                </a>
+                <!-- Links array from JSON -->
+                <nav
+                    class="flex flex-wrap items-center gap-x-6 gap-y-3 font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface-variant">
+                    <a class="hover:text-primary dark:hover:text-primary transition-colors duration-200" href="#">About
+                        Us</a>
+                    <a class="hover:text-primary dark:hover:text-primary transition-colors duration-200"
+                        href="#">Experiences &amp; IMAX</a>
+                    <a class="hover:text-primary dark:hover:text-primary transition-colors duration-200" href="#">Cinema
+                        Partner Program</a>
+                    <a class="hover:text-primary dark:hover:text-primary transition-colors duration-200"
+                        href="#">Privacy Policy</a>
+                    <a class="hover:text-primary dark:hover:text-primary transition-colors duration-200" href="#">Terms
+                        of Service</a>
+                    <a class="hover:text-primary dark:hover:text-primary transition-colors duration-200"
+                        href="#">Certified Security Standards</a>
+                </nav>
+            </div>
+            <!-- Bottom Footer Row: Legal Copyright Text -->
+            <div
+                class="flex flex-col sm:flex-row items-center justify-between gap-4 font-body-sm text-body-sm text-on-surface-variant/80">
+                <p>© 2024 Cineva Entertainment Inc. All rights reserved. Atmos, IMAX, and 4DX are registered trademarks.
+                </p>
+                <div class="flex items-center gap-4 text-on-surface-variant">
+                    <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base"
+                            data-icon="lock">lock</span> 256-Bit SSL Encrypted Ticketing</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Micro-interactions Script -->
+    <script>
+        function selectShowtime(theater, screen, time, price) {
+            document.getElementById('modal-showtime-meta').innerText = `${theater} • ${screen} • ${time} (${price})`;
+            document.getElementById('seat-modal').classList.remove('hidden');
+        }
+
+        function triggerSeatMapModal() {
+            document.getElementById('modal-showtime-meta').innerText = `AMC Times Sq • Auditorium 1 (IMAX) • 07:15 PM ($24.50)`;
+            document.getElementById('seat-modal').classList.remove('hidden');
+        }
+
+        function confirmBooking() {
+            alert("Redirecting to secured payment gateway for Chronicles of Dune: Oblivion. Reserved seats: B3, B4.");
+            document.getElementById('seat-modal').classList.add('hidden');
+        }
+
+        function setRating(stars) {
+            const labels = [
+                "1 Star - Poor",
+                "2 Stars - Fair",
+                "3 Stars - Good",
+                "4 Stars - Great",
+                "5 Stars - Masterpiece"
+            ];
+            document.getElementById('rating-label').innerText = labels[stars - 1];
+        }
+
+        function submitRating() {
+            alert("Thank you! Your rating has been recorded and verified for Cineva Score calculation.");
+            document.getElementById('rate-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,215 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}Gallery Manager: {{ movie.title }} — Cineva Ops{% endblock %}
+{% block breadcrumb_active %}Gallery: {{ movie.title }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-control, input[type="text"], input[type="number"] {
+        background-color: #11131b !important;
+        border: 1px solid rgba(172, 136, 139, 0.25) !important;
+        color: #e1e1ed !important;
+        border-radius: 0.5rem !important;
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.875rem !important;
+    }
+    input[type="file"] {
+        color: #ac888b;
+    }
+</style>
+{% endblock %}
+
+{% block top_actions %}
+<a
+    href="{% url 'movie_admin_edit' movie.id %}"
+    class="flex items-center gap-1.5 h-10 px-3.5 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">edit</span>
+    <span>Edit Movie</span>
+</a>
+
+<a
+    href="{% url 'movie_detail' movie.slug %}"
+    target="_blank"
+    class="flex items-center gap-1.5 h-10 px-3.5 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">visibility</span>
+    <span>View on Site</span>
+</a>
+
+<a
+    href="{% url 'movie_admin_dashboard' %}"
+    class="flex items-center gap-1.5 h-10 px-4 rounded-lg bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    <span>Back to Catalog</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<div class="flex flex-col gap-6">
+    <!-- Header Strip -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-outline-variant/20">
+        <div>
+            <h1 class="text-headline-md font-headline-md font-bold text-on-surface tracking-tight">Gallery Studio: {{ movie.title }}</h1>
+            <p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+                Upload theatrical posters, behind-the-scenes stills, and high-resolution marketing backdrops.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-label-sm font-label-sm px-3 py-1 rounded-full bg-surface-container-high text-secondary border border-outline-variant/30 font-semibold">
+                {{ images.count }} Gallery Asset{{ images.count|pluralize }}
+            </span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- LEFT COLUMN: Upload Card -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            <section class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-5">
+                <div class="flex items-center gap-2 pb-3 border-b border-outline-variant/20">
+                    <span class="material-symbols-outlined text-primary text-[22px]">add_photo_alternate</span>
+                    <h2 class="text-title-md font-title-md font-bold text-on-surface">Upload Gallery Asset</h2>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="upload" />
+
+                    <!-- File Input -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ upload_form.image.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Image File <span class="text-primary">*</span>
+                        </label>
+                        <div class="p-3 rounded-xl bg-surface border border-outline-variant/30">
+                            {{ upload_form.image }}
+                        </div>
+                        <span class="text-label-sm font-label-sm text-on-surface-variant">JPG, PNG, WebP up to 5MB. Verified for integrity.</span>
+                    </div>
+
+                    <!-- Caption Input -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ upload_form.caption.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Asset Caption (Optional)
+                        </label>
+                        {{ upload_form.caption }}
+                    </div>
+
+                    <!-- Display Order -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="{{ upload_form.display_order.id_for_label }}" class="text-title-sm font-title-sm font-semibold text-on-surface">
+                            Sequence / Display Order
+                        </label>
+                        {{ upload_form.display_order }}
+                        <span class="text-label-sm font-label-sm text-on-surface-variant">Lower numbers appear first in gallery carousels.</span>
+                    </div>
+
+                    <!-- Set as Primary Checkbox -->
+                    <label class="flex items-center gap-2.5 p-3 rounded-xl bg-surface border border-outline-variant/30 cursor-pointer hover:border-primary/40 transition-colors">
+                        {{ upload_form.is_primary }}
+                        <span class="text-label-md font-label-md font-semibold text-on-surface">Set as Primary Theatrical Poster</span>
+                    </label>
+
+                    <button
+                        type="submit"
+                        class="w-full py-3 px-4 rounded-xl bg-primary-container text-on-primary-container hover:bg-primary font-label-lg text-label-lg font-bold shadow-md shadow-primary-container/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-2">
+                        <span class="material-symbols-outlined text-[20px]">cloud_upload</span>
+                        <span>Upload to Gallery</span>
+                    </button>
+                </form>
+            </section>
+        </div>
+
+        <!-- RIGHT COLUMN: Current Gallery Grid -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            <section class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 flex flex-col gap-5">
+                <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary text-[22px]">collections</span>
+                        <h2 class="text-title-md font-title-md font-bold text-on-surface">Curated Image Assets</h2>
+                    </div>
+                    <span class="text-label-sm font-label-sm text-outline">{{ images.count }} items</span>
+                </div>
+
+                {% if images %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    {% for img in images %}
+                    <div class="rounded-xl bg-surface border border-outline-variant/20 overflow-hidden flex flex-col justify-between group hover:border-outline-variant/40 transition-colors shadow-lg">
+                        <!-- Image Container -->
+                        <div class="w-full aspect-video bg-surface-container-lowest relative overflow-hidden">
+                            <img src="{{ img.image.url }}" alt="{{ img.caption|default:movie.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            {% if img.is_primary %}
+                            <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-primary-container text-on-primary-container text-label-sm font-label-sm font-bold flex items-center gap-1 shadow-md">
+                                <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                <span>Primary Poster</span>
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-4 flex flex-col gap-3">
+                            <div class="text-body-sm font-body-sm text-on-surface font-semibold truncate" title="{{ img.caption }}">
+                                {{ img.caption|default:"No caption specified" }}
+                            </div>
+
+                            <!-- Display Order Form -->
+                            <form method="POST" class="flex items-center gap-2">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="update_order" />
+                                <input type="hidden" name="image_id" value="{{ img.id }}" />
+                                <span class="text-label-sm font-label-sm text-on-surface-variant">Order:</span>
+                                <input
+                                    type="number"
+                                    name="display_order"
+                                    value="{{ img.display_order }}"
+                                    class="w-20 h-8 text-center text-body-sm bg-surface-container border border-outline-variant/30 rounded"
+                                    min="0"
+                                />
+                                <button type="submit" class="h-8 px-3 rounded bg-surface-container hover:bg-surface-container-high text-on-surface text-label-sm font-semibold transition-colors">
+                                    Save
+                                </button>
+                            </form>
+
+                            <!-- Actions Row -->
+                            <div class="flex items-center justify-between pt-2 border-t border-outline-variant/10">
+                                {% if not img.is_primary %}
+                                <form method="POST" class="inline m-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="set_primary" />
+                                    <input type="hidden" name="image_id" value="{{ img.id }}" />
+                                    <button type="submit" class="text-secondary hover:text-primary text-label-sm font-label-sm font-semibold flex items-center gap-1 transition-colors">
+                                        <span class="material-symbols-outlined text-[16px]">star</span>
+                                        <span>Set as Primary</span>
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span class="text-primary text-label-sm font-label-sm font-bold flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                                    <span>Active Primary</span>
+                                </span>
+                                {% endif %}
+
+                                <form method="POST" class="inline m-0" onsubmit="return confirm('Delete this image asset?');">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete" />
+                                    <input type="hidden" name="image_id" value="{{ img.id }}" />
+                                    <button type="submit" class="p-1.5 rounded text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" title="Delete Image">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="py-12 text-center text-on-surface-variant flex flex-col items-center justify-center">
+                    <span class="material-symbols-outlined text-4xl mb-2 text-outline">photo_library</span>
+                    <h3 class="text-title-md font-title-md font-bold text-on-surface">No Gallery Images Uploaded</h3>
+                    <p class="text-body-sm font-body-sm text-on-surface-variant max-w-sm mt-1">
+                        Use the form on the left to upload promotional stills, alternate banners, or behind-the-scenes photographs.
+                    </p>
+                </div>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

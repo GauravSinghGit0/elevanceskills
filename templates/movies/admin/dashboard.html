@@ -1,0 +1,569 @@
+{% extends "movies/admin/base_admin.html" %}
+
+{% block title %}Movie Management Dashboard — Cineva Cinema Ops{% endblock %}
+{% block breadcrumb_active %}Movie Management{% endblock %}
+
+{% block top_stats_pill %}
+<span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-label-sm font-label-sm text-on-surface">
+    <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+    <span>Total Movies: <strong class="text-secondary">{{ total_movies }} Registered</strong></span>
+</span>
+{% endblock %}
+
+{% block top_actions %}
+<form method="GET" class="relative w-64 md:w-80">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+    <input
+        class="w-full h-10 pl-9 pr-4 text-body-sm font-body-sm bg-surface-container-low border border-outline-variant/30 rounded-lg text-on-surface placeholder-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/40 transition-all"
+        name="search"
+        placeholder="Quick search movies..."
+        type="text"
+        value="{{ search }}"
+    />
+    {% if status_filter %}
+    <input type="hidden" name="status" value="{{ status_filter }}" />
+    {% endif %}
+</form>
+
+<a
+    href="{% url 'movie_admin_create' %}"
+    class="flex items-center gap-2 h-10 px-4 rounded-lg bg-primary-container text-on-primary-container hover:bg-primary font-label-lg text-label-lg font-bold shadow-md shadow-primary-container/25 transition-all duration-150 active:scale-95">
+    <span class="material-symbols-outlined text-[20px]">add</span>
+    <span class="whitespace-nowrap">New Movie</span>
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<!-- Metric Stat KPI Cards Row -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Card 1: Total Movies -->
+    <div class="p-5 rounded-xl bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/20 hover:border-outline-variant/40 transition-all duration-200">
+        <div class="flex items-center justify-between text-on-surface-variant mb-2">
+            <span class="text-label-md font-label-md uppercase tracking-wider font-semibold">Total Movies</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-[20px]">movie</span>
+            </div>
+        </div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-headline-md font-headline-md font-bold text-on-surface">{{ total_movies }}</span>
+            <span class="text-label-sm font-label-sm text-secondary font-semibold">Catalog</span>
+        </div>
+        <div class="mt-2 text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px] text-secondary">videocam</span>
+            <span>Active productions database</span>
+        </div>
+    </div>
+
+    <!-- Card 2: Total Reviews -->
+    <div class="p-5 rounded-xl bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/20 hover:border-outline-variant/40 transition-all duration-200">
+        <div class="flex items-center justify-between text-on-surface-variant mb-2">
+            <span class="text-label-md font-label-md uppercase tracking-wider font-semibold">Total Reviews</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+                <span class="material-symbols-outlined text-[20px]">rate_review</span>
+            </div>
+        </div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-headline-md font-headline-md font-bold text-on-surface">{{ total_reviews }}</span>
+            <span class="text-label-sm font-label-sm text-secondary font-semibold">Submitted</span>
+        </div>
+        <div class="mt-2 text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px] text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+            <span>Verified viewer ratings engine</span>
+        </div>
+    </div>
+
+    <!-- Card 3: Pending Moderation -->
+    <div class="p-5 rounded-xl bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/20 hover:border-outline-variant/40 transition-all duration-200">
+        <div class="flex items-center justify-between text-on-surface-variant mb-2">
+            <span class="text-label-md font-label-md uppercase tracking-wider font-semibold">Pending Reports</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-error">
+                <span class="material-symbols-outlined text-[20px]">flag</span>
+            </div>
+        </div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-headline-md font-headline-md font-bold text-error">{{ pending_reports_count }}</span>
+            <span class="text-label-sm font-label-sm text-error font-semibold">Action Req</span>
+        </div>
+        <div class="mt-2 text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+            <a href="{% url 'movie_admin_reports' %}" class="text-primary hover:underline flex items-center gap-1">
+                <span>Go to Moderation Queue</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Card 4: Quick Admin Modules -->
+    <div class="p-5 rounded-xl bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/20 hover:border-outline-variant/40 transition-all duration-200">
+        <div class="flex items-center justify-between text-on-surface-variant mb-2">
+            <span class="text-label-md font-label-md uppercase tracking-wider font-semibold">Ops Modules</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-tertiary">
+                <span class="material-symbols-outlined text-[20px]">settings_suggest</span>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-1.5 mt-2">
+            <a href="/admin/movies/genre/" target="_blank" class="px-2 py-1 rounded bg-surface-container text-label-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors">Genres</a>
+            <a href="/admin/movies/language/" target="_blank" class="px-2 py-1 rounded bg-surface-container text-label-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors">Languages</a>
+            <a href="/admin/movies/castmember/" target="_blank" class="px-2 py-1 rounded bg-surface-container text-label-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors">Cast</a>
+            <a href="/admin/movies/showschedule/" target="_blank" class="px-2 py-1 rounded bg-surface-container text-label-sm text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors">Schedules</a>
+        </div>
+    </div>
+</section>
+
+<!-- Manage All Cinema Entities Operations Grid -->
+<section class="p-6 rounded-2xl bg-surface-container-low/90 border border-outline-variant/25 shadow-xl">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-outline-variant/20">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl">admin_panel_settings</span>
+                <h2 class="text-title-lg font-title-lg font-bold text-on-surface">Cinema Enterprise Management Hub</h2>
+            </div>
+            <p class="text-body-sm font-body-sm text-on-surface-variant mt-1">Full administrator access to manage venues, auditoriums, schedules, cast, taxonomies and audience reservations.</p>
+        </div>
+        <a href="/admin/" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-secondary hover:text-primary text-label-md font-label-md font-semibold transition-colors self-start sm:self-auto">
+            <span class="material-symbols-outlined text-base">tune</span>
+            <span>Django Master Admin</span>
+            <span class="material-symbols-outlined text-xs">open_in_new</span>
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <!-- Entity 1: Theaters & Multiplexes -->
+        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-secondary/40 transition-all flex flex-col justify-between group">
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="w-9 h-9 rounded-lg bg-secondary-container/20 text-secondary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-lg">theater_comedy</span>
+                    </div>
+                    <span class="font-bold text-headline-sm text-secondary">{{ total_theaters }}</span>
+                </div>
+                <h3 class="font-title-sm text-title-sm font-bold text-on-surface">Theaters &amp; Venues</h3>
+                <p class="text-body-sm text-on-surface-variant/80 text-xs mt-1">Manage cinema multiplexes, cities, addresses, and status.</p>
+            </div>
+            <div class="pt-3 mt-3 border-t border-outline-variant/15 flex items-center justify-between gap-2">
+                <a href="{% url 'admin_theaters_list' %}" class="text-label-sm font-label-sm text-secondary hover:underline flex items-center gap-0.5">
+                    <span>Manage</span>
+                    <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+                <a href="{% url 'admin_theater_create' %}" class="px-2 py-1 rounded bg-surface-container-high hover:bg-secondary/20 text-on-surface text-label-sm font-label-sm flex items-center gap-1 transition-colors">
+                    <span class="material-symbols-outlined text-xs text-secondary">add</span>
+                    <span>New</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Entity 2: Screens & Auditoriums -->
+        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-tertiary/40 transition-all flex flex-col justify-between group">
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="w-9 h-9 rounded-lg bg-tertiary-container/20 text-tertiary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-lg">meeting_room</span>
+                    </div>
+                    <span class="font-bold text-headline-sm text-tertiary">{{ total_screens }}</span>
+                </div>
+                <h3 class="font-title-sm text-title-sm font-bold text-on-surface">Screens &amp; Auditoriums</h3>
+                <p class="text-body-sm text-on-surface-variant/80 text-xs mt-1">IMAX Laser, 4DX, 3D and standard screen capacities.</p>
+            </div>
+            <div class="pt-3 mt-3 border-t border-outline-variant/15 flex items-center justify-between gap-2">
+                <a href="{% url 'admin_theaters_list' %}" class="text-label-sm font-label-sm text-tertiary hover:underline flex items-center gap-0.5">
+                    <span>Manage</span>
+                    <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+                <a href="{% url 'admin_theater_create' %}" class="px-2 py-1 rounded bg-surface-container-high hover:bg-tertiary/20 text-on-surface text-label-sm font-label-sm flex items-center gap-1 transition-colors">
+                    <span class="material-symbols-outlined text-xs text-tertiary">add</span>
+                    <span>New</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Entity 3: Show Schedules -->
+        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-primary/40 transition-all flex flex-col justify-between group">
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="w-9 h-9 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-lg">schedule</span>
+                    </div>
+                    <span class="font-bold text-headline-sm text-primary">{{ total_shows }}</span>
+                </div>
+                <h3 class="font-title-sm text-title-sm font-bold text-on-surface">Show Schedules</h3>
+                <p class="text-body-sm text-on-surface-variant/80 text-xs mt-1">Screen showtimes, slot collision checks, and pricing.</p>
+            </div>
+            <div class="pt-3 mt-3 border-t border-outline-variant/15 flex items-center justify-between gap-2">
+                <a href="{% url 'admin_shows_list' %}" class="text-label-sm font-label-sm text-primary hover:underline flex items-center gap-0.5">
+                    <span>Manage</span>
+                    <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+                <a href="{% url 'admin_show_create' %}" class="px-2 py-1 rounded bg-surface-container-high hover:bg-primary/20 text-on-surface text-label-sm font-label-sm flex items-center gap-1 transition-colors">
+                    <span class="material-symbols-outlined text-xs text-primary">add</span>
+                    <span>New</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Entity 4: Cast & Crew -->
+        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-secondary/40 transition-all flex flex-col justify-between group">
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="w-9 h-9 rounded-lg bg-surface-container-high text-on-surface flex items-center justify-center">
+                        <span class="material-symbols-outlined text-lg">groups</span>
+                    </div>
+                    <span class="font-bold text-headline-sm text-on-surface">Cast</span>
+                </div>
+                <h3 class="font-title-sm text-title-sm font-bold text-on-surface">Cast Members</h3>
+                <p class="text-body-sm text-on-surface-variant/80 text-xs mt-1">Actors, directors, headshot photos, and bios.</p>
+            </div>
+            <div class="pt-3 mt-3 border-t border-outline-variant/15 flex items-center justify-between gap-2">
+                <a href="/admin/movies/castmember/" target="_blank" class="text-label-sm font-label-sm text-on-surface hover:underline flex items-center gap-0.5">
+                    <span>Manage</span>
+                    <span class="material-symbols-outlined text-xs">open_in_new</span>
+                </a>
+                <a href="/admin/movies/castmember/add/" target="_blank" class="px-2 py-1 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface text-label-sm font-label-sm flex items-center gap-1 transition-colors">
+                    <span class="material-symbols-outlined text-xs">add</span>
+                    <span>New</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Entity 5: Genres -->
+        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-primary/40 transition-all flex flex-col justify-between group">
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="w-9 h-9 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-lg">category</span>
+                    </div>
+                    <span class="font-bold text-headline-sm text-primary">Genres</span>
+                </div>
+                <h3 class="font-title-sm text-title-sm font-bold text-on-surface">Movie Genres</h3>
+                <p class="text-body-sm text-on-surface-variant/80 text-xs mt-1">Action, Sci-Fi, Thriller, Drama, and categorization.</p>
+            </div>
+            <div class="pt-3 mt-3 border-t border-outline-variant/15 flex items-center justify-between gap-2">
+                <a href="/admin/movies/genre/" target="_blank" class="text-label-sm font-label-sm text-primary hover:underline flex items-center gap-0.5">
+                    <span>Manage</span>
+                    <span class="material-symbols-outlined text-xs">open_in_new</span>
+                </a>
+                <a href="/admin/movies/genre/add/" target="_blank" class="px-2 py-1 rounded bg-surface-container-high hover:bg-primary/20 text-on-surface text-label-sm font-label-sm flex items-center gap-1 transition-colors">
+                    <span class="material-symbols-outlined text-xs text-primary">add</span>
+                    <span>New</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Entity 6: Languages -->
+        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-secondary/40 transition-all flex flex-col justify-between group">
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="w-9 h-9 rounded-lg bg-surface-container-high text-secondary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-lg">translate</span>
+                    </div>
+                    <span class="font-bold text-headline-sm text-secondary">Langs</span>
+                </div>
+                <h3 class="font-title-sm text-title-sm font-bold text-on-surface">Languages</h3>
+                <p class="text-body-sm text-on-surface-variant/80 text-xs mt-1">Multi-language catalog tagging (English, Hindi, etc.).</p>
+            </div>
+            <div class="pt-3 mt-3 border-t border-outline-variant/15 flex items-center justify-between gap-2">
+                <a href="/admin/movies/language/" target="_blank" class="text-label-sm font-label-sm text-secondary hover:underline flex items-center gap-0.5">
+                    <span>Manage</span>
+                    <span class="material-symbols-outlined text-xs">open_in_new</span>
+                </a>
+                <a href="/admin/movies/language/add/" target="_blank" class="px-2 py-1 rounded bg-surface-container-high hover:bg-secondary/20 text-on-surface text-label-sm font-label-sm flex items-center gap-1 transition-colors">
+                    <span class="material-symbols-outlined text-xs text-secondary">add</span>
+                    <span>New</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Entity 7: Bookings & Reservations -->
+        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-tertiary/40 transition-all flex flex-col justify-between group">
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="w-9 h-9 rounded-lg bg-tertiary-container/20 text-tertiary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-lg">confirmation_number</span>
+                    </div>
+                    <span class="font-bold text-headline-sm text-tertiary">{{ total_bookings }}</span>
+                </div>
+                <h3 class="font-title-sm text-title-sm font-bold text-on-surface">Bookings &amp; Seats</h3>
+                <p class="text-body-sm text-on-surface-variant/80 text-xs mt-1">Audience reservations, seat allocations, and bookings.</p>
+            </div>
+            <div class="pt-3 mt-3 border-t border-outline-variant/15 flex items-center justify-between gap-2">
+                <a href="/admin/movies/booking/" target="_blank" class="text-label-sm font-label-sm text-tertiary hover:underline flex items-center gap-0.5">
+                    <span>Bookings</span>
+                    <span class="material-symbols-outlined text-xs">open_in_new</span>
+                </a>
+                <a href="/admin/movies/seat/" target="_blank" class="text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface flex items-center gap-0.5">
+                    <span>Seats</span>
+                    <span class="material-symbols-outlined text-xs">open_in_new</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Entity 8: Moderation & User Reviews -->
+        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-error/40 transition-all flex flex-col justify-between group">
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <div class="w-9 h-9 rounded-lg bg-error-container/20 text-error flex items-center justify-center">
+                        <span class="material-symbols-outlined text-lg">verified_user</span>
+                    </div>
+                    <span class="font-bold text-headline-sm text-error">{{ pending_reports_count }}</span>
+                </div>
+                <h3 class="font-title-sm text-title-sm font-bold text-on-surface">Review Moderation</h3>
+                <p class="text-body-sm text-on-surface-variant/80 text-xs mt-1">Pending abuse reports, verified badges, and ratings.</p>
+            </div>
+            <div class="pt-3 mt-3 border-t border-outline-variant/15 flex items-center justify-between gap-2">
+                <a href="{% url 'movie_admin_reports' %}" class="text-label-sm font-label-sm text-error hover:underline flex items-center gap-0.5 font-bold">
+                    <span>Queue ({{ pending_reports_count }})</span>
+                    <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+                <a href="/admin/movies/review/" target="_blank" class="text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface flex items-center gap-0.5">
+                    <span>All Reviews</span>
+                    <span class="material-symbols-outlined text-xs">open_in_new</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter & Search Toolbar Bar -->
+<section class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20">
+    <form method="GET" class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[300px]">
+            <!-- Search Input -->
+            <div class="relative flex-1 min-w-[200px]">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+                <input
+                    type="text"
+                    name="search"
+                    class="w-full h-10 pl-9 pr-4 text-body-sm font-body-sm bg-surface border border-outline-variant/30 rounded-lg text-on-surface placeholder-on-surface-variant/60 focus:border-primary focus:ring-1 focus:ring-primary/40 focus:outline-none"
+                    placeholder="Search movie title, director, or cast..."
+                    value="{{ search }}"
+                />
+            </div>
+
+            <!-- Status Dropdown -->
+            <div class="relative min-w-[160px]">
+                <select
+                    name="status"
+                    class="w-full h-10 pl-3 pr-8 text-body-sm font-body-sm bg-surface border border-outline-variant/30 rounded-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary/40 focus:outline-none appearance-none cursor-pointer">
+                    <option value="">All Statuses</option>
+                    <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active Only</option>
+                    <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive Only</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+            </div>
+
+            <button type="submit" class="h-10 px-5 rounded-lg bg-surface-container-highest hover:bg-surface-bright text-on-surface font-label-md text-label-md font-bold transition-colors">
+                Filter
+            </button>
+
+            {% if search or status_filter %}
+            <a href="{% url 'movie_admin_dashboard' %}" class="h-10 px-4 rounded-lg bg-surface-container border border-outline-variant/30 hover:border-outline-variant text-on-surface-variant hover:text-on-surface text-label-md font-label-md flex items-center transition-colors">
+                Clear Filters
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="text-label-sm font-label-sm text-on-surface-variant">
+            Showing <strong class="text-on-surface">{{ movies.paginator.count }}</strong> movies
+        </div>
+    </form>
+</section>
+
+<!-- Cinema Ops Movies Catalog Table -->
+<div class="rounded-xl border border-outline-variant/20 bg-surface-container-lowest overflow-hidden shadow-2xl">
+    <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="border-b border-outline-variant/20 bg-surface-container-low text-label-sm font-label-sm uppercase tracking-wider text-outline">
+                    <th class="py-3.5 px-4 w-14">Poster</th>
+                    <th class="py-3.5 px-4 min-w-[240px]">Movie Title &amp; Details</th>
+                    <th class="py-3.5 px-4">Cert / Run</th>
+                    <th class="py-3.5 px-4">Language &amp; Formats</th>
+                    <th class="py-3.5 px-4">Theaters</th>
+                    <th class="py-3.5 px-4">Genres</th>
+                    <th class="py-3.5 px-4">Rating</th>
+                    <th class="py-3.5 px-4">Release Date</th>
+                    <th class="py-3.5 px-4">Status</th>
+                    <th class="py-3.5 px-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10 text-body-sm font-body-sm">
+                {% for m in movies %}
+                <tr class="hover:bg-surface-container-high/30 transition-colors group">
+                    <!-- Poster Column -->
+                    <td class="py-3.5 px-4">
+                        <div class="w-12 h-16 rounded-md overflow-hidden bg-surface-container border border-outline-variant/30 flex-shrink-0 relative shadow">
+                            <img
+                                class="w-full h-full object-cover"
+                                src="{{ m.get_primary_poster_url }}"
+                                alt="{{ m.title }}"
+                                onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=400&q=80'"
+                            />
+                        </div>
+                    </td>
+
+                    <!-- Title & Details -->
+                    <td class="py-3.5 px-4">
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-2">
+                                <a href="{% url 'movie_detail' m.slug %}" target="_blank" class="text-title-sm font-title-sm text-on-surface font-semibold group-hover:text-primary transition-colors">
+                                    {{ m.title }}
+                                </a>
+                                {% if m.release_date %}
+                                <span class="text-label-sm font-label-sm text-outline px-1.5 py-0.5 rounded bg-surface-container">{{ m.release_date|date:"Y" }}</span>
+                                {% endif %}
+                            </div>
+                            <span class="text-body-sm font-body-sm text-on-surface-variant/80 mt-0.5 flex items-center gap-1">
+                                <span class="text-label-sm font-label-sm text-outline">Dir:</span>
+                                {% if m.director %}{{ m.director.name }}{% elif m.director_name %}{{ m.director_name }}{% else %}Unspecified{% endif %}
+                            </span>
+                        </div>
+                    </td>
+
+                    <!-- Cert / Run -->
+                    <td class="py-3.5 px-4">
+                        <div class="flex flex-col">
+                            <span class="text-label-md font-label-md font-bold text-on-surface">{{ m.age_certification }}</span>
+                            <span class="text-label-sm font-label-sm text-outline">{{ m.duration }} min</span>
+                        </div>
+                    </td>
+
+                    <!-- Tech Specs / Language -->
+                    <td class="py-3.5 px-4">
+                        <div class="flex flex-col">
+                            <span class="text-label-sm font-label-sm text-on-surface font-medium">{{ m.language.name|default:"General" }}</span>
+                            {% if m.trailer_url %}
+                            <span class="text-label-sm font-label-sm text-secondary font-semibold flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">videocam</span> Trailer Active
+                            </span>
+                            {% else %}
+                            <span class="text-label-sm font-label-sm text-on-surface-variant/60">No trailer</span>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <!-- Assigned Theaters Column -->
+                    <td class="py-3.5 px-4">
+                        <a href="{% url 'movie_admin_assign_theaters' m.id %}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-secondary hover:text-primary transition-colors text-label-sm font-bold group/th" title="Manage assigned multiplexes">
+                            <span class="material-symbols-outlined text-[16px]">theater_comedy</span>
+                            <span>{{ m.theaters_count }} Venue{{ m.theaters_count|pluralize }}</span>
+                            <span class="material-symbols-outlined text-[14px] opacity-0 group-hover/th:opacity-100 transition-opacity">add</span>
+                        </a>
+                    </td>
+
+                    <!-- Genres -->
+                    <td class="py-3.5 px-4">
+                        <div class="flex flex-wrap gap-1 max-w-[180px]">
+                            {% for g in m.genres.all %}
+                            <span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant border border-outline-variant/20">
+                                {{ g.name }}
+                            </span>
+                            {% empty %}
+                            <span class="text-on-surface-variant/50 text-label-sm">-</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+
+                    <!-- Rating -->
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="text-secondary font-bold text-label-md font-label-md">{{ m.rating|floatformat:1 }}</span>
+                            <span class="text-outline text-label-sm font-label-sm">({{ m.total_reviews }})</span>
+                        </div>
+                    </td>
+
+                    <!-- Release Date -->
+                    <td class="py-3.5 px-4 text-on-surface-variant text-label-md font-label-md">
+                        {{ m.release_date|date:"M d, Y"|default:"TBD" }}
+                    </td>
+
+                    <!-- Status -->
+                    <td class="py-3.5 px-4">
+                        {% if m.is_active %}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Active
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-surface-variant border border-outline-variant/30 font-semibold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span>
+                            Inactive
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Actions -->
+                    <td class="py-3.5 px-4 text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <!-- View on Site -->
+                            <a
+                                href="{% url 'movie_detail' m.slug %}"
+                                target="_blank"
+                                class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors"
+                                title="View on Site">
+                                <span class="material-symbols-outlined text-[18px]">visibility</span>
+                            </a>
+
+                            <!-- Assign Theaters -->
+                            <a
+                                href="{% url 'movie_admin_assign_theaters' m.id %}"
+                                class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors"
+                                title="Assign Multiplexes &amp; Auto-Schedule">
+                                <span class="material-symbols-outlined text-[18px]">domain_add</span>
+                            </a>
+
+                            <!-- Edit Movie -->
+                            <a
+                                href="{% url 'movie_admin_edit' m.id %}"
+                                class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-secondary transition-colors"
+                                title="Edit Movie Details">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                            </a>
+
+                            <!-- Manage Gallery -->
+                            <a
+                                href="{% url 'movie_admin_gallery' m.id %}"
+                                class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-tertiary transition-colors"
+                                title="Manage Gallery &amp; Posters">
+                                <span class="material-symbols-outlined text-[18px]">photo_library</span>
+                            </a>
+
+                            <!-- Toggle Status Form -->
+                            <form method="POST" action="{% url 'movie_admin_toggle_status' m.id %}" class="inline m-0" onsubmit="return confirm('Toggle active status for {{ m.title|escapejs }}?');">
+                                {% csrf_token %}
+                                <button
+                                    type="submit"
+                                    class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container {% if m.is_active %}hover:text-warning{% else %}hover:text-emerald-400{% endif %} transition-colors"
+                                    title="{% if m.is_active %}Deactivate Movie{% else %}Activate Movie{% endif %}">
+                                    <span class="material-symbols-outlined text-[18px]">{% if m.is_active %}pause_circle{% else %}play_circle{% endif %}</span>
+                                </button>
+                            </form>
+
+                            <!-- Delete / Remove Movie -->
+                            <a
+                                href="{% url 'movie_admin_delete' m.id %}"
+                                class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-error transition-colors"
+                                title="Remove / Delete Movie">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="py-12 text-center text-on-surface-variant">
+                        <span class="material-symbols-outlined text-4xl mb-2 text-outline">movie_off</span>
+                        <p class="text-body-md font-body-md">No movies found matching current criteria.</p>
+                        <a href="{% url 'movie_admin_create' %}" class="inline-flex items-center gap-1 text-primary hover:underline text-label-md mt-2">
+                            <span>Add a new movie to catalog</span>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Reusable Pagination Controls -->
+    {% include "components/pagination.html" with page_obj=movies %}
+</div>
+{% endblock %}

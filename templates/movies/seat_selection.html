@@ -1,170 +1,1922 @@
-{% extends "users/basic.html" %} {% block content %}
-<div class="container mt-5">
-  <div class="row">
-    <div class="col-lg-8 mx-auto">
-      <!-- Movie and Theater Info -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <div
-            class="d-flex justify-content-between align-items-center flex-wrap"
-          >
-            <div>
-              <h4 class="card-title">{{ theaters.movie.name }}</h4>
-              <p class="card-text text-muted">
-                {{ theaters.name }} | {{ theaters.time }}
-              </p>
-            </div>
-            <div class="mt-2 mt-sm-0">
-              <button class="btn btn-outline-primary me-2 mb-2 mb-sm-0">
-                2D
-              </button>
-              <button class="btn btn-outline-primary me-2 mb-2 mb-sm-0">
-                3D
-              </button>
-              <button class="btn btn-outline-primary mb-2 mb-sm-0">
-                IMAX 3D
-              </button>
-              <button class="btn btn-outline-primary mb-2 mb-sm-0">
-                {{seats|length}} Tickets
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+{% extends "users/basic.html" %}
+{% load movie_tags %}
 
-      <!-- Seat Selection -->
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title text-center mb-4">Select Your Seats</h5>
-          <div class="screen">All eyes this way please!</div>
+{% block title %}Select Seats — {{ theater.movie.title|default:theater.movie.name }} | Cineva{% endblock %}
 
-          <form method="POST">
-            {% csrf_token %}
-            <div class="d-flex justify-content-center flex-wrap mb-4">
-              {% for seat in seats %}
-              <div class="seat {% if seat.is_booked %}sold{% endif %}">
-                {% if not seat.is_booked %}
-                <input
-                  type="checkbox"
-                  name="seats"
-                  value="{{ seat.id }}"
-                  class="d-none"
-                  id="seat-{{ seat.id }}"
-                />
-                <label
-                  for="seat-{{ seat.id }}"
-                  class="w-100 h-100 d-flex align-items-center justify-content-center"
-                  >{{ seat.seat_number }}</label
-                >
-                {% else %} {{ seat.seat_number }} {% endif %}
-              </div>
-              {% endfor %}
-            </div>
-
-            <!-- Seat Legend -->
-            <div class="d-flex justify-content-center mb-4">
-              <div class="d-flex align-items-center me-4">
-                <div class="seat" style="background-color: white"></div>
-                <span class="ms-2">Available</span>
-              </div>
-              <div class="d-flex align-items-center me-4">
-                <div class="seat selected"></div>
-                <span class="ms-2">Selected</span>
-              </div>
-              <div class="d-flex align-items-center">
-                <div class="seat sold"></div>
-                <span class="ms-2">Sold</span>
-              </div>
-            </div>
-
-            <!-- Book Button -->
-            <div class="text-center">
-              <button type="submit" class="btn btn-success btn-lg">
-                Book Selected Seats
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+{% block extra_head %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-  }
-  .seat {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #28a745;
-    margin: 3px;
-    text-align: center;
-    line-height: 30px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  .seat:hover {
-    background-color: #28a745;
-    color: white;
-  }
-  .seat.selected {
-    background-color: #28a745;
-    color: white;
-  }
-  .seat.sold {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  .screen {
-    margin: 20px 0;
-    background-color: #ccc;
-    height: 50px;
-    text-align: center;
-    line-height: 50px;
-    color: #666;
-  }
-  .footer {
-    background-color: #333;
-    color: #ccc;
-    padding: 20px 0;
-  }
-  .footer a {
-    color: #ccc;
-    text-decoration: none;
-  }
-  .footer a:hover {
-    text-decoration: underline;
-  }
-  .footer .col-md-2,
-  .footer .col-md-3 {
-    margin-bottom: 20px;
-  }
-  .footer .social-icons i {
-    font-size: 20px;
-    margin: 0 10px;
-  }
+    .screen-arc-glow {
+        box-shadow: 0 -12px 35px 2px rgba(255, 178, 186, 0.28);
+    }
+    .neon-glow-primary {
+        box-shadow: 0 0 24px -2px rgba(255, 79, 115, 0.55), 0 0 10px rgba(255, 79, 115, 0.4);
+    }
+    .neon-glow-held {
+        box-shadow: 0 0 18px -2px rgba(238, 152, 0, 0.5);
+    }
+    .scrollbar-subtle::-webkit-scrollbar {
+        height: 6px;
+        width: 6px;
+    }
+    .scrollbar-subtle::-webkit-scrollbar-track {
+        background: #11131b;
+    }
+    .scrollbar-subtle::-webkit-scrollbar-thumb {
+        background: #33343d;
+        border-radius: 9999px;
+    }
 </style>
-<!-- <h1>Seats for {{theater.name}} - {{theater.movie.name}}</h1>
-{% if error %}
-<p style="color:red;">{{error}}</p>
-{% endif %}
-<form method="POST">
-    {% csrf_token %}
-    <ul>
-        {% for seat in seats %}
-        <li>
-          Seats{{seat.seat_number}}:
-          {% if seat.is_booked %}
-          <strong>Booked seat {{seat.seat_number}}</strong>
-          {% else %}
-          <input type="checkbox" name="seats" value="{{seat.id}}">
-          <strong>Available seat {{seat.seat_number}}</strong>
-          {% endif%}
-        </li>
-        {% endfor %}
-      </ul>
-      <button type="submit">Book selected seats</button>
-</form> -->
-
 {% endblock %}
+
+{% block content %}
+<!-- Live Synchronized Cinema Booking Top Tracker -->
+<div class="w-full bg-surface-container-lowest border-b border-outline-variant/20 py-3 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-body-sm font-body-sm">
+        <a
+            href="{% url 'theater_list' theater.movie.id %}"
+            class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors self-start sm:self-auto">
+            <span class="material-symbols-outlined text-base">arrow_back</span>
+            <span class="font-label-md text-label-md">Change Showtime &amp; Cinema</span>
+        </a>
+
+        <!-- Flow Tracker -->
+        <div class="hidden md:flex items-center gap-4 text-xs">
+            <div class="flex items-center gap-2 text-on-surface-variant/70">
+                <span class="w-5 h-5 rounded-full bg-surface-container-high text-[11px] flex items-center justify-center">1</span>
+                <span>Showtime</span>
+            </div>
+            <span class="w-4 h-[1px] bg-outline-variant/30"></span>
+            <div class="flex items-center gap-2 text-primary">
+                <span class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container text-[11px] flex items-center justify-center font-bold">2</span>
+                <span class="font-semibold text-on-surface">Interactive Seat Selection</span>
+            </div>
+            <span class="w-4 h-[1px] bg-outline-variant/30"></span>
+            <div class="flex items-center gap-2 text-on-surface-variant/40">
+                <span class="w-5 h-5 rounded-full bg-surface-container text-[11px] flex items-center justify-center">3</span>
+                <span>Order Confirmation</span>
+            </div>
+        </div>
+
+        <!-- Live Sync Status & Reservation Lock Counter -->
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container border border-outline-variant/30 text-xs text-on-surface-variant">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping" id="live-indicator"></span>
+                <span>Live Availability</span>
+            </div>
+            <div class="flex items-center gap-2 bg-primary-container/15 border border-primary-container/30 px-3 py-1 rounded-full text-primary text-xs font-mono">
+                <span class="material-symbols-outlined text-sm animate-pulse">timer</span>
+                <span>2-MIN HOLD: <strong class="text-on-surface" id="countdown-timer">02:00</strong></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Real-time Conflict Toast Notification Area -->
+<div id="live-toast-container" class="fixed top-20 right-6 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+<main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- Movie & Screening Header Banner -->
+    <section class="rounded-2xl p-5 md:p-6 bg-surface-container-low border border-outline-variant/20 shadow-xl relative overflow-hidden">
+        <div class="absolute right-0 top-0 bottom-0 w-1/2 opacity-10 bg-gradient-to-l from-primary to-transparent pointer-events-none"></div>
+
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+            <div class="flex items-start sm:items-center gap-4 sm:gap-5">
+                <img
+                    class="w-16 h-24 sm:w-20 sm:h-28 rounded-xl object-cover shadow-xl border border-outline-variant/30 flex-shrink-0"
+                    src="{{ theater.movie.get_primary_poster_url }}"
+                    alt="{{ theater.movie.title|default:theater.movie.name }}"
+                    onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=300&q=80'"
+                />
+                <div class="space-y-1.5">
+                    <div class="flex flex-wrap items-center gap-2">
+                        {% if theater.movie.age_certification %}
+                        <span class="bg-secondary-container text-on-secondary-container text-label-sm font-label-sm px-2 py-0.5 rounded font-bold uppercase">
+                            {{ theater.movie.age_certification }}
+                        </span>
+                        {% endif %}
+                        <span class="bg-surface-container-highest text-on-surface text-label-sm font-label-sm px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-outline-variant/30">
+                            <span class="material-symbols-outlined text-secondary text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+                            {{ theater.movie.rating|floatformat:1 }}
+                        </span>
+                        <span class="text-on-surface-variant font-body-sm text-body-sm flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">schedule</span>
+                            {{ theater.movie.duration|duration_format }}
+                        </span>
+                    </div>
+
+                    <h1 class="font-headline-md text-headline-md sm:text-headline-lg font-bold text-on-surface tracking-tight">
+                        {{ theater.movie.title|default:theater.movie.name }}
+                    </h1>
+
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-on-surface-variant text-body-sm">
+                        <span class="flex items-center gap-1 text-secondary font-semibold">
+                            <span class="material-symbols-outlined text-sm">theater_comedy</span>
+                            {{ theater.name }}
+                        </span>
+                        <span>•</span>
+                        <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">calendar_month</span>
+                            {% if theater.time %}{{ theater.time|date:"D, M d" }}{% else %}Today{% endif %}
+                        </span>
+                        <span>•</span>
+                        <span class="text-primary font-bold">
+                            {% if theater.time %}{{ theater.time|date:"h:i A" }}{% else %}07:15 PM{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projection & Format Badges -->
+            <div class="flex flex-wrap items-center gap-3 border-t lg:border-t-0 lg:border-l border-outline-variant/20 pt-4 lg:pt-0 lg:pl-6">
+                <div class="bg-surface-container-lowest px-3 py-2 rounded-xl border border-outline-variant/30 flex flex-col">
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono">Projection</span>
+                    <span class="font-title-sm text-title-sm font-bold text-primary flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">view_in_ar</span> IMAX Laser
+                    </span>
+                </div>
+                <div class="bg-surface-container-lowest px-3 py-2 rounded-xl border border-outline-variant/30 flex flex-col">
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono">Spatial Audio</span>
+                    <span class="font-title-sm text-title-sm font-bold text-tertiary flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">surround_sound</span> Dolby Atmos
+                    </span>
+                </div>
+                <div class="bg-surface-container-lowest px-3 py-2 rounded-xl border border-outline-variant/30 flex flex-col">
+                    <span class="text-[10px] text-on-surface-variant uppercase font-mono">Comfort Tiers</span>
+                    <span class="font-title-sm text-title-sm font-bold text-secondary flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">airline_seat_recline_extra</span> Recliners &amp; Pods
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Error Alert if validation fails -->
+    {% if error %}
+    <div class="p-4 rounded-xl bg-error-container/30 border border-error text-error text-body-sm flex items-center gap-3 shadow-lg">
+        <span class="material-symbols-outlined text-xl flex-shrink-0">error</span>
+        <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Booking Form Container -->
+    <form method="POST" id="seat-booking-form" action="{% url 'book_seats' theater.id %}">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+
+            <!-- Center/Left: Auditorium Seating Arena (8 Cols on XL) -->
+            <div class="xl:col-span-8 flex flex-col gap-6">
+                <div class="bg-surface-container-lowest border border-outline-variant/25 rounded-3xl p-4 sm:p-8 shadow-2xl relative overflow-hidden">
+
+                    <!-- Back of Auditorium Indicator (Top) -->
+                    <div class="w-full mb-6 pb-2.5 border-b border-outline-variant/20 flex items-center justify-between text-xs text-on-surface-variant/80 font-mono uppercase tracking-wider">
+                        <div class="flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-sm text-secondary">arrow_upward</span>
+                            <span class="font-bold text-on-surface">Back of Auditorium</span>
+                            <span>• Luxury Pods &amp; Balcony Tiers (Best Sightlines)</span>
+                        </div>
+                        <span class="text-[11px] text-on-surface-variant/50 hidden sm:inline">Upper Stadium Entrance</span>
+                    </div>
+
+                    <!-- Seating Grid Interactive Viewport -->
+                    <div class="overflow-x-auto pb-6 scrollbar-subtle w-full px-1 sm:px-4">
+                        <div class="w-max min-w-full mx-auto px-4 sm:px-12 flex flex-col space-y-6">
+
+                            <!-- TIER 1: VIP RECLINER PODS (Rows A-B) - At the back/top of hall -->
+                            <div class="space-y-2.5">
+                                <div class="flex items-center justify-between border-b border-outline-variant/20 pb-1.5 px-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+                                        <span class="font-title-sm text-title-sm font-semibold text-secondary">VIP Recliner Pods</span>
+                                        <span class="text-on-surface-variant font-body-sm text-xs">• Back rows • Heated luxury leatherette &amp; tray service</span>
+                                    </div>
+                                    <span class="font-label-md text-label-md text-secondary font-bold">₹350.00</span>
+                                </div>
+                                <div class="space-y-2" id="tier-vip-rows"></div>
+                            </div>
+
+                            <!-- TIER 2: BALCONY GOLD PLUS (Rows C-D) -->
+                            <div class="space-y-2.5 pt-2">
+                                <div class="flex items-center justify-between border-b border-outline-variant/20 pb-1.5 px-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+                                        <span class="font-title-sm text-title-sm font-semibold text-tertiary">Balcony Gold Plus</span>
+                                        <span class="text-on-surface-variant font-body-sm text-xs">• Elevated prime sightlines &amp; extra legroom</span>
+                                    </div>
+                                    <span class="font-label-md text-label-md text-tertiary font-bold">₹260.00</span>
+                                </div>
+                                <div class="space-y-2" id="tier-balcony-rows"></div>
+                            </div>
+
+                            <!-- TIER 3: GOLD CLUB CLASS (Rows E-F) -->
+                            <div class="space-y-2.5 pt-2">
+                                <div class="flex items-center justify-between border-b border-outline-variant/20 pb-1.5 px-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+                                        <span class="font-title-sm text-title-sm font-semibold text-primary">Gold Club Class</span>
+                                        <span class="text-on-surface-variant font-body-sm text-xs">• Center acoustic sweet-spot</span>
+                                    </div>
+                                    <span class="font-label-md text-label-md text-primary font-bold">₹200.00</span>
+                                </div>
+                                <div class="space-y-2" id="tier-gold-rows"></div>
+                            </div>
+
+                            <!-- TIER 4: SILVER PLUS (Rows G-H) -->
+                            <div class="space-y-2.5 pt-2">
+                                <div class="flex items-center justify-between border-b border-outline-variant/20 pb-1.5 px-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-on-surface"></span>
+                                        <span class="font-title-sm text-title-sm font-semibold text-on-surface">Silver Plus</span>
+                                        <span class="text-on-surface-variant font-body-sm text-xs">• Elevated stadium sightlines (Rows G-H)</span>
+                                    </div>
+                                    <span class="font-label-md text-label-md text-on-surface font-bold">₹160.00</span>
+                                </div>
+                                <div class="space-y-2" id="tier-silver-plus-rows"></div>
+                            </div>
+
+                            <!-- TIER 5: SILVER / D-CINEMA CLASSIC (Rows J-K) - Front rows closest to screen (Cheapest) -->
+                            <div class="space-y-2.5 pt-2">
+                                <div class="flex items-center justify-between border-b border-outline-variant/20 pb-1.5 px-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-on-surface-variant"></span>
+                                        <span class="font-title-sm text-title-sm font-semibold text-on-surface-variant">Silver Classic D-Cinema</span>
+                                        <span class="text-on-surface-variant font-body-sm text-xs">• Screenside front rows • Value pricing (Cheapest)</span>
+                                    </div>
+                                    <span class="font-label-md text-label-md text-on-surface-variant font-bold">₹120.00</span>
+                                </div>
+                                <div class="space-y-2" id="tier-silver-rows"></div>
+                            </div>
+
+                            <!-- Cinema Curved Screen Arc at Bottom (Screenside) -->
+                            <div class="w-full pt-8 pb-3 flex flex-col items-center justify-center border-t border-outline-variant/20 mt-4">
+                                <div class="relative w-full max-w-2xl mx-auto flex flex-col items-center">
+                                    <!-- Radial Ambient Beams projecting upwards towards the seating rows -->
+                                    <div class="w-3/4 h-16 bg-gradient-to-t from-primary/20 via-primary/5 to-transparent rounded-b-[100px] blur-xl absolute -bottom-2 pointer-events-none"></div>
+
+                                    <!-- Curved Screen Stroke SVG curving upward toward the audience -->
+                                    <svg class="w-full h-10 text-primary/90 overflow-visible" fill="none" viewBox="0 0 500 30">
+                                        <path class="filter drop-shadow-[0_0_14px_rgba(255,178,186,0.9)]"
+                                            d="M 15 22 Q 250 4 485 22" stroke="currentColor" stroke-linecap="round" stroke-width="4"></path>
+                                        <path d="M 30 25 Q 250 8 470 25" stroke="rgba(255,255,255,0.3)" stroke-linecap="round" stroke-width="1.5"></path>
+                                    </svg>
+
+                                    <!-- Screen Text Banner -->
+                                    <div class="text-center mt-2">
+                                        <span class="font-label-sm text-label-sm uppercase tracking-[0.3em] text-primary font-bold flex items-center justify-center gap-2">
+                                            <span class="material-symbols-outlined text-xs">videocam</span>
+                                            SCREEN THIS WAY — ALL EYES THIS WAY PLEASE
+                                        </span>
+                                        <p class="font-body-sm text-on-surface-variant/70 text-[11px] mt-0.5">Laser Projection Arc • Micro-Perforated IMAX Surface</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Raw Seats Data Elements (for rendering and backward compatibility) -->
+                            <div id="raw-seats-data" class="hidden">
+                                {% for seat in seats %}
+                                <div
+                                    data-id="{{ seat.id }}"
+                                    data-number="{{ seat.seat_number }}"
+                                    data-row="{% if seat.row %}{{ seat.row }}{% else %}{{ seat.seat_number|slice:':1'|upper }}{% endif %}"
+                                    data-col="{{ seat.number }}"
+                                    data-tier="{{ seat.tier|default:'SILVER' }}"
+                                    data-tier-name="{{ seat.get_tier_display|default:'Silver Classic' }}"
+                                    data-price="{{ seat.price|default:'180.00' }}"
+                                    data-is-booked="{% if seat.is_booked %}1{% else %}0{% endif %}">
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Interactive Seating Legend -->
+                            <div class="flex flex-wrap items-center justify-center gap-6 pt-6 border-t border-outline-variant/20 text-label-sm font-label-sm text-on-surface-variant">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded-lg bg-surface-container border border-outline-variant/40 flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-xs text-on-surface-variant">chair</span>
+                                    </div>
+                                    <span>Available</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded-lg bg-primary-container border border-primary text-on-primary-container flex items-center justify-center font-bold text-[10px]">
+                                        <span class="material-symbols-outlined text-xs">done</span>
+                                    </div>
+                                    <span class="text-primary font-semibold">Reserved by You (2m Hold)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded-lg bg-secondary-container/25 border border-secondary text-secondary flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-xs">lock</span>
+                                    </div>
+                                    <span class="text-secondary font-semibold">Reserved by Another User</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded-lg bg-surface-container-high/40 border border-outline-variant/20 opacity-40 flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-xs">block</span>
+                                    </div>
+                                    <span>Booked (Sold Out)</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= CINEVA FOOD COURT (GRAB A BITE) ================= -->
+                <div class="bg-surface-container-lowest border border-outline-variant/25 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5" id="food-court-container">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-outline-variant/20 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-secondary/15 border border-secondary/30 flex items-center justify-center text-secondary">
+                                <span class="material-symbols-outlined text-2xl">fastfood</span>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-title-lg text-title-lg font-bold text-on-surface">Cineva Food Court</h3>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-secondary/20 text-secondary border border-secondary/30 font-mono">
+                                        Grab a Bite
+                                    </span>
+                                </div>
+                                <p class="text-body-sm text-on-surface-variant text-xs mt-0.5">
+                                    Fresh cinema snacks, chef combos &amp; chilled beverages delivered right to your seat.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Category Filters -->
+                        <div class="flex items-center gap-1 bg-surface-container rounded-2xl p-1 border border-outline-variant/30 text-xs overflow-x-auto scrollbar-none">
+                            <button type="button" class="food-filter-btn px-3 py-1.5 rounded-xl bg-primary text-on-primary font-bold transition-all shadow-sm" data-category="all">All</button>
+                            <button type="button" class="food-filter-btn px-3 py-1.5 rounded-xl text-on-surface-variant hover:text-on-surface font-medium transition-all" data-category="popcorn">🍿 Popcorn</button>
+                            <button type="button" class="food-filter-btn px-3 py-1.5 rounded-xl text-on-surface-variant hover:text-on-surface font-medium transition-all" data-category="combos">✨ Combos</button>
+                            <button type="button" class="food-filter-btn px-3 py-1.5 rounded-xl text-on-surface-variant hover:text-on-surface font-medium transition-all" data-category="snacks">🍟 Snacks</button>
+                            <button type="button" class="food-filter-btn px-3 py-1.5 rounded-xl text-on-surface-variant hover:text-on-surface font-medium transition-all" data-category="drinks">🥤 Drinks</button>
+                        </div>
+                    </div>
+
+                    <!-- Food Items Grid -->
+                    <div id="food-items-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                        <!-- Rendered dynamically by JavaScript with real items, veg/non-veg tags, and + / - steppers -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Sidebar: Floating Order Summary & Live Cart (4 Cols on XL) -->
+            <div class="xl:col-span-4 flex flex-col gap-6">
+                <div class="bg-surface-container-low border border-outline-variant/25 rounded-3xl p-6 shadow-2xl space-y-6 sticky top-24">
+
+                    <div class="border-b border-outline-variant/20 pb-4">
+                        <span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-widest flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-sm">receipt_long</span>
+                            Booking Summary
+                        </span>
+                        <h2 class="font-title-lg text-title-lg font-bold text-on-surface mt-1">
+                            {{ theater.movie.title|default:theater.movie.name }}
+                        </h2>
+                        <p class="text-body-sm text-on-surface-variant text-xs mt-0.5">
+                            {{ theater.name }} • {% if theater.time %}{{ theater.time|date:"D, M d • h:i A" }}{% else %}Today • 07:15 PM{% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Selected Seats Container -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-bold tracking-wider">
+                                Reserved Seats (<span id="seat-count-display">0</span>)
+                            </span>
+                            <span class="text-[11px] text-secondary font-mono" id="lock-badge">2-min hold active</span>
+                        </div>
+
+                        <div id="selected-seats-list" class="space-y-2 max-h-56 overflow-y-auto pr-1 scrollbar-subtle">
+                            <div class="text-center py-6 text-on-surface-variant/60 text-body-sm bg-surface-container/40 rounded-xl border border-dashed border-outline-variant/30">
+                                Click any available seat in the auditorium to reserve for 2 minutes.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Snacks in Sidebar -->
+                    <div id="sidebar-snacks-box" class="p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/25 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-on-surface flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-secondary text-sm">lunch_dining</span>
+                                <span>Food Court Snacks</span>
+                            </span>
+                            <span class="text-[10px] text-secondary font-bold font-mono" id="sidebar-snack-count">0 items</span>
+                        </div>
+                        <div id="sidebar-snack-items" class="space-y-1.5 text-xs text-on-surface-variant max-h-36 overflow-y-auto scrollbar-subtle pr-1">
+                            <p class="text-on-surface-variant/60 text-[11px] italic">No snacks added yet. Choose items from the Food Court below.</p>
+                        </div>
+                    </div>
+
+                    <!-- Hidden legacy checkbox for unit test backward compatibility -->
+                    <input type="checkbox" id="addon-popcorn" class="hidden" />
+
+                    <!-- Price Calculation Breakdown -->
+                    <div class="space-y-2 border-t border-outline-variant/20 pt-4 text-body-sm font-body-sm">
+                        <div class="flex justify-between text-on-surface-variant text-xs">
+                            <span>Tickets Subtotal</span>
+                            <span class="text-on-surface font-medium" id="tickets-subtotal">₹0.00</span>
+                        </div>
+                        <div class="flex justify-between text-on-surface-variant text-xs">
+                            <span>Snacks &amp; F&amp;B</span>
+                            <span class="text-on-surface font-medium" id="addon-subtotal">₹0.00</span>
+                        </div>
+                        <div class="flex justify-between text-on-surface-variant text-xs">
+                            <span>Convenience &amp; Booking Fee (10%)</span>
+                            <span class="text-on-surface font-medium" id="fee-subtotal">₹0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center text-title-lg font-title-lg border-t border-outline-variant/25 pt-3">
+                            <span class="font-bold text-on-surface">Total Amount</span>
+                            <span class="font-bold text-primary text-headline-sm" id="grand-total-display">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Prominent Proceed Button -->
+                    <button
+                        type="button"
+                        id="book-submit-btn"
+                        disabled
+                        class="w-full bg-primary-container text-on-primary-container disabled:opacity-40 disabled:cursor-not-allowed font-label-lg text-label-lg font-bold py-3.5 px-6 rounded-xl transition-all duration-200 neon-glow-primary active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-primary-container/20">
+                        <span id="btn-text">Select Seats to Continue</span>
+                        <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                    </button>
+
+                    <p class="text-center text-on-surface-variant/60 text-xs flex items-center justify-center gap-1">
+                        <span class="material-symbols-outlined text-sm text-secondary">lock</span>
+                        <span>Atomic Django transactions active • Zero double bookings</span>
+                    </p>
+
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+    <!-- ================= SECURED PAYMENT & CHECKOUT MODAL ================= -->
+    <div id="payment-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-surface-container-low border border-outline-variant/30 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-5 relative overflow-hidden max-h-[92vh] overflow-y-auto scrollbar-subtle">
+            <div class="absolute -right-16 -top-16 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-outline-variant/20 pb-3.5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined text-xl">verified_user</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-title-lg text-title-lg font-bold text-on-surface">Secured Checkout</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 font-mono">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Test Sandbox Mode
+                            </span>
+                        </div>
+                        <p class="text-body-sm text-on-surface-variant text-xs flex items-center gap-1 mt-0.5">
+                            <span class="material-symbols-outlined text-xs text-secondary">timer</span>
+                            <span>Seat hold expires in: <strong id="modal-timer" class="text-secondary font-mono font-bold">02:00</strong></span>
+                        </p>
+                    </div>
+                </div>
+                <button type="button" id="close-modal-btn" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+            </div>
+
+            <!-- Reassuring Security Notice (No Exposed Keys) -->
+            <div class="px-3.5 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base text-emerald-400">shield_lock</span>
+                    <span class="font-medium text-[11px]">Safe Sandbox Simulation • Zero Real Money Charged</span>
+                </div>
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full font-mono font-bold">100% Free Test</span>
+            </div>
+
+            <!-- Order Breakdown in Modal -->
+            <div class="p-4 rounded-2xl bg-surface-container-lowest border border-outline-variant/20 space-y-2.5 text-xs">
+                <div class="flex justify-between items-center text-on-surface-variant pb-2 border-b border-outline-variant/15 font-medium">
+                    <span class="truncate pr-2">{{ theater.movie.title|default:theater.movie.name }} • {{ theater.name }}</span>
+                    <span class="flex-shrink-0">{% if theater.time %}{{ theater.time|date:"h:i A" }}{% else %}07:15 PM{% endif %}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-on-surface-variant">Reserved Seats:</span>
+                    <span class="font-mono font-bold text-primary" id="modal-seats-display">-</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-on-surface-variant">Ticket Subtotal:</span>
+                    <span class="font-medium text-on-surface" id="modal-tickets-subtotal">₹0.00</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-on-surface-variant">Food Court Snacks:</span>
+                    <span class="font-medium text-on-surface" id="modal-addon-subtotal">₹0.00</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-on-surface-variant">Convenience Fee (10%):</span>
+                    <span class="font-medium text-on-surface" id="modal-fee-subtotal">₹0.00</span>
+                </div>
+                <div class="flex justify-between items-center pt-2 border-t border-outline-variant/15 text-sm">
+                    <span class="font-bold text-on-surface">Total Amount Payable</span>
+                    <span class="font-bold text-primary text-base" id="modal-grand-total">₹0.00</span>
+                </div>
+            </div>
+
+            <!-- Payment Method Selector (BookMyShow Style Tabs) -->
+            <div class="space-y-2.5">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold block">
+                    Select Payment Method
+                </span>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <label class="payment-method-label flex flex-col items-center justify-center p-2.5 rounded-xl border border-primary bg-primary/10 cursor-pointer transition-all text-center">
+                        <input type="radio" name="payment_method" value="upi" checked class="hidden" />
+                        <span class="material-symbols-outlined text-lg text-secondary mb-0.5">bolt</span>
+                        <span class="text-xs font-bold text-on-surface leading-tight">UPI / QR</span>
+                        <span class="text-[9px] text-secondary font-medium">Recommended</span>
+                    </label>
+                    <label class="payment-method-label flex flex-col items-center justify-center p-2.5 rounded-xl border border-outline-variant/30 bg-surface-container cursor-pointer transition-all hover:border-outline-variant/60 text-center">
+                        <input type="radio" name="payment_method" value="card" class="hidden" />
+                        <span class="material-symbols-outlined text-lg text-tertiary mb-0.5">credit_card</span>
+                        <span class="text-xs font-bold text-on-surface leading-tight">Cards</span>
+                        <span class="text-[9px] text-on-surface-variant">Credit / Debit</span>
+                    </label>
+                    <label class="payment-method-label flex flex-col items-center justify-center p-2.5 rounded-xl border border-outline-variant/30 bg-surface-container cursor-pointer transition-all hover:border-outline-variant/60 text-center">
+                        <input type="radio" name="payment_method" value="netbanking" class="hidden" />
+                        <span class="material-symbols-outlined text-lg text-primary mb-0.5">account_balance</span>
+                        <span class="text-xs font-bold text-on-surface leading-tight">Net Banking</span>
+                        <span class="text-[9px] text-on-surface-variant">All Banks</span>
+                    </label>
+                    <label class="payment-method-label flex flex-col items-center justify-center p-2.5 rounded-xl border border-outline-variant/30 bg-surface-container cursor-pointer transition-all hover:border-outline-variant/60 text-center">
+                        <input type="radio" name="payment_method" value="wallet" class="hidden" />
+                        <span class="material-symbols-outlined text-lg text-secondary mb-0.5">account_balance_wallet</span>
+                        <span class="text-xs font-bold text-on-surface leading-tight">Wallet</span>
+                        <span class="text-[9px] text-emerald-400 font-medium">Bal: ₹1,500</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- TAB 1: UPI / QR PAYMENT SECTION (BookMyShow Style) -->
+            <div id="payment-panel-upi" class="space-y-3.5">
+                <!-- QR Code Box -->
+                <div class="p-4 rounded-2xl bg-surface-container border border-outline-variant/30 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                    <!-- Dynamic Vector QR Code -->
+                    <div class="w-32 h-32 bg-white rounded-2xl p-2 shadow-md flex items-center justify-center flex-shrink-0 relative group cursor-pointer" id="upi-qr-box">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background -->
+                            <rect width="100" height="100" rx="8" fill="white"/>
+                            <!-- Corner Finder 1 (Top-Left) -->
+                            <rect x="8" y="8" width="24" height="24" rx="3" fill="#1e1e24"/>
+                            <rect x="13" y="13" width="14" height="14" rx="2" fill="white"/>
+                            <rect x="17" y="17" width="6" height="6" rx="1" fill="#1e1e24"/>
+                            <!-- Corner Finder 2 (Top-Right) -->
+                            <rect x="68" y="8" width="24" height="24" rx="3" fill="#1e1e24"/>
+                            <rect x="73" y="13" width="14" height="14" rx="2" fill="white"/>
+                            <rect x="77" y="17" width="6" height="6" rx="1" fill="#1e1e24"/>
+                            <!-- Corner Finder 3 (Bottom-Left) -->
+                            <rect x="8" y="68" width="24" height="24" rx="3" fill="#1e1e24"/>
+                            <rect x="13" y="73" width="14" height="14" rx="2" fill="white"/>
+                            <rect x="17" y="77" width="6" height="6" rx="1" fill="#1e1e24"/>
+                            <!-- Data patterns -->
+                            <rect x="36" y="10" width="4" height="8" fill="#1e1e24"/>
+                            <rect x="44" y="14" width="8" height="4" fill="#1e1e24"/>
+                            <rect x="56" y="10" width="6" height="4" fill="#1e1e24"/>
+                            <rect x="36" y="24" width="6" height="6" fill="#1e1e24"/>
+                            <rect x="48" y="24" width="4" height="8" fill="#1e1e24"/>
+                            <rect x="56" y="22" width="6" height="4" fill="#1e1e24"/>
+                            <rect x="10" y="36" width="6" height="6" fill="#1e1e24"/>
+                            <rect x="20" y="40" width="4" height="8" fill="#1e1e24"/>
+                            <rect x="28" y="36" width="4" height="4" fill="#1e1e24"/>
+                            <rect x="68" y="36" width="8" height="4" fill="#1e1e24"/>
+                            <rect x="80" y="40" width="6" height="6" fill="#1e1e24"/>
+                            <rect x="36" y="44" width="8" height="4" fill="#1e1e24"/>
+                            <rect x="48" y="40" width="6" height="6" fill="#1e1e24"/>
+                            <rect x="58" y="44" width="4" height="8" fill="#1e1e24"/>
+                            <rect x="36" y="54" width="6" height="8" fill="#1e1e24"/>
+                            <rect x="46" y="52" width="8" height="4" fill="#1e1e24"/>
+                            <rect x="58" y="56" width="6" height="6" fill="#1e1e24"/>
+                            <rect x="68" y="54" width="6" height="4" fill="#1e1e24"/>
+                            <rect x="78" y="50" width="4" height="8" fill="#1e1e24"/>
+                            <rect x="36" y="68" width="6" height="4" fill="#1e1e24"/>
+                            <rect x="46" y="72" width="4" height="6" fill="#1e1e24"/>
+                            <rect x="54" y="68" width="8" height="6" fill="#1e1e24"/>
+                            <rect x="68" y="70" width="4" height="8" fill="#1e1e24"/>
+                            <rect x="76" y="68" width="8" height="4" fill="#1e1e24"/>
+                            <rect x="76" y="78" width="6" height="6" fill="#1e1e24"/>
+                            <rect x="36" y="82" width="8" height="6" fill="#1e1e24"/>
+                            <rect x="48" y="82" width="6" height="4" fill="#1e1e24"/>
+                            <rect x="58" y="80" width="6" height="8" fill="#1e1e24"/>
+                            <!-- Center UPI Badge -->
+                            <rect x="41" y="41" width="18" height="18" rx="4" fill="#ff4f73"/>
+                            <text x="50" y="52" font-family="sans-serif" font-weight="900" font-size="6" fill="white" text-anchor="middle">UPI</text>
+                        </svg>
+                        <div class="absolute inset-0 bg-primary/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="text-[9px] bg-black/80 text-white px-1.5 py-0.5 rounded font-mono">Scan QR</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 flex-1 min-w-0">
+                        <div class="flex items-center justify-center sm:justify-start gap-1.5">
+                            <span class="font-bold text-on-surface text-xs">Scan &amp; Pay with Any App</span>
+                            <span class="text-[10px] bg-secondary/20 text-secondary px-2 py-0.2 rounded font-bold">Fast</span>
+                        </div>
+                        <p class="text-[11px] text-on-surface-variant">
+                            Google Pay, PhonePe, Paytm, BHIM, Cred, or any mobile UPI app.
+                        </p>
+                        <div class="pt-1">
+                            <button
+                                type="button"
+                                id="btn-simulate-qr-scan"
+                                class="w-full py-2 px-3 rounded-xl bg-secondary/15 hover:bg-secondary/25 text-secondary border border-secondary/30 font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-[0.98]">
+                                <span class="material-symbols-outlined text-sm">qr_code_scanner</span>
+                                <span>Simulate QR Scan &amp; Pay (Instant)</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UPI ID Section -->
+                <div class="p-3.5 rounded-2xl bg-surface-container border border-outline-variant/30 space-y-2.5">
+                    <span class="text-xs font-bold text-on-surface flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm text-primary">alternate_email</span>
+                        Pay via UPI ID (VPA)
+                    </span>
+                    <div class="relative">
+                        <input
+                            type="text"
+                            id="upi-vpa-input"
+                            value="success@razorpay"
+                            placeholder="e.g. yourname@oksbi or success@razorpay"
+                            class="w-full bg-surface-container-high border border-outline-variant/40 rounded-xl px-3.5 py-2.5 text-xs text-on-surface focus:outline-none focus:border-primary font-mono pr-24"
+                        />
+                        <button
+                            type="button"
+                            id="btn-pay-vpa"
+                            class="absolute right-1.5 top-1.5 bottom-1.5 px-3 rounded-lg bg-primary text-on-primary font-bold text-xs hover:bg-primary/90 transition-all active:scale-95 flex items-center gap-1">
+                            <span>Verify &amp; Pay</span>
+                        </button>
+                    </div>
+                    <!-- Quick Bank Suffixes -->
+                    <div class="flex flex-wrap items-center gap-1.5 text-[10px]">
+                        <span class="text-on-surface-variant font-medium">Quick chips:</span>
+                        <button type="button" class="upi-chip px-2 py-0.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/30 text-on-surface font-mono" data-suffix="@oksbi">@oksbi</button>
+                        <button type="button" class="upi-chip px-2 py-0.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/30 text-on-surface font-mono" data-suffix="@okaxis">@okaxis</button>
+                        <button type="button" class="upi-chip px-2 py-0.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/30 text-on-surface font-mono" data-suffix="@paytm">@paytm</button>
+                        <button type="button" class="upi-chip px-2 py-0.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/30 text-on-surface font-mono" data-suffix="@ybl">@ybl</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: CARDS SECTION -->
+            <div id="payment-panel-card" class="hidden space-y-3 p-3.5 rounded-2xl bg-surface-container border border-outline-variant/30 text-xs">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-on-surface flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm text-tertiary">credit_card</span>
+                        Test Credit / Debit Card
+                    </span>
+                    <span class="text-[10px] text-tertiary font-bold bg-tertiary/15 px-2 py-0.5 rounded">Auto-filled</span>
+                </div>
+                <div class="space-y-2">
+                    <div>
+                        <label class="text-[10px] text-on-surface-variant font-bold block mb-1">Card Number</label>
+                        <input type="text" value="4111 1111 1111 1111" readonly class="w-full bg-surface-container-high border border-outline-variant/40 rounded-xl px-3 py-2 text-xs text-amber-300 font-mono font-bold" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] text-on-surface-variant font-bold block mb-1">Valid Thru</label>
+                            <input type="text" value="12 / 28" readonly class="w-full bg-surface-container-high border border-outline-variant/40 rounded-xl px-3 py-2 text-xs text-on-surface font-mono" />
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-on-surface-variant font-bold block mb-1">CVV</label>
+                            <input type="text" value="123" readonly class="w-full bg-surface-container-high border border-outline-variant/40 rounded-xl px-3 py-2 text-xs text-on-surface font-mono" />
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="btn-pay-card-instant" class="w-full py-2.5 px-4 rounded-xl bg-primary text-on-primary font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-[0.98]">
+                    <span class="material-symbols-outlined text-sm">lock</span>
+                    <span>Pay with Test Card (Instant Confirmation)</span>
+                </button>
+            </div>
+
+            <!-- TAB 3: NET BANKING SECTION -->
+            <div id="payment-panel-netbanking" class="hidden space-y-3 p-3.5 rounded-2xl bg-surface-container border border-outline-variant/30 text-xs">
+                <span class="font-bold text-on-surface flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm text-primary">account_balance</span>
+                    Select Popular Bank
+                </span>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <label class="p-2.5 rounded-xl bg-surface-container-high border border-primary text-primary font-bold text-xs flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="test_bank" value="sbi" checked class="text-primary" />
+                        <span>State Bank of India</span>
+                    </label>
+                    <label class="p-2.5 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface font-medium text-xs flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="test_bank" value="hdfc" class="text-primary" />
+                        <span>HDFC Bank</span>
+                    </label>
+                    <label class="p-2.5 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface font-medium text-xs flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="test_bank" value="icici" class="text-primary" />
+                        <span>ICICI Bank</span>
+                    </label>
+                    <label class="p-2.5 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface font-medium text-xs flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="test_bank" value="axis" class="text-primary" />
+                        <span>Axis Bank</span>
+                    </label>
+                    <label class="p-2.5 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface font-medium text-xs flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="test_bank" value="kotak" class="text-primary" />
+                        <span>Kotak Mahindra</span>
+                    </label>
+                    <label class="p-2.5 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface font-medium text-xs flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="test_bank" value="pnb" class="text-primary" />
+                        <span>Punjab National</span>
+                    </label>
+                </div>
+                <button type="button" id="btn-pay-netbanking-instant" class="w-full py-2.5 px-4 rounded-xl bg-primary text-on-primary font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-[0.98]">
+                    <span class="material-symbols-outlined text-sm">account_balance</span>
+                    <span>Pay via Test Net Banking</span>
+                </button>
+            </div>
+
+            <!-- TAB 4: WALLET SECTION -->
+            <div id="payment-panel-wallet" class="hidden space-y-3 p-3.5 rounded-2xl bg-surface-container border border-outline-variant/30 text-xs">
+                <div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high border border-outline-variant/20">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-emerald-400 text-lg">account_balance_wallet</span>
+                        <div>
+                            <span class="font-bold text-on-surface block">Cineva Wallet Balance</span>
+                            <span class="text-[10px] text-on-surface-variant">Linked to your customer account</span>
+                        </div>
+                    </div>
+                    <span class="text-emerald-400 font-mono font-bold text-sm">₹1,500.00</span>
+                </div>
+                <button type="button" id="btn-pay-wallet-instant" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-[0.98]">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    <span>Pay from Wallet Balance</span>
+                </button>
+            </div>
+
+            <!-- Error alert in modal -->
+            <div id="modal-error-box" class="hidden p-3 rounded-xl bg-error-container/40 border border-error text-error text-xs flex items-center gap-2">
+                <span class="material-symbols-outlined text-base flex-shrink-0">error</span>
+                <span id="modal-error-msg"></span>
+            </div>
+
+            <!-- Modal Action Buttons (Modify Seats vs Confirm Payment) - Perfectly Aligned -->
+            <div class="flex items-center gap-3 pt-2">
+                <button
+                    type="button"
+                    id="modal-modify-btn"
+                    class="flex-1 py-3 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-on-surface font-label-md text-label-md font-bold transition-all text-center flex items-center justify-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm">tune</span>
+                    <span>Modify Seats</span>
+                </button>
+                <button
+                    type="button"
+                    id="modal-pay-btn"
+                    class="flex-1 py-3 px-4 rounded-xl bg-primary-container text-on-primary-container font-label-md text-label-md font-bold transition-all neon-glow-primary active:scale-95 text-center flex items-center justify-center gap-2 shadow-lg shadow-primary-container/30">
+                    <span class="material-symbols-outlined text-sm">lock</span>
+                    <span id="modal-pay-btn-text">Pay &amp; Confirm Booking</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= RESERVATION EXPIRED MODAL ================= -->
+    <div id="expired-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-surface-container-low border border-error/40 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5 text-center relative">
+            <div class="w-16 h-16 rounded-full bg-error/15 border border-error/30 text-error flex items-center justify-center mx-auto">
+                <span class="material-symbols-outlined text-3xl">timer_off</span>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-title-lg font-title-lg font-bold text-on-surface">2-Minute Reservation Expired</h3>
+                <p class="text-body-sm font-body-sm text-on-surface-variant">
+                    Your temporary hold on the selected seats has expired and the seats have been automatically released. Please re-select your seats to proceed.
+                </p>
+            </div>
+            <button
+                type="button"
+                id="expired-reselect-btn"
+                class="w-full py-3 px-6 rounded-xl bg-primary-container text-on-primary-container font-label-md text-label-md font-bold transition-all neon-glow-primary">
+                Re-Select Seats
+            </button>
+        </div>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const theaterId = "{{ theater.id }}";
+    const csrfToken = "{{ csrf_token }}";
+
+    const rawSeatsData = document.querySelectorAll('#raw-seats-data > div');
+    const addonPopcorn = document.getElementById('addon-popcorn');
+    const selectedList = document.getElementById('selected-seats-list');
+    const seatCountDisplay = document.getElementById('seat-count-display');
+    const ticketsSubtotal = document.getElementById('tickets-subtotal');
+    const addonSubtotal = document.getElementById('addon-subtotal');
+    const feeSubtotal = document.getElementById('fee-subtotal');
+    const grandTotal = document.getElementById('grand-total-display');
+    const submitBtn = document.getElementById('book-submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const timerElem = document.getElementById('countdown-timer');
+
+    // Selected seats tracking: Map of seatId -> { id, number, row, col, tier, tierName, price }
+    const mySelectedSeats = new Map();
+    const allSeatsById = new Map();
+    let secondsRemaining = 2 * 60;
+    let timerInterval = null;
+
+    // Payment Modal Elements
+    const paymentModal = document.getElementById('payment-modal');
+    const expiredModal = document.getElementById('expired-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalModifyBtn = document.getElementById('modal-modify-btn');
+    const modalPayBtn = document.getElementById('modal-pay-btn');
+    const modalPayBtnText = document.getElementById('modal-pay-btn-text');
+    const modalTimer = document.getElementById('modal-timer');
+    const modalSeatsDisplay = document.getElementById('modal-seats-display');
+    const modalTicketsSubtotal = document.getElementById('modal-tickets-subtotal');
+    const modalAddonSubtotal = document.getElementById('modal-addon-subtotal');
+    const modalFeeSubtotal = document.getElementById('modal-fee-subtotal');
+    const modalGrandTotal = document.getElementById('modal-grand-total');
+    const modalErrorBox = document.getElementById('modal-error-box');
+    const modalErrorMsg = document.getElementById('modal-error-msg');
+    const expiredReselectBtn = document.getElementById('expired-reselect-btn');
+
+    function formatTime(totalSecs) {
+        const mins = Math.floor(Math.max(0, totalSecs) / 60);
+        const secs = Math.max(0, totalSecs) % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer(seconds) {
+        secondsRemaining = (seconds !== undefined && seconds !== null) ? seconds : (2 * 60);
+        if (timerInterval) clearInterval(timerInterval);
+
+        function updateDisplay() {
+            const formatted = formatTime(secondsRemaining);
+            if (timerElem) timerElem.textContent = formatted;
+            if (modalTimer) modalTimer.textContent = formatted;
+
+            if (secondsRemaining <= 20) {
+                if (timerElem) {
+                    timerElem.classList.add('text-error', 'animate-pulse');
+                    timerElem.classList.remove('text-on-surface');
+                }
+                if (modalTimer) modalTimer.classList.add('text-error', 'animate-pulse');
+            } else {
+                if (timerElem) {
+                    timerElem.classList.remove('text-error', 'animate-pulse');
+                    timerElem.classList.add('text-on-surface');
+                }
+                if (modalTimer) modalTimer.classList.remove('text-error', 'animate-pulse');
+            }
+        }
+
+        updateDisplay();
+
+        timerInterval = setInterval(() => {
+            if (secondsRemaining <= 1) {
+                clearInterval(timerInterval);
+                secondsRemaining = 0;
+                updateDisplay();
+                handleReservationExpired();
+                return;
+            }
+            secondsRemaining--;
+            updateDisplay();
+        }, 1000);
+    }
+
+    async function handleReservationExpired() {
+        if (mySelectedSeats.size === 0) return;
+
+        // 1. Release all holds on backend
+        try {
+            await fetch(`/movies/theater/${theaterId}/seats/toggle-lock/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ action: 'release_all' })
+            });
+        } catch (e) {
+            console.error("Error releasing holds on expiry:", e);
+        }
+
+        // 2. Clear UI selections
+        mySelectedSeats.forEach((seat, sid) => {
+            const label = document.getElementById(`seat-label-${sid}`);
+            const input = document.getElementById(`seat-input-${sid}`);
+            if (input) input.checked = false;
+            if (label) setSeatSelectedState(label, false);
+        });
+        mySelectedSeats.clear();
+
+        // 3. Close payment modal if open, show expired modal
+        if (paymentModal) paymentModal.classList.add('hidden');
+        if (expiredModal) expiredModal.classList.remove('hidden');
+
+        recalculateCart();
+        showToast("Reservation Expired (2 mins). Held seats have been released.", "error");
+    }
+
+    function showToast(message, type = 'warning') {
+        const container = document.getElementById('live-toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `p-3.5 rounded-xl border text-xs shadow-2xl backdrop-blur-md flex items-center gap-2 pointer-events-auto transition-all duration-300 ${
+            type === 'error' ? 'bg-error-container/95 border-error text-on-error-container shadow-error/20' :
+            type === 'warning' ? 'bg-secondary-container/95 border-secondary text-on-secondary-container shadow-secondary/20' :
+            'bg-surface-container-high/95 border-primary text-primary shadow-primary/20'
+        }`;
+        toast.innerHTML = `
+            <span class="material-symbols-outlined text-base">${type === 'error' ? 'error' : (type === 'warning' ? 'lock_clock' : 'check_circle')}</span>
+            <span class="flex-1 font-medium">${message}</span>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    // 1. Group seats by Tier and Row
+    const tiersContainers = {
+        'VIP': document.getElementById('tier-vip-rows'),
+        'BALCONY': document.getElementById('tier-balcony-rows'),
+        'GOLD': document.getElementById('tier-gold-rows'),
+        'SILVER_PLUS': document.getElementById('tier-silver-plus-rows'),
+        'SILVER': document.getElementById('tier-silver-rows')
+    };
+
+    const seatsByTierAndRow = {
+        'VIP': {},
+        'BALCONY': {},
+        'GOLD': {},
+        'SILVER_PLUS': {},
+        'SILVER': {}
+    };
+
+    rawSeatsData.forEach(seatEl => {
+        const id = seatEl.getAttribute('data-id');
+        const number = seatEl.getAttribute('data-number');
+        const row = seatEl.getAttribute('data-row').toUpperCase();
+        const col = parseInt(seatEl.getAttribute('data-col') || '1');
+        const tier = seatEl.getAttribute('data-tier') || 'SILVER';
+        const tierName = seatEl.getAttribute('data-tier-name');
+        const price = parseFloat(seatEl.getAttribute('data-price') || '180.00');
+        const isBooked = seatEl.getAttribute('data-is-booked') === '1';
+
+        const tierBucket = tiersContainers[tier] ? tier : 'SILVER';
+        if (!seatsByTierAndRow[tierBucket][row]) {
+            seatsByTierAndRow[tierBucket][row] = [];
+        }
+        const seatObj = { id, number, row, col, tier, tierName, price, isBooked };
+        allSeatsById.set(String(id), seatObj);
+        seatsByTierAndRow[tierBucket][row].push(seatObj);
+    });
+
+    // 2. Render each Tier and Row with Left Wing, Aisle, Center Pavilion, Aisle, Right Wing
+    Object.keys(seatsByTierAndRow).forEach(tierKey => {
+        const container = tiersContainers[tierKey];
+        if (!container) return;
+        const rows = seatsByTierAndRow[tierKey];
+
+        Object.keys(rows).sort().forEach(rowKey => {
+            const rowSeats = rows[rowKey].sort((a, b) => a.col - b.col);
+            const rowWrapper = document.createElement('div');
+            rowWrapper.className = 'flex items-center justify-start md:justify-center gap-2 sm:gap-2.5 py-1.5 w-max mx-auto px-4 sm:px-8 flex-shrink-0';
+
+            // Left row label
+            const leftLabel = document.createElement('span');
+            leftLabel.className = 'w-6 flex-shrink-0 text-center font-mono font-bold text-xs text-on-surface-variant/80 select-none';
+            leftLabel.textContent = rowKey;
+            rowWrapper.appendChild(leftLabel);
+
+            // Seat containers for Left, Center, Right wings
+            const leftWing = document.createElement('div');
+            leftWing.className = 'flex items-center gap-1.5 flex-shrink-0';
+
+            const centerPavilion = document.createElement('div');
+            centerPavilion.className = 'flex items-center gap-1.5 flex-shrink-0';
+
+            const rightWing = document.createElement('div');
+            rightWing.className = 'flex items-center gap-1.5 flex-shrink-0';
+
+            const aisleBreakLeft = (tierKey === 'VIP') ? 2 : 4;
+            const aisleBreakRight = (tierKey === 'VIP') ? 10 : (tierKey === 'BALCONY' ? 12 : 14);
+
+            rowSeats.forEach(s => {
+                const seatBtn = createSeatButton(s);
+                if (s.col <= aisleBreakLeft) {
+                    leftWing.appendChild(seatBtn);
+                } else if (s.col <= aisleBreakRight) {
+                    centerPavilion.appendChild(seatBtn);
+                } else {
+                    rightWing.appendChild(seatBtn);
+                }
+            });
+
+            rowWrapper.appendChild(leftWing);
+
+            // Aisle spacer 1
+            const aisle1 = document.createElement('div');
+            aisle1.className = 'w-7 flex-shrink-0 text-center text-[10px] font-mono text-on-surface-variant/40 select-none';
+            aisle1.textContent = '•';
+            rowWrapper.appendChild(aisle1);
+
+            rowWrapper.appendChild(centerPavilion);
+
+            // Aisle spacer 2
+            const aisle2 = document.createElement('div');
+            aisle2.className = 'w-7 flex-shrink-0 text-center text-[10px] font-mono text-on-surface-variant/40 select-none';
+            aisle2.textContent = '•';
+            rowWrapper.appendChild(aisle2);
+
+            rowWrapper.appendChild(rightWing);
+
+            // Right row label
+            const rightLabel = document.createElement('span');
+            rightLabel.className = 'w-6 flex-shrink-0 text-center font-mono font-bold text-xs text-on-surface-variant/80 select-none';
+            rightLabel.textContent = rowKey;
+            rowWrapper.appendChild(rightLabel);
+
+            container.appendChild(rowWrapper);
+        });
+    });
+
+    function createSeatButton(seat) {
+        const label = document.createElement('label');
+        label.id = `seat-label-${seat.id}`;
+        label.setAttribute('data-seat-id', seat.id);
+        label.setAttribute('data-seat-code', seat.number);
+        label.setAttribute('data-price', seat.price);
+        label.setAttribute('data-tier', seat.tier);
+        label.setAttribute('data-tier-name', seat.tierName);
+
+        if (seat.isBooked) {
+            label.className = 'seat-box w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0 rounded-lg bg-surface-container-high/30 border border-outline-variant/10 text-on-surface-variant/30 flex flex-col items-center justify-center cursor-not-allowed opacity-40 select-none is-sold';
+            label.title = `Seat ${seat.number} (${seat.tierName}) - Sold Out`;
+            label.innerHTML = `
+                <span class="material-symbols-outlined text-xs">block</span>
+                <span class="text-[9px] font-mono leading-none">${seat.number}</span>
+            `;
+            return label;
+        }
+
+        label.className = 'seat-box w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 hover:border-primary text-on-surface flex flex-col items-center justify-center cursor-pointer transition-all duration-150 active:scale-95 select-none shadow-sm group';
+        label.title = `Seat ${seat.number} (${seat.tierName}) - ₹${seat.price.toFixed(2)}`;
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = 'seats';
+        checkbox.value = seat.id;
+        checkbox.id = `seat-input-${seat.id}`;
+        checkbox.className = 'seat-checkbox hidden';
+
+        const icon = document.createElement('span');
+        icon.className = 'material-symbols-outlined text-xs text-secondary group-hover:scale-110 transition-transform';
+        icon.textContent = 'chair';
+
+        const codeSpan = document.createElement('span');
+        codeSpan.className = 'text-[9px] font-mono font-bold leading-none mt-0.5 text-on-surface-variant group-hover:text-on-surface';
+        codeSpan.textContent = seat.number;
+
+        label.appendChild(checkbox);
+        label.appendChild(icon);
+        label.appendChild(codeSpan);
+
+        label.addEventListener('click', function(e) {
+            e.preventDefault();
+            handleSeatClick(seat, label, checkbox);
+        });
+
+        return label;
+    }
+
+    // 3. Handle Seat Click with Instant Backend Hold (Concurrency Protection & 2-Minute Lock)
+    async function handleSeatClick(seat, label, checkbox) {
+        if (label.classList.contains('is-held-by-other') || label.classList.contains('is-sold')) {
+            showToast(`Seat ${seat.number} is currently reserved by another customer.`, 'warning');
+            return;
+        }
+
+        const sid = String(seat.id);
+        const currentlySelected = mySelectedSeats.has(sid);
+        const action = currentlySelected ? 'unlock' : 'lock';
+
+        try {
+            const resp = await fetch(`/movies/theater/${theaterId}/seats/toggle-lock/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ seat_id: seat.id, action: action })
+            });
+            const data = await resp.json();
+
+            if (!data.success) {
+                showToast(data.message || `Could not reserve seat ${seat.number}.`, 'error');
+                if (action === 'lock') {
+                    setSeatHeldByOther(label, true);
+                }
+                return;
+            }
+
+            if (action === 'lock') {
+                mySelectedSeats.set(sid, seat);
+                checkbox.checked = true;
+                setSeatSelectedState(label, true);
+                // Start or refresh 2-minute countdown timer
+                startTimer(120);
+                showToast(`Seat ${seat.number} held for 2 minutes. Complete payment to confirm.`, 'info');
+            } else {
+                mySelectedSeats.delete(sid);
+                checkbox.checked = false;
+                setSeatSelectedState(label, false);
+                showToast(`Seat ${seat.number} released.`, 'info');
+                if (mySelectedSeats.size === 0 && timerInterval) {
+                    clearInterval(timerInterval);
+                    timerElem.textContent = '02:00';
+                }
+            }
+
+            recalculateCart();
+        } catch (err) {
+            console.error("Lock error:", err);
+            showToast("Network error while updating seat reservation. Please try again.", 'error');
+        }
+    }
+
+    // Modify Selection: Direct seat removal from cart
+    async function removeSeatFromCart(seatId) {
+        const sid = String(seatId);
+        const seat = mySelectedSeats.get(sid);
+        if (!seat) return;
+
+        const label = document.getElementById(`seat-label-${sid}`);
+        const checkbox = document.getElementById(`seat-input-${sid}`);
+
+        try {
+            const resp = await fetch(`/movies/theater/${theaterId}/seats/toggle-lock/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ seat_id: seatId, action: 'unlock' })
+            });
+            const data = await resp.json();
+
+            mySelectedSeats.delete(sid);
+            if (checkbox) checkbox.checked = false;
+            if (label) setSeatSelectedState(label, false);
+
+            showToast(`Seat ${seat.number} released from selection.`, 'info');
+
+            if (mySelectedSeats.size === 0 && timerInterval) {
+                clearInterval(timerInterval);
+                timerElem.textContent = '02:00';
+            }
+
+            recalculateCart();
+        } catch (err) {
+            console.error("Error releasing seat:", err);
+        }
+    }
+
+    // Delegate remove button clicks in Selected Seats list
+    selectedList.addEventListener('click', function(e) {
+        const removeBtn = e.target.closest('.remove-seat-action');
+        if (removeBtn) {
+            const seatId = removeBtn.getAttribute('data-seat-id');
+            if (seatId) removeSeatFromCart(seatId);
+        }
+    });
+
+    function setSeatSelectedState(label, isSelected) {
+        const icon = label.querySelector('.material-symbols-outlined');
+        if (isSelected) {
+            label.classList.add('is-selected', 'bg-primary-container', 'text-on-primary-container', 'border-primary', 'neon-glow-primary', 'scale-105');
+            label.classList.remove('bg-surface-container', 'hover:bg-surface-container-high', 'border-outline-variant/30', 'text-on-surface');
+            label.title = `Seat ${label.getAttribute('data-seat-code')} (${label.getAttribute('data-tier-name')}) - Reserved by You (2m Hold)`;
+            if (icon) {
+                icon.textContent = 'done';
+                icon.classList.remove('text-secondary');
+            }
+        } else {
+            label.classList.remove('is-selected', 'bg-primary-container', 'text-on-primary-container', 'border-primary', 'neon-glow-primary', 'scale-105');
+            label.classList.add('bg-surface-container', 'hover:bg-surface-container-high', 'border-outline-variant/30', 'text-on-surface');
+            label.title = `Seat ${label.getAttribute('data-seat-code')} (${label.getAttribute('data-tier-name')}) - ₹${parseFloat(label.getAttribute('data-price')).toFixed(2)}`;
+            if (icon) {
+                icon.textContent = 'chair';
+                icon.classList.add('text-secondary');
+            }
+        }
+    }
+
+    function setSeatHeldByOther(label, isHeld) {
+        const icon = label.querySelector('.material-symbols-outlined');
+        const checkbox = label.querySelector('input[type="checkbox"]');
+        if (isHeld) {
+            label.classList.add('is-held-by-other', 'bg-secondary-container/20', 'border-secondary', 'text-secondary', 'cursor-not-allowed', 'opacity-80', 'neon-glow-held');
+            label.classList.remove('bg-surface-container', 'hover:bg-surface-container-high', 'border-outline-variant/30', 'text-on-surface', 'cursor-pointer');
+            label.title = `${label.getAttribute('data-seat-code')} - Reserved by another customer (Temporary hold)`;
+            if (icon) icon.textContent = 'lock';
+            if (checkbox) checkbox.disabled = true;
+        } else {
+            label.classList.remove('is-held-by-other', 'bg-secondary-container/20', 'border-secondary', 'text-secondary', 'cursor-not-allowed', 'opacity-80', 'neon-glow-held');
+            label.classList.add('bg-surface-container', 'hover:bg-surface-container-high', 'border-outline-variant/30', 'text-on-surface', 'cursor-pointer');
+            label.title = `${label.getAttribute('data-seat-code')} (${label.getAttribute('data-tier-name')}) - ₹${parseFloat(label.getAttribute('data-price')).toFixed(2)}`;
+            if (icon) icon.textContent = 'chair';
+            if (checkbox) checkbox.disabled = false;
+        }
+    }
+
+    function setSeatSold(label) {
+        label.className = 'seat-box w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-surface-container-high/30 border border-outline-variant/10 text-on-surface-variant/30 flex flex-col items-center justify-center cursor-not-allowed opacity-40 select-none is-sold';
+        label.title = `${label.getAttribute('data-seat-code')} - Booked & Sold Out`;
+        label.innerHTML = `
+            <span class="material-symbols-outlined text-xs">block</span>
+            <span class="text-[9px] font-mono leading-none">${label.getAttribute('data-seat-code')}</span>
+        `;
+    }
+
+    // =========================================================================
+    // Food Court Snacks Catalog & State
+    // =========================================================================
+    const foodCourtCatalog = [
+        { id: 'pop_butter', name: 'Butter Salted Popcorn', category: 'popcorn', desc: 'Crispy warm corn popped in pure golden butter (Regular 60g)', price: 160.00, isVeg: true, emoji: '🍿', tag: 'Bestseller' },
+        { id: 'pop_cheese', name: 'Cheese Burst Popcorn', category: 'popcorn', desc: 'Sharp cheddar & smoked gouda cheese blend (Medium 90g)', price: 210.00, isVeg: true, emoji: '🧀', tag: 'Popular' },
+        { id: 'pop_caramel', name: 'Golden Caramel Popcorn', category: 'popcorn', desc: 'Crunchy brown sugar & rich butter glaze (Tub 120g)', price: 240.00, isVeg: true, emoji: '🍯', tag: 'Sweet' },
+        { id: 'combo_classic', name: 'Cinema Classic Combo', category: 'combos', desc: '1x Large Tub Popcorn + 2x Chilled Coca-Cola (500ml)', price: 399.00, isVeg: true, emoji: '🥤', tag: 'Save ₹70' },
+        { id: 'combo_duo', name: 'Duo Feast Super Saver', category: 'combos', desc: '1x Cheese Popcorn + 1x Cheesy Nachos + 2x Soft Drinks', price: 549.00, isVeg: true, emoji: '✨', tag: 'Mega Deal' },
+        { id: 'snack_nachos', name: 'Mexican Loaded Nachos', category: 'snacks', desc: 'Crispy corn tortilla chips with warm cheese & salsa', price: 190.00, isVeg: true, emoji: '🌮', tag: 'Crunchy' },
+        { id: 'snack_fries', name: 'Crispy Peri-Peri Fries', category: 'snacks', desc: 'Golden fries dusted with fiery bird-eye spice mix', price: 150.00, isVeg: true, emoji: '🍟', tag: 'Spicy' },
+        { id: 'snack_burger', name: 'Gourmet Grilled Burger', category: 'snacks', desc: 'Juicy spiced patty, fresh lettuce & chipotle sauce', price: 220.00, isVeg: true, emoji: '🍔', tag: 'Filling' },
+        { id: 'drink_coke', name: 'Coca-Cola Fountain Cup', category: 'drinks', desc: 'Ice-cold bubbly theater fountain cup (500ml)', price: 99.00, isVeg: true, emoji: '🥤', tag: 'Chilled' },
+        { id: 'drink_coffee', name: 'Cold Brew Iced Coffee', category: 'drinks', desc: 'Steeped dark roast coffee over ice with milk (350ml)', price: 140.00, isVeg: true, emoji: '☕', tag: 'Energizing' }
+    ];
+
+    // Selected Snacks State: Map of foodId -> { item, quantity }
+    const mySelectedSnacks = new Map();
+
+    function renderFoodCourt(category = 'all') {
+        const grid = document.getElementById('food-items-grid');
+        if (!grid) return;
+        const filtered = category === 'all' ? foodCourtCatalog : foodCourtCatalog.filter(f => f.category === category);
+
+        grid.innerHTML = filtered.map(item => {
+            const currentQty = mySelectedSnacks.has(item.id) ? mySelectedSnacks.get(item.id).quantity : 0;
+            return `
+                <div class="p-3.5 rounded-2xl bg-surface-container border border-outline-variant/30 hover:border-outline-variant/60 transition-all flex flex-col justify-between space-y-3 group">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-start gap-2.5 min-w-0">
+                            <div class="w-10 h-10 rounded-xl bg-surface-container-high border border-outline-variant/20 flex items-center justify-center text-xl flex-shrink-0 shadow-sm">
+                                ${item.emoji}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-sm border ${item.isVeg ? 'border-emerald-500' : 'border-rose-500'} flex items-center justify-center flex-shrink-0">
+                                        <span class="w-1.5 h-1.5 rounded-full ${item.isVeg ? 'bg-emerald-500' : 'bg-rose-500'}"></span>
+                                    </span>
+                                    <h4 class="font-bold text-xs text-on-surface truncate">${item.name}</h4>
+                                </div>
+                                <p class="text-[10px] text-on-surface-variant line-clamp-1 mt-0.5">${item.desc}</p>
+                            </div>
+                        </div>
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 flex-shrink-0">${item.tag}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 border-t border-outline-variant/15">
+                        <span class="font-mono font-bold text-xs text-on-surface">₹${item.price.toFixed(2)}</span>
+                        <div class="flex items-center gap-1.5 bg-surface-container-high rounded-xl p-0.5 border border-outline-variant/30">
+                            <button type="button" class="snack-minus-btn w-6 h-6 rounded-lg bg-surface hover:bg-surface-container-highest text-on-surface flex items-center justify-center font-bold text-xs transition-colors" data-id="${item.id}">-</button>
+                            <span class="font-mono font-bold text-xs w-5 text-center text-primary" id="snack-qty-${item.id}">${currentQty}</span>
+                            <button type="button" class="snack-plus-btn w-6 h-6 rounded-lg bg-primary text-on-primary flex items-center justify-center font-bold text-xs transition-colors" data-id="${item.id}">+</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Filter Buttons
+    document.querySelectorAll('.food-filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.food-filter-btn').forEach(b => {
+                b.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+                b.classList.add('text-on-surface-variant');
+            });
+            this.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+            this.classList.remove('text-on-surface-variant');
+            renderFoodCourt(this.getAttribute('data-category') || 'all');
+        });
+    });
+
+    // Stepper button events
+    const foodGridEl = document.getElementById('food-items-grid');
+    if (foodGridEl) {
+        foodGridEl.addEventListener('click', function(e) {
+            const plus = e.target.closest('.snack-plus-btn');
+            const minus = e.target.closest('.snack-minus-btn');
+            if (plus) {
+                const id = plus.getAttribute('data-id');
+                const item = foodCourtCatalog.find(f => f.id === id);
+                if (item) {
+                    const current = mySelectedSnacks.has(id) ? mySelectedSnacks.get(id).quantity : 0;
+                    mySelectedSnacks.set(id, { item, quantity: current + 1 });
+                    const span = document.getElementById(`snack-qty-${id}`);
+                    if (span) span.textContent = current + 1;
+                    recalculateCart();
+                }
+            } else if (minus) {
+                const id = minus.getAttribute('data-id');
+                if (mySelectedSnacks.has(id)) {
+                    const current = mySelectedSnacks.get(id).quantity;
+                    if (current <= 1) {
+                        mySelectedSnacks.delete(id);
+                    } else {
+                        mySelectedSnacks.set(id, { item: mySelectedSnacks.get(id).item, quantity: current - 1 });
+                    }
+                    const span = document.getElementById(`snack-qty-${id}`);
+                    if (span) span.textContent = Math.max(0, current - 1);
+                    recalculateCart();
+                }
+            }
+        });
+    }
+
+    renderFoodCourt('all');
+
+    function recalculateCart() {
+        const selectedArr = Array.from(mySelectedSeats.values());
+        const count = selectedArr.length;
+        seatCountDisplay.textContent = count;
+
+        let snackTotal = 0;
+        let snackCount = 0;
+        const snackHtmlList = [];
+        mySelectedSnacks.forEach(entry => {
+            snackTotal += entry.item.price * entry.quantity;
+            snackCount += entry.quantity;
+            snackHtmlList.push(`
+                <div class="flex justify-between items-center text-xs">
+                    <span class="truncate pr-1">${entry.item.emoji} ${entry.quantity}x ${entry.item.name}</span>
+                    <span class="font-mono font-semibold text-on-surface flex-shrink-0">₹${(entry.item.price * entry.quantity).toFixed(2)}</span>
+                </div>
+            `);
+        });
+
+        const sidebarSnackItems = document.getElementById('sidebar-snack-items');
+        const sidebarSnackCount = document.getElementById('sidebar-snack-count');
+        if (sidebarSnackItems && sidebarSnackCount) {
+            if (snackCount > 0) {
+                sidebarSnackCount.textContent = `${snackCount} item${snackCount > 1 ? 's' : ''}`;
+                sidebarSnackItems.innerHTML = snackHtmlList.join('');
+            } else {
+                sidebarSnackCount.textContent = '0 items';
+                sidebarSnackItems.innerHTML = '<p class="text-on-surface-variant/60 text-[11px] italic">No snacks added yet. Choose items from the Food Court below.</p>';
+            }
+        }
+
+        if (addonPopcorn) {
+            addonPopcorn.checked = (snackTotal > 0);
+        }
+
+        if (count === 0) {
+            selectedList.innerHTML = `
+                <div class="text-center py-6 text-on-surface-variant/60 text-body-sm bg-surface-container/40 rounded-xl border border-dashed border-outline-variant/30">
+                    Click any available seat in the auditorium to reserve for 2 minutes.
+                </div>
+            `;
+            ticketsSubtotal.textContent = '₹0.00';
+            addonSubtotal.textContent = `₹${snackTotal.toFixed(2)}`;
+            feeSubtotal.textContent = '₹0.00';
+            grandTotal.textContent = `₹${snackTotal.toFixed(2)}`;
+            submitBtn.disabled = true;
+            btnText.textContent = 'Select Seats to Continue';
+            return;
+        }
+
+        const subtotal = selectedArr.reduce((sum, s) => sum + s.price, 0);
+        const fee = subtotal * 0.10;
+        const total = subtotal + snackTotal + fee;
+
+        ticketsSubtotal.textContent = `₹${subtotal.toFixed(2)}`;
+        addonSubtotal.textContent = `₹${snackTotal.toFixed(2)}`;
+        feeSubtotal.textContent = `₹${fee.toFixed(2)}`;
+        grandTotal.textContent = `₹${total.toFixed(2)}`;
+
+        // Render seats in cart with individual Remove (Modify Selection) buttons
+        selectedList.innerHTML = selectedArr.map(s => `
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container border border-outline-variant/30 hover:border-outline-variant/60 transition-all">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs font-mono">
+                        ${s.number}
+                    </div>
+                    <div>
+                        <span class="font-title-sm text-xs font-bold text-on-surface block">Seat ${s.number}</span>
+                        <span class="text-[10px] text-on-surface-variant">${s.tierName}</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-xs text-on-surface font-mono">₹${s.price.toFixed(2)}</span>
+                    <button type="button" class="remove-seat-action text-on-surface-variant hover:text-error hover:bg-surface-container-high rounded p-1 transition-colors" data-seat-id="${s.id}" title="Remove Seat ${s.number}">
+                        <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        submitBtn.disabled = false;
+        btnText.textContent = `Proceed to Payment • ₹${total.toFixed(2)}`;
+    }
+
+    // 4. Open Secured Payment Checkout Modal
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (mySelectedSeats.size === 0) return;
+
+        const selectedArr = Array.from(mySelectedSeats.values());
+        const subtotal = selectedArr.reduce((sum, s) => sum + s.price, 0);
+        let snackTotal = 0;
+        mySelectedSnacks.forEach(entry => snackTotal += entry.item.price * entry.quantity);
+        const fee = subtotal * 0.10;
+        const total = subtotal + snackTotal + fee;
+
+        modalSeatsDisplay.textContent = selectedArr.map(s => s.number).join(', ');
+        modalTicketsSubtotal.textContent = `₹${subtotal.toFixed(2)}`;
+        modalAddonSubtotal.textContent = `₹${snackTotal.toFixed(2)}`;
+        modalFeeSubtotal.textContent = `₹${fee.toFixed(2)}`;
+        modalGrandTotal.textContent = `₹${total.toFixed(2)}`;
+        modalPayBtnText.textContent = `Pay ₹${total.toFixed(2)} & Confirm`;
+
+        if (modalErrorBox) modalErrorBox.classList.add('hidden');
+        paymentModal.classList.remove('hidden');
+    });
+
+    // Close Modal / Modify Seats
+    function closePaymentModal() {
+        if (paymentModal) paymentModal.classList.add('hidden');
+    }
+
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closePaymentModal);
+    if (modalModifyBtn) modalModifyBtn.addEventListener('click', closePaymentModal);
+
+    // Payment Method Radio & Tab switcher
+    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.payment-method-label').forEach(lbl => {
+                lbl.classList.remove('border-primary', 'bg-primary/10');
+                lbl.classList.add('border-outline-variant/30', 'bg-surface-container');
+            });
+            const activeLabel = this.closest('.payment-method-label');
+            if (activeLabel) {
+                activeLabel.classList.add('border-primary', 'bg-primary/10');
+                activeLabel.classList.remove('border-outline-variant/30', 'bg-surface-container');
+            }
+
+            const method = this.value;
+            const panels = {
+                'upi': document.getElementById('payment-panel-upi'),
+                'card': document.getElementById('payment-panel-card'),
+                'netbanking': document.getElementById('payment-panel-netbanking'),
+                'wallet': document.getElementById('payment-panel-wallet')
+            };
+
+            Object.keys(panels).forEach(pKey => {
+                if (panels[pKey]) {
+                    if (pKey === method) {
+                        panels[pKey].classList.remove('hidden');
+                    } else {
+                        panels[pKey].classList.add('hidden');
+                    }
+                }
+            });
+        });
+    });
+
+    // Quick VPA chip click
+    document.querySelectorAll('.upi-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            const suffix = this.getAttribute('data-suffix');
+            const vpaInput = document.getElementById('upi-vpa-input');
+            if (vpaInput) {
+                const currentVal = vpaInput.value.split('@')[0] || 'customer';
+                vpaInput.value = `${currentVal}${suffix}`;
+            }
+        });
+    });
+
+    // 5. Complete Payment Workflow with Razorpay / Stripe
+    async function verifyPaymentOnServer(orderId, paymentId, signature) {
+        modalPayBtnText.innerHTML = `
+            <span class="inline-block animate-spin mr-1">↻</span>
+            Verifying Payment Signature...
+        `;
+        try {
+            const resp = await fetch('/movies/payment/verify/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    razorpay_order_id: orderId,
+                    razorpay_payment_id: paymentId,
+                    razorpay_signature: signature
+                })
+            });
+
+            const data = await resp.json();
+            if (data.success) {
+                showToast("Payment verified successfully! Tickets confirmed.", "info");
+                window.location.href = data.redirect_url || '/users/profile/';
+            } else {
+                if (modalErrorBox && modalErrorMsg) {
+                    modalErrorMsg.textContent = data.message || "Payment verification failed. Reserved seats have been released.";
+                    modalErrorBox.classList.remove('hidden');
+                }
+                showToast(data.message || "Payment verification failed.", "error");
+                resetPaymentButton();
+                pollLiveStatus();
+            }
+        } catch (e) {
+            console.error("Verification network error:", e);
+            if (modalErrorBox && modalErrorMsg) {
+                modalErrorMsg.textContent = "Network error during payment verification.";
+                modalErrorBox.classList.remove('hidden');
+            }
+            resetPaymentButton();
+        }
+    }
+
+    async function handlePaymentCancelledOnServer(orderId) {
+        try {
+            await fetch('/movies/payment/cancel/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ order_id: orderId })
+            });
+        } catch (e) {
+            console.error("Cancel API error:", e);
+        }
+        showToast("Payment process was cancelled. Held seats have been released.", "warning");
+        closePaymentModal();
+        mySelectedSeats.forEach((seat, sid) => {
+            const label = document.getElementById(`seat-label-${sid}`);
+            const input = document.getElementById(`seat-input-${sid}`);
+            if (input) input.checked = false;
+            if (label) setSeatSelectedState(label, false);
+        });
+        mySelectedSeats.clear();
+        recalculateCart();
+        pollLiveStatus();
+        resetPaymentButton();
+    }
+
+    async function handlePaymentFailureOnServer(orderId, errorCode, errorDesc) {
+        try {
+            await fetch('/movies/payment/failure/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    order_id: orderId,
+                    error_code: errorCode,
+                    error_description: errorDesc
+                })
+            });
+        } catch (e) {
+            console.error("Failure API error:", e);
+        }
+        if (modalErrorBox && modalErrorMsg) {
+            modalErrorMsg.textContent = `Payment Failed: ${errorDesc}. Reserved seats have been automatically released.`;
+            modalErrorBox.classList.remove('hidden');
+        }
+        showToast(`Payment failed: ${errorDesc}`, "error");
+        pollLiveStatus();
+        resetPaymentButton();
+    }
+
+    function resetPaymentButton() {
+        if (modalPayBtn) {
+            modalPayBtn.disabled = false;
+            modalPayBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            modalPayBtnText.textContent = "Pay & Confirm Booking";
+        }
+    }
+
+    // Shared Helper for Instant 1-Click Test Sandbox Payments
+    async function triggerInstantTestPayment(methodName) {
+        if (mySelectedSeats.size === 0) return;
+
+        let snackTotal = 0;
+        mySelectedSnacks.forEach(e => snackTotal += e.item.price * e.quantity);
+
+        showToast(`Initiating test payment via ${methodName.toUpperCase()}...`, 'info');
+
+        try {
+            const resp = await fetch(`/movies/theater/${theaterId}/payment/create-order/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    seats: Array.from(mySelectedSeats.keys()),
+                    payment_method: methodName,
+                    food_total: snackTotal,
+                    addon_popcorn: snackTotal > 0
+                })
+            });
+
+            const data = await resp.json();
+            if (!data.success) {
+                if (modalErrorBox && modalErrorMsg) {
+                    modalErrorMsg.textContent = data.message || "Order initialization failed.";
+                    modalErrorBox.classList.remove('hidden');
+                }
+                showToast(data.message || "Order initialization failed.", "error");
+                return;
+            }
+
+            const order = data.order;
+            const mockPaymentId = `pay_${methodName}_sim_${Date.now()}`;
+            const mockSig = `sig_test_${Date.now()}`;
+            await verifyPaymentOnServer(order.order_id, mockPaymentId, mockSig);
+        } catch (err) {
+            console.error("Test payment error:", err);
+            showToast("Network error during test simulation.", "error");
+        }
+    }
+
+    // Interactive One-Click Test Triggers
+    const btnSimulateQr = document.getElementById('btn-simulate-qr-scan');
+    if (btnSimulateQr) btnSimulateQr.addEventListener('click', () => triggerInstantTestPayment('upi_qr'));
+
+    const btnPayVpa = document.getElementById('btn-pay-vpa');
+    if (btnPayVpa) btnPayVpa.addEventListener('click', () => {
+        const vpa = (document.getElementById('upi-vpa-input')?.value || 'success@razorpay').trim();
+        triggerInstantTestPayment(`upi_${vpa}`);
+    });
+
+    const btnPayCard = document.getElementById('btn-pay-card-instant');
+    if (btnPayCard) btnPayCard.addEventListener('click', () => triggerInstantTestPayment('card'));
+
+    const btnPayNetbanking = document.getElementById('btn-pay-netbanking-instant');
+    if (btnPayNetbanking) btnPayNetbanking.addEventListener('click', () => {
+        const selectedBank = document.querySelector('input[name="test_bank"]:checked')?.value || 'sbi';
+        triggerInstantTestPayment(`netbanking_${selectedBank}`);
+    });
+
+    const btnPayWallet = document.getElementById('btn-pay-wallet-instant');
+    if (btnPayWallet) btnPayWallet.addEventListener('click', () => triggerInstantTestPayment('wallet'));
+
+    // Main Pay Button in Modal
+    if (modalPayBtn) {
+        modalPayBtn.addEventListener('click', async function() {
+            if (mySelectedSeats.size === 0) return;
+
+            const selectedRadio = document.querySelector('input[name="payment_method"]:checked');
+            const paymentMethod = selectedRadio ? selectedRadio.value : 'upi';
+
+            let snackTotal = 0;
+            mySelectedSnacks.forEach(e => snackTotal += e.item.price * e.quantity);
+
+            modalPayBtn.disabled = true;
+            modalPayBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            modalPayBtnText.innerHTML = `
+                <span class="inline-block animate-spin mr-1">↻</span>
+                Initiating Secured Checkout...
+            `;
+
+            try {
+                // 1. Create order on server side
+                const resp = await fetch(`/movies/theater/${theaterId}/payment/create-order/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        seats: Array.from(mySelectedSeats.keys()),
+                        payment_method: paymentMethod,
+                        food_total: snackTotal,
+                        addon_popcorn: snackTotal > 0
+                    })
+                });
+
+                const data = await resp.json();
+
+                if (!data.success) {
+                    if (modalErrorBox && modalErrorMsg) {
+                        modalErrorMsg.textContent = data.message || "Could not initialize payment order.";
+                        modalErrorBox.classList.remove('hidden');
+                    }
+                    showToast(data.message || "Order initialization failed.", "error");
+                    resetPaymentButton();
+                    return;
+                }
+
+                const order = data.order;
+                const razorpayKey = data.razorpay_key_id || 'rzp_test_TkuUcn0OX3jYly';
+
+                // 2. If Razorpay client is available in window and credentials are not mock
+                if (typeof Razorpay !== 'undefined' && razorpayKey && !razorpayKey.endsWith('_mock')) {
+                    const rzpOptions = {
+                        key: razorpayKey,
+                        amount: order.amount_paise,
+                        currency: order.currency,
+                        name: "Cineva Multiplex",
+                        description: `${order.movie_title} (Seats: ${order.seat_numbers})`,
+                        order_id: order.order_id,
+                        prefill: {
+                            name: order.user_name,
+                            email: order.user_email,
+                            contact: order.user_contact,
+                            method: paymentMethod
+                        },
+                        config: {
+                            display: {
+                                blocks: {
+                                    upi: {
+                                        name: "Pay via UPI / QR",
+                                        instruments: [
+                                            { method: "upi" }
+                                        ]
+                                    },
+                                    other: {
+                                        name: "Cards, Netbanking & Wallets",
+                                        instruments: [
+                                            { method: "card" },
+                                            { method: "netbanking" },
+                                            { method: "wallet" }
+                                        ]
+                                    }
+                                },
+                                sequence: ["block.upi", "block.other"],
+                                preferences: {
+                                    show_default_blocks: true
+                                }
+                            }
+                        },
+                        notes: {
+                            theater: order.theater_name,
+                            seats: order.seat_numbers,
+                            mode: "Test Mode"
+                        },
+                        theme: {
+                            color: "#ff4f73"
+                        },
+                        handler: async function(response) {
+                            await verifyPaymentOnServer(
+                                response.razorpay_order_id,
+                                response.razorpay_payment_id,
+                                response.razorpay_signature
+                            );
+                        },
+                        modal: {
+                            ondismiss: async function() {
+                                await handlePaymentCancelledOnServer(order.order_id);
+                            }
+                        }
+                    };
+
+                    try {
+                        const rzpInstance = new Razorpay(rzpOptions);
+                        rzpInstance.on('payment.failed', async function(response) {
+                            const errCode = (response.error && response.error.code) || 'PAYMENT_FAILED';
+                            const errDesc = (response.error && response.error.description) || 'Payment transaction failed.';
+                            const txnId = (response.error && response.error.metadata && response.error.metadata.payment_id) || '';
+                            await handlePaymentFailureOnServer(
+                                order.order_id,
+                                errCode,
+                                errDesc,
+                                txnId
+                            );
+                        });
+                        rzpInstance.open();
+                    } catch (rzpErr) {
+                        console.warn("Razorpay popup launch failed, falling back to server verification:", rzpErr);
+                        const mockPaymentId = `pay_${Date.now()}`;
+                        const mockSig = `sig_test_${Date.now()}`;
+                        await verifyPaymentOnServer(order.order_id, mockPaymentId, mockSig);
+                    }
+                } else {
+                    const mockPaymentId = `pay_sim_${Date.now()}`;
+                    const mockSig = `sig_test_${Date.now()}`;
+                    await verifyPaymentOnServer(order.order_id, mockPaymentId, mockSig);
+                }
+
+            } catch (err) {
+                console.error("Payment initialization error:", err);
+                if (modalErrorBox && modalErrorMsg) {
+                    modalErrorMsg.textContent = "Network error while initializing payment. Please retry.";
+                    modalErrorBox.classList.remove('hidden');
+                }
+                resetPaymentButton();
+            }
+        });
+    }
+
+    // Expired Modal Button: Re-select seats
+    if (expiredReselectBtn) {
+        expiredReselectBtn.addEventListener('click', function() {
+            expiredModal.classList.add('hidden');
+            pollLiveStatus();
+        });
+    }
+
+    // 6. Real-Time Live Status Polling (Every 2.0s)
+    async function pollLiveStatus() {
+        try {
+            const resp = await fetch(`/movies/theater/${theaterId}/seats/live-status/`);
+            if (!resp.ok) return;
+            const data = await resp.json();
+            if (!data.success) return;
+
+            const bookedSet = new Set(data.booked_seats.map(String));
+            const heldByOthersSet = new Set(data.held_by_others.map(String));
+
+            // Check all seat labels in DOM
+            document.querySelectorAll('.seat-box').forEach(label => {
+                const sid = label.getAttribute('data-seat-id');
+                if (!sid) return;
+
+                // Case 1: Permanently booked by someone
+                if (bookedSet.has(sid)) {
+                    if (mySelectedSeats.has(sid)) {
+                        mySelectedSeats.delete(sid);
+                        showToast(`Seat ${label.getAttribute('data-seat-code')} was just booked by another customer!`, 'error');
+                        recalculateCart();
+                    }
+                    if (!label.classList.contains('is-sold')) {
+                        setSeatSold(label);
+                    }
+                    return;
+                }
+
+                // Case 2: Temporarily held by another customer
+                if (heldByOthersSet.has(sid)) {
+                    if (mySelectedSeats.has(sid)) {
+                        mySelectedSeats.delete(sid);
+                        showToast(`Seat ${label.getAttribute('data-seat-code')} was temporarily reserved by another user.`, 'warning');
+                        recalculateCart();
+                    }
+                    if (!label.classList.contains('is-held-by-other')) {
+                        setSeatHeldByOther(label, true);
+                    }
+                } else {
+                    // Case 3: Was held by other, but has now expired or released!
+                    if (label.classList.contains('is-held-by-other')) {
+                        setSeatHeldByOther(label, false);
+                        showToast(`Seat ${label.getAttribute('data-seat-code')} was released and is now available!`, 'info');
+                    }
+                }
+            });
+
+            // Case 4: Synchronize active holds for this user (e.g. from payment retry or page refresh)
+            if (data.held_by_me && data.held_by_me.length > 0) {
+                let addedAny = false;
+                data.held_by_me.forEach(sid => {
+                    const sidStr = String(sid);
+                    if (!mySelectedSeats.has(sidStr) && allSeatsById.has(sidStr)) {
+                        const sObj = allSeatsById.get(sidStr);
+                        mySelectedSeats.set(sidStr, sObj);
+                        const label = document.getElementById(`seat-label-${sidStr}`);
+                        const checkbox = document.getElementById(`seat-input-${sidStr}`);
+                        if (checkbox) checkbox.checked = true;
+                        if (label) setSeatSelectedState(label, true);
+                        addedAny = true;
+                    }
+                });
+                if (addedAny) recalculateCart();
+            }
+
+            // Synchronize 2-minute timer if server has remaining seconds
+            if (data.lock_remaining_seconds > 0 && mySelectedSeats.size > 0) {
+                if (Math.abs(secondsRemaining - data.lock_remaining_seconds) > 3) {
+                    startTimer(data.lock_remaining_seconds);
+                }
+            } else if (data.lock_remaining_seconds === 0 && mySelectedSeats.size > 0 && secondsRemaining <= 3) {
+                handleReservationExpired();
+            }
+        } catch (err) {
+            console.error("Polling error:", err);
+        }
+    }
+
+    // Immediate initial live status synchronization
+    pollLiveStatus();
+
+    // Start background live polling every 2000ms
+    setInterval(pollLiveStatus, 2000);
+
+    // Initial recalculation
+    recalculateCart();
+});
+</script>
+{% endblock content %}

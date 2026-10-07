@@ -1,111 +1,551 @@
 {% extends "users/basic.html" %}
+{% load movie_tags %}
+
+{% block title %}Movie Discovery & Showtimes | Cineva Cinema{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h1 class="text-center mb-5">Movies</h1>
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-8">
+    <!-- Header & Search Hero -->
+    <div class="relative rounded-2xl bg-surface-container-lowest border border-outline-variant/20 p-6 sm:p-8 overflow-hidden shadow-2xl">
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="row justify-content-center mb-5">
-        <div class="col-md-8">
-            <form method="GET" action="{% url 'movie_list' %}" class="search-bar">
-                <div class="input-group">
+        <div class="relative z-10 flex flex-col gap-5">
+            <!-- Breadcrumbs -->
+            <nav class="flex items-center gap-2 font-label-sm text-label-sm text-outline tracking-wider">
+                <a class="hover:text-primary transition-colors" href="{% url 'home' %}">Home</a>
+                <span class="material-symbols-outlined text-xs">chevron_right</span>
+                <span class="text-on-surface font-semibold">Movies</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight flex items-center gap-3">
+                        Explore Movies &amp; Showtimes
+                        <span id="liveCounterBadge" class="inline-flex items-center gap-1.5 font-label-sm text-label-sm px-3 py-1 rounded-full bg-primary-container/20 text-primary border border-primary-container/30">
+                            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                            <span id="badgeCount">{{ total_count }}</span> Available
+                        </span>
+                    </h1>
+                    <p class="font-body-md text-body-md text-on-surface-variant/80 mt-1 max-w-2xl">
+                        Discover premiere theatrical releases, verified viewer scores, uncompressed trailers, and reserve premium auditorium seating.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Big Search & Quick Genre Tags -->
+            <div class="pt-3 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 border-t border-outline-variant/15">
+                <!-- Search Bar -->
+                <form id="heroSearchForm" method="GET" action="{% url 'movie_list' %}" class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
                     <input
-                        class="form-control form-control-lg"
+                        id="heroSearchInput"
                         name="search"
-                        placeholder="Search for Movies, Events, Plays, Sports and Activities"
+                        value="{{ search_query }}"
+                        autocomplete="off"
+                        class="w-full bg-surface-container text-on-surface placeholder:text-outline/70 border border-outline-variant/30 rounded-xl pl-11 pr-28 py-2.5 font-body-md text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/30 focus:outline-none transition-all"
+                        placeholder="Search by title, director, or cast..."
                         type="text"
-                        value="{{ request.GET.search|default_if_none:'' }}"
-                        aria-label="Search for movies"
                     />
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="fas fa-search"></i> Search
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+                    <!-- Retain active filters if already set -->
+                    {% if selected_genre %}<input type="hidden" name="genre" value="{{ selected_genre }}" />{% endif %}
+                    {% if selected_language %}<input type="hidden" name="language" value="{{ selected_language }}" />{% endif %}
+                    {% if selected_city %}<input type="hidden" name="city" value="{{ selected_city }}" />{% endif %}
+                    {% if selected_theater %}<input type="hidden" name="theater" value="{{ selected_theater }}" />{% endif %}
+                    {% if selected_release %}<input type="hidden" name="release_date" value="{{ selected_release }}" />{% endif %}
+                    {% if selected_rating %}<input type="hidden" name="rating" value="{{ selected_rating }}" />{% endif %}
+                    {% if selected_timing %}<input type="hidden" name="timing" value="{{ selected_timing }}" />{% endif %}
+                    {% if selected_sort %}<input type="hidden" name="sort" value="{{ selected_sort }}" />{% endif %}
 
-    <div class="row" id="movieList">
-        {% for movie in movies %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <img src="{{ movie.image.url }}" class="card-img-top" alt="{{ movie.name }}" style="height: 300px; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title">{{ movie.name }}</h5>
-                    <p class="card-text">
-                        <i class="fas fa-star text-warning"></i> {{ movie.rating }}
-                    </p>
-                    <p class="card-text">
-                        <small class="text-muted">
-                            <i class="fas fa-users"></i> Cast: {{ movie.cast }}
-                        </small>
-                    </p>
-                </div>
-                <div class="card-footer bg-white border-top-0">
-                    <a href="{% url 'theater_list' movie.id %}" class="btn btn-outline-primary btn-block">
-                        View Theaters <i class="fas fa-chevron-right ml-2"></i>
+                    <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-primary-container hover:bg-inverse-primary text-on-primary-container rounded-lg font-label-md text-label-md font-semibold transition-colors">
+                        Search
+                    </button>
+                </form>
+
+                <!-- Quick Genre Tags -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 custom-scrollbar">
+                    <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider whitespace-nowrap">Genres:</span>
+                    <a href="{% param_replace genre='' %}"
+                       class="px-3.5 py-1.5 rounded-full font-label-md text-label-md font-semibold whitespace-nowrap transition-all {% if not selected_genre %}bg-primary-container text-on-primary-container glow-aura-subtle{% else %}bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface{% endif %}">
+                        All
                     </a>
+                    {% for g in all_genres %}
+                    <a href="{% param_replace genre=g.slug %}"
+                       class="px-3.5 py-1.5 rounded-full font-label-md text-label-md font-semibold whitespace-nowrap transition-all {% if selected_genre == g.slug %}bg-primary-container text-on-primary-container glow-aura-subtle{% else %}bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface{% endif %}">
+                        {{ g.name }}
+                    </a>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        {% empty %}
-        <div class="col-12 text-center">
-            <p class="lead">No movies found. Try a different search term.</p>
+    </div>
+
+    <!-- Recommended For You Shelf -->
+    {% if recommendations %}
+    <section class="rounded-2xl bg-surface-container-low/70 border border-outline-variant/25 p-6 shadow-xl relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-outline-variant/15 pb-4">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                <div>
+                    <h2 class="font-title-lg text-title-lg font-bold text-on-surface">Recommended for You</h2>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant/75">
+                        Tailored from your confirmed bookings, recent browsing signals, and critical acclaim.
+                    </p>
+                </div>
+            </div>
+            <span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 self-start sm:self-auto">
+                Personalized Algorithm
+            </span>
         </div>
-        {% endfor %}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {% for rec in recommendations %}
+            <div class="group relative flex flex-col bg-surface-container rounded-xl overflow-hidden border border-outline-variant/20 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                <!-- Poster -->
+                <div class="relative aspect-[3/4] w-full overflow-hidden bg-surface-container-high">
+                    <img
+                        src="{{ rec.get_primary_poster_url }}"
+                        alt="{{ rec.title }}"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                        onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=400&q=80'"
+                    />
+                    <!-- Rating Badge -->
+                    <div class="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-lowest/85 backdrop-blur-sm border border-outline-variant/30 text-secondary text-xs font-bold">
+                        <span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                        <span>{{ rec.rating|floatformat:1 }}</span>
+                    </div>
+
+                    <!-- Trailer Trigger if available -->
+                    {% if rec.get_youtube_video_id %}
+                    <button
+                        type="button"
+                        onclick="event.stopPropagation(); openTrailerModal('{{ rec.get_youtube_video_id }}', '{{ rec.title|escapejs }}')"
+                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                        <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-lg">
+                            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        </div>
+                    </button>
+                    {% endif %}
+                </div>
+
+                <div class="p-3 flex flex-col flex-1 justify-between gap-2">
+                    <div>
+                        <!-- Recommendation Reason Pill -->
+                        {% if rec.recommendation_reason %}
+                        <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold bg-primary-container/20 text-primary border border-primary-container/30 line-clamp-1 mb-1">
+                            {{ rec.recommendation_reason }}
+                        </span>
+                        {% endif %}
+
+                        <h3 class="font-title-sm text-title-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-1">
+                            <a href="{% url 'movie_detail' rec.slug %}">{{ rec.title }}</a>
+                        </h3>
+
+                        <div class="flex items-center gap-1.5 text-[11px] text-on-surface-variant/75 mt-0.5">
+                            {% if rec.language %}<span>{{ rec.language.name }}</span><span>•</span>{% endif %}
+                            <span>{{ rec.duration|duration_format }}</span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'movie_detail' rec.slug %}"
+                       class="mt-1 w-full text-center py-1.5 px-2 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface font-label-sm text-label-sm font-semibold transition-colors">
+                        Book Seats
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Recently Viewed Shelf -->
+    {% if recently_viewed %}
+    <section class="rounded-2xl bg-surface-container-low/50 border border-outline-variant/15 p-5 shadow-sm">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-outlined text-outline text-xl">history</span>
+            <h3 class="font-title-md text-title-md font-semibold text-on-surface">Recently Viewed</h3>
+        </div>
+        <div class="flex items-center gap-3 overflow-x-auto pb-2 custom-scrollbar">
+            {% for rv in recently_viewed %}
+            <a href="{% url 'movie_detail' rv.slug %}"
+               class="flex items-center gap-3 px-3 py-2 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-primary/40 shrink-0 transition-colors">
+                <img
+                    src="{{ rv.get_primary_poster_url }}"
+                    alt="{{ rv.title }}"
+                    class="w-10 h-14 object-cover rounded-md"
+                    onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=100&q=80'"
+                />
+                <div class="flex flex-col">
+                    <span class="font-title-sm text-title-sm font-bold text-on-surface line-clamp-1">{{ rv.title }}</span>
+                    <div class="flex items-center gap-1 text-xs text-secondary font-semibold">
+                        <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+                        <span>{{ rv.rating|floatformat:1 }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Main Content: Sidebar + Movie Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Sidebar Filters -->
+        <aside class="lg:col-span-3 flex flex-col gap-6 bg-surface-container-low border border-outline-variant/20 rounded-2xl p-5 shadow-xl sticky top-20">
+            <!-- Filter Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-xl">tune</span>
+                    <h2 class="font-title-md text-title-md font-bold text-on-surface">Filters &amp; Sort</h2>
+                </div>
+                {% if applied_filters %}
+                <a href="{% url 'movie_list' %}" class="font-label-sm text-label-sm text-primary hover:underline flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">restart_alt</span>
+                    <span>Reset</span>
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Unified Filter Form -->
+            <form id="filterSidebarForm" method="GET" action="{% url 'movie_list' %}" class="flex flex-col gap-5">
+                <!-- Search sync -->
+                {% if search_query %}
+                <input type="hidden" name="search" value="{{ search_query }}" />
+                {% endif %}
+
+                <!-- 1. Sorting -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="sortSelect" class="font-title-sm text-title-sm text-on-surface font-semibold flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-base text-primary">sort</span>
+                        <span>Sort By</span>
+                    </label>
+                    <select
+                        id="sortSelect"
+                        name="sort"
+                        onchange="this.form.submit()"
+                        class="w-full bg-surface-container text-on-surface border border-outline-variant/30 rounded-xl px-3 py-2 font-body-sm text-body-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none">
+                        {% for opt in filter_options.sort_options %}
+                        <option value="{{ opt.key }}" {% if selected_sort == opt.key %}selected{% endif %}>
+                            {{ opt.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 2. Genre Filter -->
+                <div class="flex flex-col gap-1.5 pt-3 border-t border-outline-variant/15">
+                    <label for="genreSelect" class="font-title-sm text-title-sm text-on-surface font-semibold flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-base text-primary">theaters</span>
+                        <span>Genre</span>
+                    </label>
+                    <select
+                        id="genreSelect"
+                        name="genre"
+                        onchange="this.form.submit()"
+                        class="w-full bg-surface-container text-on-surface border border-outline-variant/30 rounded-xl px-3 py-2 font-body-sm text-body-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none">
+                        <option value="" {% if not selected_genre %}selected{% endif %}>All Genres</option>
+                        {% for g in filter_options.genres %}
+                        <option value="{{ g.slug }}" {% if selected_genre == g.slug or selected_genre == g.id|stringformat:'s' %}selected{% endif %}>
+                            {{ g.name }} ({{ g.movie_count }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 3. Language Filter -->
+                <div class="flex flex-col gap-1.5 pt-3 border-t border-outline-variant/15">
+                    <label for="langSelect" class="font-title-sm text-title-sm text-on-surface font-semibold flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-base text-primary">translate</span>
+                        <span>Language</span>
+                    </label>
+                    <select
+                        id="langSelect"
+                        name="language"
+                        onchange="this.form.submit()"
+                        class="w-full bg-surface-container text-on-surface border border-outline-variant/30 rounded-xl px-3 py-2 font-body-sm text-body-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none">
+                        <option value="" {% if not selected_language %}selected{% endif %}>All Languages</option>
+                        {% for l in filter_options.languages %}
+                        <option value="{{ l.code }}" {% if selected_language == l.code or selected_language == l.id|stringformat:'s' %}selected{% endif %}>
+                            {{ l.name }} ({{ l.movie_count }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 4. City Filter -->
+                <div class="flex flex-col gap-1.5 pt-3 border-t border-outline-variant/15">
+                    <label for="citySelect" class="font-title-sm text-title-sm text-on-surface font-semibold flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-base text-primary">location_city</span>
+                        <span>City</span>
+                    </label>
+                    <select
+                        id="citySelect"
+                        name="city"
+                        onchange="this.form.submit()"
+                        class="w-full bg-surface-container text-on-surface border border-outline-variant/30 rounded-xl px-3 py-2 font-body-sm text-body-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none">
+                        <option value="" {% if not selected_city %}selected{% endif %}>All Cities</option>
+                        {% for c in filter_options.cities %}
+                        <option value="{{ c }}" {% if selected_city|lower == c|lower %}selected{% endif %}>
+                            {{ c }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 5. Theater Filter -->
+                <div class="flex flex-col gap-1.5 pt-3 border-t border-outline-variant/15">
+                    <label for="theaterSelect" class="font-title-sm text-title-sm text-on-surface font-semibold flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-base text-primary">apartment</span>
+                        <span>Theater</span>
+                    </label>
+                    <select
+                        id="theaterSelect"
+                        name="theater"
+                        onchange="this.form.submit()"
+                        class="w-full bg-surface-container text-on-surface border border-outline-variant/30 rounded-xl px-3 py-2 font-body-sm text-body-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none">
+                        <option value="" {% if not selected_theater %}selected{% endif %}>All Theaters</option>
+                        {% for th in filter_options.theaters %}
+                        <option value="{{ th.id }}" {% if selected_theater == th.id|stringformat:'s' or selected_theater == th.name %}selected{% endif %}>
+                            {{ th.name }}{% if th.city %} ({{ th.city }}){% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 6. Release Date Preset Filter -->
+                <div class="flex flex-col gap-1.5 pt-3 border-t border-outline-variant/15">
+                    <label for="releaseSelect" class="font-title-sm text-title-sm text-on-surface font-semibold flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-base text-primary">calendar_month</span>
+                        <span>Release Schedule</span>
+                    </label>
+                    <select
+                        id="releaseSelect"
+                        name="release_date"
+                        onchange="this.form.submit()"
+                        class="w-full bg-surface-container text-on-surface border border-outline-variant/30 rounded-xl px-3 py-2 font-body-sm text-body-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none">
+                        {% for r in filter_options.release_date_presets %}
+                        <option value="{{ r.key }}" {% if selected_release == r.key or not selected_release and r.key == 'all' %}selected{% endif %}>
+                            {{ r.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 7. Minimum Rating Filter -->
+                <div class="flex flex-col gap-1.5 pt-3 border-t border-outline-variant/15">
+                    <label for="ratingSelect" class="font-title-sm text-title-sm text-on-surface font-semibold flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-base text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+                        <span>Audience Rating</span>
+                    </label>
+                    <select
+                        id="ratingSelect"
+                        name="rating"
+                        onchange="this.form.submit()"
+                        class="w-full bg-surface-container text-on-surface border border-outline-variant/30 rounded-xl px-3 py-2 font-body-sm text-body-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none">
+                        <option value="" {% if not selected_rating %}selected{% endif %}>Any Rating</option>
+                        {% for ro in filter_options.rating_options %}
+                        <option value="{{ ro.val }}" {% if selected_rating == ro.val %}selected{% endif %}>
+                            {{ ro.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 8. Show Timings Filter -->
+                <div class="flex flex-col gap-2 pt-3 border-t border-outline-variant/15">
+                    <span class="font-title-sm text-title-sm text-on-surface font-semibold flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-base text-primary">schedule</span>
+                        <span>Show Timings</span>
+                    </span>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        {% for t in filter_options.timing_options %}
+                        <label class="cursor-pointer flex flex-col p-2 rounded-xl border transition-all text-center {% if selected_timing == t.key %}bg-primary-container/20 border-primary text-primary font-bold shadow-sm{% else %}bg-surface-container border-outline-variant/25 text-on-surface-variant hover:border-outline-variant/50 hover:text-on-surface{% endif %}">
+                            <input
+                                type="radio"
+                                name="timing"
+                                value="{{ t.key }}"
+                                {% if selected_timing == t.key %}checked{% endif %}
+                                onchange="this.form.submit()"
+                                class="hidden"
+                            />
+                            <span class="material-symbols-outlined text-lg mx-auto mb-0.5">{{ t.icon }}</span>
+                            <span class="font-label-sm text-[11px] leading-tight">{{ t.label }}</span>
+                            <span class="text-[9px] opacity-70 leading-tight mt-0.5">{{ t.time }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    {% if selected_timing %}
+                    <a href="{% param_replace timing='' %}" class="text-xs text-primary hover:underline text-center mt-1">
+                        Clear timing filter
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Filter Actions -->
+                <div class="pt-4 border-t border-outline-variant/20 flex flex-col gap-2">
+                    <button
+                        type="submit"
+                        class="w-full py-2.5 px-4 bg-primary-container hover:bg-inverse-primary text-on-primary-container font-label-md text-label-md font-bold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">filter_alt</span>
+                        <span>Apply Filters</span>
+                    </button>
+                    <a
+                        href="{% url 'movie_list' %}"
+                        class="w-full py-2 px-4 bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm font-semibold rounded-xl text-center transition-colors">
+                        Clear All
+                    </a>
+                </div>
+            </form>
+        </aside>
+
+        <!-- Movie Cards Grid -->
+        <section class="lg:col-span-9 flex flex-col gap-6">
+            <!-- Active Filters & Counter Banner -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-low/70 border border-outline-variant/20 rounded-xl p-3.5">
+                <div class="flex items-center gap-2 text-body-sm text-on-surface">
+                    <span class="material-symbols-outlined text-primary text-lg">movie</span>
+                    <span>
+                        Showing <strong id="showingCount" class="text-primary">{{ movies|length }}</strong> of
+                        <strong id="totalCount" class="text-on-surface">{{ total_count }}</strong> matching title{{ total_count|pluralize }}
+                    </span>
+                </div>
+
+                <!-- Active Filter Tags -->
+                <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                    {% if search_query %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-container/20 text-primary border border-primary-container/30">
+                        <span>"{{ search_query }}"</span>
+                        <a href="{% param_replace search='' %}" class="hover:text-error transition-colors" title="Remove search filter">✕</a>
+                    </span>
+                    {% endif %}
+
+                    {% if selected_genre and selected_genre != 'all' %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-outline-variant/30">
+                        <span>Genre: {{ selected_genre|title }}</span>
+                        <a href="{% param_replace genre='' %}" class="hover:text-error transition-colors" title="Remove genre filter">✕</a>
+                    </span>
+                    {% endif %}
+
+                    {% if selected_language and selected_language != 'all' %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-outline-variant/30">
+                        <span>Language: {{ selected_language|upper }}</span>
+                        <a href="{% param_replace language='' %}" class="hover:text-error transition-colors" title="Remove language filter">✕</a>
+                    </span>
+                    {% endif %}
+
+                    {% if selected_city and selected_city != 'all' %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-outline-variant/30">
+                        <span>City: {{ selected_city }}</span>
+                        <a href="{% param_replace city='' %}" class="hover:text-error transition-colors" title="Remove city filter">✕</a>
+                    </span>
+                    {% endif %}
+
+                    {% if selected_theater and selected_theater != 'all' %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-outline-variant/30">
+                        <span>Theater Filtered</span>
+                        <a href="{% param_replace theater='' %}" class="hover:text-error transition-colors" title="Remove theater filter">✕</a>
+                    </span>
+                    {% endif %}
+
+                    {% if selected_release and selected_release != 'all' %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-outline-variant/30">
+                        <span>Schedule: {{ selected_release|title }}</span>
+                        <a href="{% param_replace release_date='' %}" class="hover:text-error transition-colors" title="Remove release date filter">✕</a>
+                    </span>
+                    {% endif %}
+
+                    {% if selected_rating %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-outline-variant/30">
+                        <span>Rating: {{ selected_rating }}+</span>
+                        <a href="{% param_replace rating='' %}" class="hover:text-error transition-colors" title="Remove rating filter">✕</a>
+                    </span>
+                    {% endif %}
+
+                    {% if selected_timing and selected_timing != 'all' %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-outline-variant/30">
+                        <span>Timing: {{ selected_timing|title }}</span>
+                        <a href="{% param_replace timing='' %}" class="hover:text-error transition-colors" title="Remove timing filter">✕</a>
+                    </span>
+                    {% endif %}
+
+                    {% if selected_sort and selected_sort != 'popularity' %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface border border-outline-variant/30">
+                        <span>Sort: {{ selected_sort|title }}</span>
+                        <a href="{% param_replace sort='popularity' %}" class="hover:text-error transition-colors" title="Reset sort">✕</a>
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Movie Cards Grid -->
+            <div id="movieGridContainer" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {% for movie in movies %}
+                {% include "components/movie_card.html" with movie=movie %}
+                {% empty %}
+                <div class="col-span-3 text-center py-20 bg-surface-container-low rounded-2xl border border-outline-variant/20 p-8 shadow-sm">
+                    <span class="material-symbols-outlined text-6xl mb-3 text-primary" data-icon="search_off">search_off</span>
+                    <h3 class="text-title-lg font-title-lg font-bold text-on-surface mb-2">No movies found</h3>
+                    <p class="text-body-sm text-on-surface-variant max-w-md mx-auto mb-6">
+                        We couldn't find any releases matching your current combination of search, genre, timing, city, or rating filters.
+                    </p>
+                    <a href="{% url 'movie_list' %}" class="px-6 py-2.5 bg-primary-container hover:bg-inverse-primary text-on-primary-container rounded-xl font-label-md text-label-md font-semibold inline-flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">restart_alt</span>
+                        <span>Reset All Filters</span>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Reusable Pagination with Parameter Preservation -->
+            {% include "components/pagination.html" with page_obj=movies %}
+        </section>
     </div>
 </div>
 
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% include "components/trailer_modal.html" %}
 
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
-<style>
-    .card {
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    }
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-    }
-</style>
-
+<!-- Client-side Dynamic Discovery & Match Count Preview Script -->
 <script>
-    $(document).ready(function() {
-        // Add animation to cards on hover
-        $('.card').hover(
-            function() { $(this).addClass('shadow'); },
-            function() { $(this).removeClass('shadow'); }
-        );
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('heroSearchInput');
+    const badgeCount = document.getElementById('badgeCount');
+    const liveCounterBadge = document.getElementById('liveCounterBadge');
 
-        // Implement client-side filtering
-        $('input[name="search"]').on('input', function() {
-            var searchTerm = $(this).val().toLowerCase();
-            $('#movieList .col-md-4').each(function() {
-                var movieTitle = $(this).find('.card-title').text().toLowerCase();
-                if (movieTitle.includes(searchTerm)) {
-                    $(this).show();
+    let debounceTimer = null;
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const query = searchInput.value.trim();
+
+            debounceTimer = setTimeout(function() {
+                // Fetch dynamic matching preview count from movie_discovery_api
+                const url = new URL("{% url 'movie_discovery_api' %}", window.location.origin);
+                const params = new URLSearchParams(window.location.search);
+                if (query) {
+                    params.set('search', query);
                 } else {
-                    $(this).hide();
+                    params.delete('search');
                 }
-            });
+                params.set('per_page', '1');
+                url.search = params.toString();
+
+                fetch(url.toString(), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && typeof data.count === 'number') {
+                        if (badgeCount) {
+                            badgeCount.textContent = data.count;
+                        }
+                    }
+                })
+                .catch(() => {});
+            }, 300);
         });
-    });
+    }
+});
 </script>
-<!-- <h1>Movies</h1>
-<ul>
-    {% for movie in movies%}
-    <li>
-        <img src="{{movie.image.url}}" alt="image" >
-        <strong>{{movie.name}}</strong>{{movie.rating}}
-        <p>Cast:{{movie.cast}}</p>
-        <a href="{% url 'theater_list' movie.id %}">View Theaters</a>
-    </li>
-    {% endfor %}
-</ul> -->
 {% endblock %}

@@ -1,0 +1,137 @@
+{% extends "users/basic.html" %}
+
+{% block title %}Ticket Verification | Cineva Premium Cinema{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-xl mx-auto px-4 py-12">
+    <div class="bg-surface-container-low border border-outline-variant/25 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        <!-- Glow accents -->
+        <div class="absolute -top-24 -right-24 w-60 h-60 {% if is_valid %}bg-emerald-500/15{% else %}bg-rose-500/15{% endif %} rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Verification Status Badge -->
+        <div class="text-center pb-6 border-b border-outline-variant/20 flex flex-col items-center">
+            {% if is_valid %}
+            <div class="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/10">
+                <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-label-md text-label-md font-bold border border-emerald-500/30 mb-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                VALID TICKET &bull; ADMISSION GRANTED
+            </span>
+            <h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">Verified Cinema Admission</h1>
+            <p class="text-body-sm text-on-surface-variant mt-1">Official entry token verified with cryptographic HMAC-SHA256.</p>
+            {% else %}
+            <div class="w-20 h-20 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center mb-4 shadow-lg shadow-rose-500/10">
+                <span class="material-symbols-outlined text-4xl">gpp_bad</span>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-rose-500/15 text-rose-400 font-label-md text-label-md font-bold border border-rose-500/30 mb-2">
+                INVALID / UNVERIFIED TICKET
+            </span>
+            <h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">Verification Failed</h1>
+            <p class="text-body-sm text-on-surface-variant mt-1">This ticket token is invalid, expired, or has been tampered with.</p>
+            {% endif %}
+        </div>
+
+        {% if is_valid and booking %}
+        <!-- Verified Ticket Details -->
+        <div class="py-6 flex flex-col gap-4">
+            <!-- Movie Banner -->
+            <div class="flex items-center gap-4 p-4 rounded-2xl bg-surface-container border border-outline-variant/20">
+                <img
+                    src="{{ booking.movie.get_primary_poster_url }}"
+                    alt="{{ booking.movie.title }}"
+                    class="w-16 h-22 object-cover rounded-xl shadow-md flex-shrink-0"
+                    onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=400&q=80'"
+                />
+                <div class="flex flex-col min-w-0">
+                    <span class="text-title-md font-title-md font-bold text-on-surface line-clamp-1">
+                        {{ booking.movie.title }}
+                    </span>
+                    <span class="text-label-sm text-primary font-semibold mt-0.5">
+                        {{ booking.movie.age_certification }} &bull; {{ booking.movie.duration }} min
+                    </span>
+                    <span class="text-body-sm text-on-surface-variant mt-1 truncate">
+                        {{ booking.theater.name }} ({{ booking.theater.city }})
+                    </span>
+                </div>
+            </div>
+
+            <!-- Screening Details Grid -->
+            <div class="grid grid-cols-2 gap-3 text-body-sm">
+                <div class="p-3.5 rounded-xl bg-surface-container border border-outline-variant/15 flex flex-col">
+                    <span class="text-label-sm text-outline font-medium">Screen &amp; Audi</span>
+                    <strong class="text-on-surface mt-0.5">
+                        {% if booking.show and booking.show.screen %}{{ booking.show.screen.name }} ({{ booking.show.screen.screen_type }}){% else %}Screen 1{% endif %}
+                    </strong>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-surface-container border border-outline-variant/15 flex flex-col">
+                    <span class="text-label-sm text-outline font-medium">Assigned Seat</span>
+                    <strong class="text-secondary mt-0.5 text-title-sm font-bold">
+                        {{ booking.seat.tier }}-{{ booking.seat.seat_number }}
+                    </strong>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-surface-container border border-outline-variant/15 flex flex-col">
+                    <span class="text-label-sm text-outline font-medium">Screening Date &amp; Time</span>
+                    <strong class="text-on-surface mt-0.5">
+                        {% if booking.show and booking.show.start_time %}
+                            {{ booking.show.start_time|date:"M d, Y • h:i A" }}
+                        {% elif booking.theater.time %}
+                            {{ booking.theater.time|date:"M d, Y • h:i A" }}
+                        {% else %}
+                            {{ booking.booked_at|date:"M d, Y • h:i A" }}
+                        {% endif %}
+                    </strong>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-surface-container border border-outline-variant/15 flex flex-col">
+                    <span class="text-label-sm text-outline font-medium">Booking ID</span>
+                    <strong class="text-on-surface font-mono mt-0.5">
+                        #{{ booking.id }}
+                    </strong>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-surface-container border border-outline-variant/15 flex flex-col">
+                    <span class="text-label-sm text-outline font-medium">Customer Name</span>
+                    <strong class="text-on-surface mt-0.5 truncate">
+                        {{ booking.user.get_full_name|default:booking.user.username }}
+                    </strong>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-surface-container border border-outline-variant/15 flex flex-col">
+                    <span class="text-label-sm text-outline font-medium">Payment Status</span>
+                    <strong class="text-emerald-400 font-bold mt-0.5">
+                        {% if booking.payment %}{{ booking.payment.status }}{% else %}CONFIRMED{% endif %}
+                    </strong>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="pt-4 flex flex-col sm:flex-row items-center gap-3">
+                <a
+                    href="{% url 'download_ticket' booking.id %}"
+                    class="w-full sm:flex-1 py-3 px-4 bg-primary-container hover:bg-inverse-primary text-on-primary-container font-label-md text-label-md font-bold rounded-xl text-center shadow-lg transition-colors flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-base">download</span>
+                    <span>Download PDF Ticket</span>
+                </a>
+                <a
+                    href="{% url 'home' %}"
+                    class="w-full sm:w-auto py-3 px-4 bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold rounded-xl text-center transition-colors">
+                    Home
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="py-6 text-center">
+            <p class="text-body-sm text-on-surface-variant max-w-sm mx-auto mb-6">
+                Please ensure you have scanned the official QR code printed on the cinema ticket pass. If you require assistance, kindly contact the theater admission desk.
+            </p>
+            <a href="{% url 'home' %}" class="py-2.5 px-6 rounded-xl bg-primary-container text-on-primary-container font-label-md font-bold inline-block">
+                Return to Cineva
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

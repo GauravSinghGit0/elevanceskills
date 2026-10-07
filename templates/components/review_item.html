@@ -1,0 +1,70 @@
+{% load movie_tags %}
+{# Reusable Review Item Component #}
+<div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 hover:border-outline-variant/40 transition-colors flex flex-col gap-4">
+    <!-- Review Author Header -->
+    <div class="flex items-start justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-primary-container to-secondary-container text-on-primary-container flex items-center justify-center font-bold text-label-lg shadow-sm">
+                {{ review.user.username|slice:":2"|upper }}
+            </div>
+            <div class="flex flex-col">
+                <div class="flex items-center gap-2">
+                    <span class="text-title-sm font-title-sm font-bold text-on-surface">{{ review.user.username }}</span>
+                    {% if review.is_verified_viewer %}
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/20 border border-secondary/30 text-secondary text-label-sm font-label-sm font-bold" title="Verified Ticket Buyer & Audience Member">
+                        <span class="material-symbols-outlined text-[13px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                        <span>Verified Viewer</span>
+                    </span>
+                    {% endif %}
+                </div>
+                <span class="text-label-sm font-label-sm text-on-surface-variant mt-0.5">
+                    {{ review.created_at|date:"M d, Y" }}
+                    {% if review.updated_at != review.created_at %}
+                    <span class="italic text-on-surface-variant/60">(Edited)</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Rating Pill -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container border border-outline-variant/30 text-secondary font-title-sm font-bold">
+            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+            <span>{{ review.rating }} / 5</span>
+        </div>
+    </div>
+
+    <!-- Review Title & Comment Body -->
+    <div class="space-y-1.5">
+        {% if review.title %}
+        <h4 class="text-title-sm font-title-sm font-bold text-on-surface">{{ review.title }}</h4>
+        {% endif %}
+        <p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
+            {{ review.comment }}
+        </p>
+    </div>
+
+    <!-- Actions Row -->
+    <div class="flex items-center justify-between pt-3 border-t border-outline-variant/15 text-label-sm font-label-sm text-on-surface-variant">
+        <div class="flex items-center gap-2">
+            {% if request.user == review.user %}
+            <a
+                href="{% url 'edit_review' review.id %}"
+                class="flex items-center gap-1 text-primary hover:underline font-semibold">
+                <span class="material-symbols-outlined text-sm">edit</span>
+                <span>Edit Your Review</span>
+            </a>
+            {% endif %}
+        </div>
+
+        {% if request.user.is_authenticated and request.user != review.user %}
+        <button
+            type="button"
+            onclick="openReportModal('{{ review.id }}')"
+            class="text-on-surface-variant hover:text-error flex items-center gap-1 transition-colors"
+            title="Report this review for inappropriate content">
+            <span class="material-symbols-outlined text-sm">flag</span>
+            <span>Report</span>
+        </button>
+        {% endif %}
+    </div>
+</div>

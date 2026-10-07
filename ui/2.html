@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cineva - Explore Movies in New York</title>
+    <!-- Material Symbols Outlined -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#5c3f42",
+                        "on-tertiary-fixed": "#07006c",
+                        "surface": "#11131b",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#5b3800",
+                        "on-primary-fixed-variant": "#910030",
+                        "inverse-primary": "#bd0042",
+                        "on-secondary-fixed": "#2a1700",
+                        "outline": "#ac888b",
+                        "surface-variant": "#33343d",
+                        "surface-container": "#1d1f28",
+                        "primary-fixed-dim": "#ffb2ba",
+                        "secondary-container": "#ee9800",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "inverse-on-surface": "#2e3039",
+                        "on-tertiary-container": "#0d0096",
+                        "secondary-fixed": "#ffddb8",
+                        "on-primary": "#670020",
+                        "surface-container-low": "#191b23",
+                        "primary-container": "#ff4f73",
+                        "surface-container-high": "#282a32",
+                        "on-primary-container": "#5a001b",
+                        "primary": "#ffb2ba",
+                        "on-secondary": "#472a00",
+                        "on-surface-variant": "#e5bdc0",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-bright": "#373942",
+                        "surface-tint": "#ffb2ba",
+                        "background": "#11131b",
+                        "tertiary-fixed": "#e1e0ff",
+                        "secondary": "#ffb95f",
+                        "surface-container-lowest": "#0c0e16",
+                        "on-tertiary-fixed-variant": "#2f2ebe",
+                        "tertiary": "#c0c1ff",
+                        "tertiary-fixed-dim": "#c0c1ff",
+                        "surface-dim": "#11131b",
+                        "error-container": "#93000a",
+                        "tertiary-container": "#8083ff",
+                        "surface-container-highest": "#33343d",
+                        "on-surface": "#e1e1ed",
+                        "on-error-container": "#ffdad6",
+                        "inverse-surface": "#e1e1ed",
+                        "primary-fixed": "#ffd9dc",
+                        "on-primary-fixed": "#400011",
+                        "on-background": "#e1e1ed",
+                        "on-tertiary": "#1000a9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "space-xl": "2.5rem",
+                        "space-sm": "0.5rem",
+                        "space-xs": "0.25rem",
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "margin": "2rem",
+                        "space-md": "1rem",
+                        "gutter-mobile": "1rem",
+                        "space-lg": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "display-md": ["Outfit"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "display-md-mobile": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Outfit"],
+                        "title-lg": ["Plus Jakarta Sans"],
+                        "title-md": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Outfit"],
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+                        "display-md": ["44px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "display-md-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "title-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "title-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 20px;
+            line-height: 1;
+            display: inline-block;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Custom subtle glass gradient aesthetics */
+        .glass-card {
+            background: rgba(26, 29, 39, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 178, 186, 0.3);
+            box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 79, 115, 0.15);
+        }
+
+        .crimson-glow {
+            box-shadow: 0 0 22px rgba(255, 79, 115, 0.35);
+        }
+
+        /* Scrollbar refinement */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #11131b;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #33343d;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5c3f42;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface text-on-surface font-body-md min-h-screen antialiased flex flex-col selection:bg-primary-container selection:text-on-primary">
+    <!-- TOP NAVBAR (from Shared Components JSON) -->
+    <header
+        class="sticky top-0 z-50 w-full bg-surface/90 backdrop-blur-md border-b border-outline-variant/20 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
+            <!-- Brand & Main Nav Links -->
+            <div class="flex items-center gap-8">
+                <a class="text-headline-md font-headline-md font-bold tracking-tight text-primary transition-all duration-200 ease-out active:scale-95 flex items-center gap-2"
+                    href="#">
+                    <span class="material-symbols-outlined text-primary text-2xl"
+                        style="font-variation-settings: 'FILL' 1;">movie</span>
+                    Cineva
+                </a>
+                <!-- Desktop Navigation: 'Movies' is ACTIVE per Intent -->
+                <nav class="hidden md:flex items-center gap-6">
+                    <!-- Active: Movies -->
+                    <a class="text-primary font-label-lg text-label-lg border-b-2 border-primary pb-1 transition-all duration-200 ease-out"
+                        href="#">Movies</a>
+                    <!-- Inactive: Stream -->
+                    <a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary hover:bg-surface-container-high/40 px-2 py-1 rounded transition-colors duration-200"
+                        href="#">Stream</a>
+                    <!-- Inactive: Experiences -->
+                    <a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary hover:bg-surface-container-high/40 px-2 py-1 rounded transition-colors duration-200"
+                        href="#">Experiences</a>
+                    <!-- Inactive: Events -->
+                    <a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary hover:bg-surface-container-high/40 px-2 py-1 rounded transition-colors duration-200"
+                        href="#">Events</a>
+                </nav>
+            </div>
+            <!-- Trailing Action Cluster & Search -->
+            <div class="flex items-center gap-4">
+                <!-- Quick Search Bar (Right aligned) -->
+                <div class="relative hidden sm:block w-64">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+                    <input
+                        class="w-full bg-surface-container-low text-on-surface placeholder:text-outline/70 border border-outline-variant/30 rounded-lg pl-9 pr-3 py-1.5 font-body-sm text-body-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none transition-all duration-200"
+                        placeholder="Search films, actors, directors..." type="text" />
+                </div>
+                <!-- Trailing Secondary: Location -->
+                <div
+                    class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high/60 border border-outline-variant/30 text-on-surface font-label-md text-label-md hover:border-primary/50 cursor-pointer transition-colors">
+                    <span class="material-symbols-outlined text-secondary text-sm">location_on</span>
+                    <span>Location: New York</span>
+                    <span class="material-symbols-outlined text-outline text-xs">expand_more</span>
+                </div>
+                <!-- Action Icons: Confirmation Number, Notifications -->
+                <div class="flex items-center gap-1">
+                    <button
+                        class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 rounded-full transition-colors relative"
+                        title="My Bookings">
+                        <span class="material-symbols-outlined text-lg">confirmation_number</span>
+                        <span
+                            class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-container rounded-full ring-2 ring-surface"></span>
+                    </button>
+                    <button
+                        class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 rounded-full transition-colors"
+                        title="Notifications">
+                        <span class="material-symbols-outlined text-lg">notifications</span>
+                    </button>
+                </div>
+                <!-- User / Sign In Action -->
+                <a class="hidden sm:inline-flex items-center justify-center px-4 py-1.5 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg font-bold crimson-glow hover:brightness-110 active:scale-95 transition-all duration-150"
+                    href="#">
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </header>
+    <!-- MAIN CANVAS -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-6">
+        <!-- DISCOVERY HERO HEADER & BREADCRUMBS -->
+        <div
+            class="relative rounded-2xl bg-surface-container-lowest border border-outline-variant/20 p-6 sm:p-8 overflow-hidden">
+            <!-- Ambient light effect -->
+            <div
+                class="absolute -top-24 -right-24 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none">
+            </div>
+            <div
+                class="absolute -bottom-24 -left-24 w-80 h-80 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none">
+            </div>
+            <div class="relative z-10 flex flex-col gap-4">
+                <!-- Breadcrumb navigation -->
+                <nav class="flex items-center gap-2 font-label-sm text-label-sm text-outline tracking-wider">
+                    <a class="hover:text-primary transition-colors" href="#">Home</a>
+                    <span class="material-symbols-outlined text-xs">chevron_right</span>
+                    <a class="hover:text-primary transition-colors" href="#">Movies</a>
+                    <span class="material-symbols-outlined text-xs">chevron_right</span>
+                    <span class="text-on-surface font-semibold">Browse All</span>
+                </nav>
+                <!-- Title & Subtitle -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <h1
+                            class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight flex items-center gap-3">
+                            Explore Movies in New York
+                            <span
+                                class="inline-flex items-center gap-1 font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-primary-container/20 text-primary border border-primary-container/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                                48 Showing Now
+                            </span>
+                        </h1>
+                        <p class="font-body-md text-body-md text-on-surface-variant/80 mt-1 max-w-2xl">
+                            Experience modern cinema across Manhattan, Brooklyn, and Queens. Select premium auditorium
+                            experiences including IMAX laser, Dolby Atmos, and 4DX immersive seating.
+                        </p>
+                    </div>
+                    <!-- Quick Location Radius Chip -->
+                    <div
+                        class="flex items-center gap-2 self-start md:self-auto bg-surface-container-high/80 border border-outline-variant/30 rounded-xl px-3 py-2">
+                        <span class="material-symbols-outlined text-secondary text-base">near_me</span>
+                        <div class="flex flex-col">
+                            <span class="font-label-sm text-label-sm text-outline">Geo Radius</span>
+                            <span class="font-title-sm text-title-sm font-semibold text-on-surface">Within 15
+                                Miles</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Search query & Quick Tag pills -->
+                <div
+                    class="pt-2 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 border-t border-outline-variant/15">
+                    <!-- Big Search Bar -->
+                    <div class="relative flex-1">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+                        <input
+                            class="w-full bg-surface-container text-on-surface placeholder:text-outline/70 border border-outline-variant/30 rounded-xl pl-11 pr-4 py-2.5 font-body-md text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/30 focus:outline-none transition-all"
+                            placeholder="Search by title, director, cinema hall or actor..." type="text" value="" />
+                    </div>
+                    <!-- Quick Filters / Tags -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
+                        <span
+                            class="font-label-sm text-label-sm text-outline uppercase tracking-wider whitespace-nowrap">Quick
+                            Tags:</span>
+                        <button
+                            class="px-3.5 py-1.5 rounded-full bg-primary-container text-on-primary font-label-md text-label-md font-semibold whitespace-nowrap crimson-glow transition-all">
+                            In Theaters
+                        </button>
+                        <button
+                            class="px-3.5 py-1.5 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-outline-variant/60 font-label-md text-label-md whitespace-nowrap transition-colors">
+                            Opening This Weekend
+                        </button>
+                        <button
+                            class="px-3.5 py-1.5 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-outline-variant/60 font-label-md text-label-md whitespace-nowrap transition-colors">
+                            IMAX 3D
+                        </button>
+                        <button
+                            class="px-3.5 py-1.5 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-outline-variant/60 font-label-md text-label-md whitespace-nowrap transition-colors">
+                            Festival Highlights
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- MAIN TWO-COLUMN CONTENT GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- LEFT COLUMN: Advanced Filter Sidebar (280px equivalent on lg) -->
+            <aside
+                class="lg:col-span-4 xl:col-span-3 flex flex-col gap-6 bg-surface-container-low border border-outline-variant/20 rounded-2xl p-5 backdrop-blur-md sticky top-20 shadow-xl">
+                <!-- Sidebar Header -->
+                <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-xl">tune</span>
+                        <h2 class="font-title-md text-title-md font-bold text-on-surface">Advanced Filters</h2>
+                    </div>
+                    <button class="font-label-sm text-label-sm text-primary hover:underline uppercase tracking-wider">
+                        Reset All
+                    </button>
+                </div>
+                <!-- Filter 1: City / Location Selector -->
+                <div class="flex flex-col gap-2.5">
+                    <label class="font-title-sm text-title-sm text-on-surface flex items-center justify-between">
+                        <span>Location &amp; Radius</span>
+                        <span class="font-label-sm text-label-sm text-secondary">NYC Metro</span>
+                    </label>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">location_city</span>
+                        <select
+                            class="w-full bg-surface-container border border-outline-variant/30 rounded-lg pl-9 pr-8 py-2 font-body-sm text-body-sm text-on-surface focus:border-primary-container focus:outline-none appearance-none cursor-pointer">
+                            <option>New York, NY (All Boroughs)</option>
+                            <option>Manhattan - Midtown &amp; Downtown</option>
+                            <option>Brooklyn - DUMBO &amp; Williamsburg</option>
+                            <option>Queens - Long Island City</option>
+                            <option>Hoboken / Jersey City</option>
+                        </select>
+                        <span
+                            class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline text-xs pointer-events-none">arrow_drop_down</span>
+                    </div>
+                    <!-- Radius Slider simulation -->
+                    <div class="flex flex-col gap-1 mt-1">
+                        <div class="flex justify-between text-label-sm font-label-sm text-outline">
+                            <span>Distance Radius</span>
+                            <span class="text-on-surface font-semibold">15 miles</span>
+                        </div>
+                        <input
+                            class="w-full accent-primary-container bg-surface-container-highest h-1.5 rounded-lg cursor-pointer"
+                            max="50" min="5" type="range" value="15" />
+                    </div>
+                </div>
+                <!-- Filter 2: Format & Experience -->
+                <div class="flex flex-col gap-2.5 pt-4 border-t border-outline-variant/15">
+                    <span class="font-title-sm text-title-sm text-on-surface flex items-center justify-between">
+                        <span>Format &amp; Experience</span>
+                        <span class="text-label-sm font-label-sm text-primary">1 Active</span>
+                    </span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <!-- Active IMAX -->
+                        <button
+                            class="flex items-center justify-between px-3 py-2 rounded-lg bg-primary-container/20 border border-primary-container text-primary font-label-md text-label-md font-bold transition-colors">
+                            <span>IMAX</span>
+                            <span class="material-symbols-outlined text-xs">check</span>
+                        </button>
+                        <button
+                            class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container border border-outline-variant/25 text-on-surface-variant hover:text-on-surface hover:border-outline-variant/50 font-label-md text-label-md transition-colors">
+                            <span>Dolby Cinema</span>
+                        </button>
+                        <button
+                            class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container border border-outline-variant/25 text-on-surface-variant hover:text-on-surface hover:border-outline-variant/50 font-label-md text-label-md transition-colors">
+                            <span>4DX</span>
+                        </button>
+                        <button
+                            class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container border border-outline-variant/25 text-on-surface-variant hover:text-on-surface hover:border-outline-variant/50 font-label-md text-label-md transition-colors">
+                            <span>ScreenX</span>
+                        </button>
+                        <button
+                            class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container border border-outline-variant/25 text-on-surface-variant hover:text-on-surface hover:border-outline-variant/50 font-label-md text-label-md transition-colors">
+                            <span>RealD 3D</span>
+                        </button>
+                        <button
+                            class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container border border-outline-variant/25 text-on-surface-variant hover:text-on-surface hover:border-outline-variant/50 font-label-md text-label-md transition-colors">
+                            <span>Standard</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Filter 3: Languages (Multi-checkbox) -->
+                <div class="flex flex-col gap-2.5 pt-4 border-t border-outline-variant/15">
+                    <span class="font-title-sm text-title-sm text-on-surface">Language</span>
+                    <div class="flex flex-col gap-2">
+                        <!-- English (Checked) -->
+                        <label class="flex items-center justify-between cursor-pointer group">
+                            <div class="flex items-center gap-2.5">
+                                <input checked=""
+                                    class="w-4 h-4 rounded text-primary-container bg-surface-container border-outline-variant/40 focus:ring-0 focus:ring-offset-0"
+                                    type="checkbox" />
+                                <span
+                                    class="font-body-sm text-body-sm text-on-surface group-hover:text-primary transition-colors">English</span>
+                            </div>
+                            <span
+                                class="font-label-sm text-label-sm text-outline px-1.5 py-0.5 rounded bg-surface-container">(48)</span>
+                        </label>
+                        <!-- Spanish -->
+                        <label class="flex items-center justify-between cursor-pointer group">
+                            <div class="flex items-center gap-2.5">
+                                <input
+                                    class="w-4 h-4 rounded text-primary-container bg-surface-container border-outline-variant/40 focus:ring-0 focus:ring-offset-0"
+                                    type="checkbox" />
+                                <span
+                                    class="font-body-sm text-body-sm text-on-surface group-hover:text-primary transition-colors">Spanish</span>
+                            </div>
+                            <span
+                                class="font-label-sm text-label-sm text-outline px-1.5 py-0.5 rounded bg-surface-container">(14)</span>
+                        </label>
+                        <!-- Hindi -->
+                        <label class="flex items-center justify-between cursor-pointer group">
+                            <div class="flex items-center gap-2.5">
+                                <input
+                                    class="w-4 h-4 rounded text-primary-container bg-surface-container border-outline-variant/40 focus:ring-0 focus:ring-offset-0"
+                                    type="checkbox" />
+                                <span
+                                    class="font-body-sm text-body-sm text-on-surface group-hover:text-primary transition-colors">Hindi</span>
+                            </div>
+                            <span
+                                class="font-label-sm text-label-sm text-outline px-1.5 py-0.5 rounded bg-surface-container">(12)</span>
+                        </label>
+                        <!-- Korean -->
+                        <label class="flex items-center justify-between cursor-pointer group">
+                            <div class="flex items-center gap-2.5">
+                                <input
+                                    class="w-4 h-4 rounded text-primary-container bg-surface-container border-outline-variant/40 focus:ring-0 focus:ring-offset-0"
+                                    type="checkbox" />
+                                <span
+                                    class="font-body-sm text-body-sm text-on-surface group-hover:text-primary transition-colors">Korean</span>
+                            </div>
+                            <span
+                                class="font-label-sm text-label-sm text-outline px-1.5 py-0.5 rounded bg-surface-container">(8)</span>
+                        </label>
+                        <!-- Japanese -->
+                        <label class="flex items-center justify-between cursor-pointer group">
+                            <div class="flex items-center gap-2.5">
+                                <input
+                                    class="w-4 h-4 rounded text-primary-container bg-surface-container border-outline-variant/40 focus:ring-0 focus:ring-offset-0"
+                                    type="checkbox" />
+                                <span
+                                    class="font-body-sm text-body-sm text-on-surface group-hover:text-primary transition-colors">Japanese</span>
+                            </div>
+                            <span
+                                class="font-label-sm text-label-sm text-outline px-1.5 py-0.5 rounded bg-surface-container">(6)</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Filter 4: Genres (Chip Filters) -->
+                <div class="flex flex-col gap-2.5 pt-4 border-t border-outline-variant/15">
+                    <span class="font-title-sm text-title-sm text-on-surface">Genres</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button
+                            class="px-2.5 py-1 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold">Sci-Fi</button>
+                        <button
+                            class="px-2.5 py-1 rounded-full bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-outline-variant font-label-sm text-label-sm">Action</button>
+                        <button
+                            class="px-2.5 py-1 rounded-full bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-outline-variant font-label-sm text-label-sm">Adventure</button>
+                        <button
+                            class="px-2.5 py-1 rounded-full bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-outline-variant font-label-sm text-label-sm">Drama</button>
+                        <button
+                            class="px-2.5 py-1 rounded-full bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-outline-variant font-label-sm text-label-sm">Thriller</button>
+                        <button
+                            class="px-2.5 py-1 rounded-full bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-outline-variant font-label-sm text-label-sm">Horror</button>
+                        <button
+                            class="px-2.5 py-1 rounded-full bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-outline-variant font-label-sm text-label-sm">Comedy</button>
+                        <button
+                            class="px-2.5 py-1 rounded-full bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-outline-variant font-label-sm text-label-sm">Animation</button>
+                    </div>
+                </div>
+                <!-- Filter 5: Certification -->
+                <div class="flex flex-col gap-2.5 pt-4 border-t border-outline-variant/15">
+                    <span class="font-title-sm text-title-sm text-on-surface">Age Rating / Certification</span>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <button
+                            class="w-10 h-8 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">G</button>
+                        <button
+                            class="w-10 h-8 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">PG</button>
+                        <button
+                            class="w-14 h-8 rounded-lg bg-primary-container/20 border border-primary-container text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">PG-13</button>
+                        <button
+                            class="w-10 h-8 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">R</button>
+                        <button
+                            class="w-14 h-8 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">NC-17</button>
+                    </div>
+                </div>
+                <!-- Filter 6: Show Timing -->
+                <div class="flex flex-col gap-2.5 pt-4 border-t border-outline-variant/15">
+                    <span class="font-title-sm text-title-sm text-on-surface">Show Timing</span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button
+                            class="flex flex-col items-start p-2 rounded-lg bg-surface-container border border-outline-variant/25 hover:border-primary/40 text-left transition-colors">
+                            <span class="font-label-sm text-label-sm font-semibold text-on-surface">Morning</span>
+                            <span class="font-label-sm text-[10px] text-outline">Before 12 PM</span>
+                        </button>
+                        <button
+                            class="flex flex-col items-start p-2 rounded-lg bg-surface-container border border-outline-variant/25 hover:border-primary/40 text-left transition-colors">
+                            <span class="font-label-sm text-label-sm font-semibold text-on-surface">Afternoon</span>
+                            <span class="font-label-sm text-[10px] text-outline">12 PM - 5 PM</span>
+                        </button>
+                        <button
+                            class="flex flex-col items-start p-2 rounded-lg bg-primary-container/20 border border-primary-container text-left transition-colors">
+                            <span class="font-label-sm text-label-sm font-semibold text-primary">Evening</span>
+                            <span class="font-label-sm text-[10px] text-primary/80">5 PM - 9 PM</span>
+                        </button>
+                        <button
+                            class="flex flex-col items-start p-2 rounded-lg bg-surface-container border border-outline-variant/25 hover:border-primary/40 text-left transition-colors">
+                            <span class="font-label-sm text-label-sm font-semibold text-on-surface">Night</span>
+                            <span class="font-label-sm text-[10px] text-outline">After 9 PM</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Filter 7: Minimum User Rating -->
+                <div class="flex flex-col gap-2.5 pt-4 border-t border-outline-variant/15">
+                    <span class="font-title-sm text-title-sm text-on-surface">Audience Score</span>
+                    <div class="flex items-center gap-2">
+                        <button
+                            class="flex-1 py-1.5 rounded-lg bg-secondary/20 border border-secondary text-secondary font-label-md text-label-md font-bold flex items-center justify-center gap-1">
+                            <span class="material-symbols-outlined text-xs"
+                                style="font-variation-settings: 'FILL' 1;">star</span>
+                            8.0+
+                        </button>
+                        <button
+                            class="flex-1 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-secondary font-label-md text-label-md flex items-center justify-center gap-1 transition-colors">
+                            <span class="material-symbols-outlined text-xs">star</span>
+                            7.0+
+                        </button>
+                        <button
+                            class="flex-1 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-secondary font-label-md text-label-md flex items-center justify-center gap-1 transition-colors">
+                            <span class="material-symbols-outlined text-xs">star</span>
+                            6.0+
+                        </button>
+                    </div>
+                </div>
+                <!-- Action CTAs -->
+                <div class="pt-4 border-t border-outline-variant/20 flex flex-col gap-2">
+                    <button
+                        class="w-full py-2.5 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg font-bold crimson-glow hover:brightness-110 active:scale-95 transition-all">
+                        Apply Filters
+                    </button>
+                    <button
+                        class="w-full py-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors">
+                        Reset All Filters
+                    </button>
+                </div>
+            </aside>
+            <!-- RIGHT COLUMN: Main Content Area (Results, Grid, Pagination) -->
+            <section class="lg:col-span-8 xl:col-span-9 flex flex-col gap-6">
+                <!-- Results Header & Active Filter Badges Bar -->
+                <div
+                    class="bg-surface-container-low border border-outline-variant/20 rounded-2xl p-4 flex flex-col gap-3 shadow-md">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <!-- Counter & Quick Sort -->
+                        <div class="flex items-center gap-3">
+                            <span class="font-headline-sm text-headline-sm font-bold text-on-surface">Showing 48
+                                Movies</span>
+                            <span
+                                class="text-xs text-outline font-label-sm bg-surface-container-highest px-2 py-0.5 rounded-md">Page
+                                1 of 4</span>
+                        </div>
+                        <!-- Sort and View Toggle Toolbar -->
+                        <div class="flex items-center gap-3 self-end sm:self-auto">
+                            <!-- Sort Dropdown -->
+                            <div class="flex items-center gap-2">
+                                <span class="font-label-sm text-label-sm text-outline hidden md:inline">Sort:</span>
+                                <select
+                                    class="bg-surface-container border border-outline-variant/30 rounded-lg px-3 py-1.5 font-label-md text-label-md text-on-surface focus:border-primary-container focus:outline-none appearance-none pr-8 relative cursor-pointer">
+                                    <option>Popularity (Most Booked)</option>
+                                    <option>Rating: High to Low</option>
+                                    <option>Release Date: Newest</option>
+                                    <option>Ticket Price: Low to High</option>
+                                </select>
+                            </div>
+                            <!-- View Switcher -->
+                            <div
+                                class="flex items-center bg-surface-container rounded-lg p-0.5 border border-outline-variant/25">
+                                <button class="p-1.5 rounded bg-surface-container-highest text-primary"
+                                    title="Grid View">
+                                    <span class="material-symbols-outlined text-sm">grid_view</span>
+                                </button>
+                                <button class="p-1.5 rounded text-outline hover:text-on-surface" title="List View">
+                                    <span class="material-symbols-outlined text-sm">view_list</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Active Filter Pill Badges -->
+                    <div class="flex items-center gap-2 flex-wrap pt-2 border-t border-outline-variant/15">
+                        <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Active:</span>
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-highest border border-outline-variant/30 text-on-surface font-label-md text-label-md">
+                            <span>Language: English</span>
+                            <button class="text-outline hover:text-primary flex items-center">
+                                <span class="material-symbols-outlined text-xs">close</span>
+                            </button>
+                        </span>
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-highest border border-outline-variant/30 text-on-surface font-label-md text-label-md">
+                            <span>Format: IMAX</span>
+                            <button class="text-outline hover:text-primary flex items-center">
+                                <span class="material-symbols-outlined text-xs">close</span>
+                            </button>
+                        </span>
+                        <span
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container-highest border border-outline-variant/30 text-on-surface font-label-md text-label-md">
+                            <span>Time: Evening (5-9 PM)</span>
+                            <button class="text-outline hover:text-primary flex items-center">
+                                <span class="material-symbols-outlined text-xs">close</span>
+                            </button>
+                        </span>
+                        <button
+                            class="text-primary hover:text-primary-fixed-dim font-label-sm text-label-sm font-semibold ml-auto transition-colors">
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+                <!-- MOVIE CARDS BENTO GRID (4 cols on 2xl, 3 on lg/xl, 2 on sm, 1 on xs) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Movie Card 1: Dune: Part Two -->
+                    <article
+                        class="glass-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
+                        <!-- Poster Container (2:3 aspect) -->
+                        <div class="relative w-full aspect-[2/3] overflow-hidden bg-surface-container">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                data-alt="Cinematic theatrical movie poster for a dramatic sci-fi desert epic featuring warriors in high-tech stillsuits standing before a colossal orange sun against dark starry skies. The composition mirrors theatrical IMAX key art with warm amber light and deep atmospheric shadows. High-end modern film production quality with rich tactile details."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIVI-a7bjn8xvOIEsnP2pnR5YvX_vjOBlk52WLqM-YWDVPUAbMU9zGFQM6VBJDvBNYTh-iz_4L4ogqNfQWlQWn2bnqYr-GoujsBhJFJzpAMq8fnJTquR6j4Gh2EW0vGIx6SVxUqfO8FnWCtxe9KDhw6qd4TX_93Ip90H1S-Ofq113Cnw7M9Y2JSoiH8U6QXkTFVNClQjHS-TYw1nq7A1tPVEu2RmCWgwPGFOIYRy6UqxsHRVrXrupHSw" />
+                            <!-- Gradient Overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-black/40">
+                            </div>
+                            <!-- Top floating badges -->
+                            <div
+                                class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-md border border-white/10 text-on-surface font-label-sm text-label-sm">
+                                    PG-13
+                                </span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-label-sm text-label-sm font-bold shadow-lg">
+                                    IMAX 70MM
+                                </span>
+                            </div>
+                            <!-- Bottom poster specs -->
+                            <div
+                                class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-on-surface font-label-md text-label-md">
+                                <span
+                                    class="flex items-center gap-1 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-secondary font-bold">
+                                    <span class="material-symbols-outlined text-xs"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    9.4
+                                </span>
+                                <span
+                                    class="text-outline-variant/80 text-xs bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-on-surface">
+                                    2h 46m
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="p-4 flex-1 flex flex-col justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2 text-outline font-label-sm text-label-sm mb-1">
+                                    <span>Sci-Fi</span>
+                                    <span>•</span>
+                                    <span>Adventure</span>
+                                    <span>•</span>
+                                    <span>English</span>
+                                </div>
+                                <h3
+                                    class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-1">
+                                    Chronicles of Arrakis: Part II
+                                </h3>
+                                <p class="font-body-sm text-body-sm text-outline mt-1 line-clamp-2">
+                                    A mythic journey of vengeance and destiny unfolds across the endless dunes as power
+                                    collides.
+                                </p>
+                            </div>
+                            <!-- Format Tags -->
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">IMAX
+                                    Laser</span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">Dolby
+                                    Atmos</span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">4DX</span>
+                            </div>
+                            <!-- Action Toolbar -->
+                            <div class="flex items-center gap-2 pt-2 border-t border-outline-variant/15">
+                                <button
+                                    class="flex-1 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold text-center crimson-glow hover:brightness-110 active:scale-95 transition-all">
+                                    Book Now
+                                </button>
+                                <button
+                                    class="w-10 h-9 rounded-lg bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 flex items-center justify-center transition-colors"
+                                    title="Watch Trailer">
+                                    <span class="material-symbols-outlined text-base">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <!-- Movie Card 2: Cyber Noir -->
+                    <article
+                        class="glass-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
+                        <!-- Poster Container (2:3 aspect) -->
+                        <div class="relative w-full aspect-[2/3] overflow-hidden bg-surface-container">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                data-alt="Futuristic cyberpunk detective thriller film poster showcasing a silhouette in a trench coat standing beneath neon holographic billboards in torrential rain. High contrast dark obsidian shadows with radiant crimson and cyan lens flares. Highly cinematic lighting creating a moody, atmospheric neo-noir visual tone."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf688jtna9dW_1mWTGTbu5PaXfVzEaZoJ1xhZBpzKwNJJi2ZcXvO0Vtlu3B7Dux3hK7hf-g52R-3gtAylPJJIf0HZW6j5nyZIy5bKvrygK1XiFUqdskKLNKXVePfwAPB3gWCXGNl2Aj_uticQHuNYSdejkbq28RwieOAhM3EP2OY_MGGbPon_E-74FUkPiYELP1-OXjlw35ULQVxEnvYSbuYpFrBlrumFIKObgaiI4o-PQXIYwCCeroQ" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-black/40">
+                            </div>
+                            <div
+                                class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-md border border-white/10 text-on-surface font-label-sm text-label-sm">
+                                    R
+                                </span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-secondary-container text-on-secondary font-label-sm text-label-sm font-bold shadow-lg">
+                                    DOLBY CINEMA
+                                </span>
+                            </div>
+                            <div
+                                class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-on-surface font-label-md text-label-md">
+                                <span
+                                    class="flex items-center gap-1 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-secondary font-bold">
+                                    <span class="material-symbols-outlined text-xs"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    8.9
+                                </span>
+                                <span
+                                    class="text-xs bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-on-surface">
+                                    2h 18m
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="p-4 flex-1 flex flex-col justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2 text-outline font-label-sm text-label-sm mb-1">
+                                    <span>Thriller</span>
+                                    <span>•</span>
+                                    <span>Sci-Fi</span>
+                                    <span>•</span>
+                                    <span>English</span>
+                                </div>
+                                <h3
+                                    class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-1">
+                                    Shadow Matrix: Protocol 9
+                                </h3>
+                                <p class="font-body-sm text-body-sm text-outline mt-1 line-clamp-2">
+                                    In a neon metropolis governed by synthetic minds, an operative uncovers an erased
+                                    conspiracy.
+                                </p>
+                            </div>
+                            <!-- Format Tags -->
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">Dolby
+                                    Cinema</span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">IMAX
+                                    3D</span>
+                            </div>
+                            <!-- Action Toolbar -->
+                            <div class="flex items-center gap-2 pt-2 border-t border-outline-variant/15">
+                                <button
+                                    class="flex-1 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold text-center crimson-glow hover:brightness-110 active:scale-95 transition-all">
+                                    Book Now
+                                </button>
+                                <button
+                                    class="w-10 h-9 rounded-lg bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 flex items-center justify-center transition-colors"
+                                    title="Watch Trailer">
+                                    <span class="material-symbols-outlined text-base">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <!-- Movie Card 3: Deep Space Symphony -->
+                    <article
+                        class="glass-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
+                        <!-- Poster Container (2:3 aspect) -->
+                        <div class="relative w-full aspect-[2/3] overflow-hidden bg-surface-container">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                data-alt="Breathtaking deep space exploration film poster featuring a solitary interstellar spacecraft orbiting a glittering golden nebula and deep purple gravitational lensing event. Hypnotic composition with clean celestial geometry, luminous rim lighting, and photorealistic space textures evoking wonder and grandeur."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHhQn1391QWakhm6xVAzOuuMN7xSPPkwq2fN9EH2wVAL5Kxq6izy4mllMJniESYzkZDyOlJPgirduPGsg-0JG5VWeRCwanvpQQV8rf-vpMRBUdIxdLnXm4fPOONmWTGP2VZ3KZm79vpM5MtzPt03reHLCk5jV9JBB8mi_uVqXjan1rir8pYy6Ih2DYFoxSPAoREVxH2U-VyLgYn4cPjRcTtcslxanGRe-BjPWnYUeOH-wIpJPbGJwJNw" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-black/40">
+                            </div>
+                            <div
+                                class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-md border border-white/10 text-on-surface font-label-sm text-label-sm">
+                                    PG-13
+                                </span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-semibold border border-white/10">
+                                    SCREENX
+                                </span>
+                            </div>
+                            <div
+                                class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-on-surface font-label-md text-label-md">
+                                <span
+                                    class="flex items-center gap-1 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-secondary font-bold">
+                                    <span class="material-symbols-outlined text-xs"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    9.1
+                                </span>
+                                <span
+                                    class="text-xs bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-on-surface">
+                                    2h 32m
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="p-4 flex-1 flex flex-col justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2 text-outline font-label-sm text-label-sm mb-1">
+                                    <span>Sci-Fi</span>
+                                    <span>•</span>
+                                    <span>Drama</span>
+                                    <span>•</span>
+                                    <span>English</span>
+                                </div>
+                                <h3
+                                    class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-1">
+                                    Beyond the Event Horizon
+                                </h3>
+                                <p class="font-body-sm text-body-sm text-outline mt-1 line-clamp-2">
+                                    An astrophysicist embarks on a solitary hyperspace voyage through acoustic
+                                    frequencies across the galaxy.
+                                </p>
+                            </div>
+                            <!-- Format Tags -->
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">ScreenX
+                                    270°</span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">Dolby
+                                    Atmos</span>
+                            </div>
+                            <!-- Action Toolbar -->
+                            <div class="flex items-center gap-2 pt-2 border-t border-outline-variant/15">
+                                <button
+                                    class="flex-1 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold text-center crimson-glow hover:brightness-110 active:scale-95 transition-all">
+                                    Book Now
+                                </button>
+                                <button
+                                    class="w-10 h-9 rounded-lg bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 flex items-center justify-center transition-colors"
+                                    title="Watch Trailer">
+                                    <span class="material-symbols-outlined text-base">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <!-- Movie Card 4: Victorian Gothic -->
+                    <article
+                        class="glass-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
+                        <div class="relative w-full aspect-[2/3] overflow-hidden bg-surface-container">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                data-alt="Victorian Gothic horror drama film poster featuring an enigmatic woman in an emerald velvet dress walking along a foggy moonlit cobblestone alley beside ornate gas lamps. Rich atmospheric mist, deep blacks, subtle crimson candle glows, and textured antique architecture creating an intense moody period cinema aesthetic."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgfosqxCFXTOJs0mtIJms0bKKXW1SfpyGnNS_1o7dJWxEs3aReClaBteTiQm995vGezz25kHufRoQibg-O4ycWzqYyb1bNi3hlifxldFjsUrP2lSe0DvT0zh72P9P_i7rsWQO_3NbRLNvDGTrdkwJpp8UQK1CViknTqZY6k3SidK_ZGavx7y7_ggmMlGRknn9twW58YEdNM8v8WCKyJGEZM4T54M1PAhVnBgHO6P2f21_aKnQSqCKHgg" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-black/40">
+                            </div>
+                            <div
+                                class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-md border border-white/10 text-on-surface font-label-sm text-label-sm">
+                                    R
+                                </span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-label-sm text-label-sm font-bold shadow-lg">
+                                    IMAX
+                                </span>
+                            </div>
+                            <div
+                                class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-on-surface font-label-md text-label-md">
+                                <span
+                                    class="flex items-center gap-1 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-secondary font-bold">
+                                    <span class="material-symbols-outlined text-xs"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    8.7
+                                </span>
+                                <span
+                                    class="text-xs bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-on-surface">
+                                    2h 05m
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2 text-outline font-label-sm text-label-sm mb-1">
+                                    <span>Horror</span>
+                                    <span>•</span>
+                                    <span>Mystery</span>
+                                    <span>•</span>
+                                    <span>English</span>
+                                </div>
+                                <h3
+                                    class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-1">
+                                    The Whispering Lantern
+                                </h3>
+                                <p class="font-body-sm text-body-sm text-outline mt-1 line-clamp-2">
+                                    Dark family secrets resurface when a London estate archivist discovers unsent
+                                    correspondence from 1892.
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">IMAX
+                                    Digital</span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">Dolby
+                                    Audio</span>
+                            </div>
+                            <div class="flex items-center gap-2 pt-2 border-t border-outline-variant/15">
+                                <button
+                                    class="flex-1 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold text-center crimson-glow hover:brightness-110 active:scale-95 transition-all">
+                                    Book Now
+                                </button>
+                                <button
+                                    class="w-10 h-9 rounded-lg bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 flex items-center justify-center transition-colors"
+                                    title="Watch Trailer">
+                                    <span class="material-symbols-outlined text-base">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <!-- Movie Card 5: High Octane Motorsport -->
+                    <article
+                        class="glass-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
+                        <div class="relative w-full aspect-[2/3] overflow-hidden bg-surface-container">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                data-alt="High-octane action sports movie poster showing an aerodynamic endurance prototype racing car drifting around a wet asphalt apex under floodlights with glowing red carbon ceramic brake discs throwing vibrant orange sparks. Hyper-kinetic motion blur, deep obsidian tarmac, and cinematic cinema-grade saturation."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuChJHis-N40DlLtHlt21aFRNYUtFbQbA63VCo5AcxmdJs0qatgx6h-SSCGgd11mMe3_dM9uFLK3xXEYtX51lmha0eCNGzvz25gflUQkvwsdz1NLHA4xHL3RIgYdDohkyp2EPdAqN8-Nchem48sySTXJOOGiVpxql95ovep2HpDK3aqu0zjE-kaMClOrtTuXc9-LMegXUB6-keWGysXCSqUZJao9w0bQ5W6DB_yRMs6MlncbKvWrrZtAJg" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-black/40">
+                            </div>
+                            <div
+                                class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-md border border-white/10 text-on-surface font-label-sm text-label-sm">
+                                    PG-13
+                                </span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-secondary-container text-on-secondary font-label-sm text-label-sm font-bold shadow-lg">
+                                    4DX MOTION
+                                </span>
+                            </div>
+                            <div
+                                class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-on-surface font-label-md text-label-md">
+                                <span
+                                    class="flex items-center gap-1 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-secondary font-bold">
+                                    <span class="material-symbols-outlined text-xs"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    9.0
+                                </span>
+                                <span
+                                    class="text-xs bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-on-surface">
+                                    2h 12m
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2 text-outline font-label-sm text-label-sm mb-1">
+                                    <span>Action</span>
+                                    <span>•</span>
+                                    <span>Drama</span>
+                                    <span>•</span>
+                                    <span>English</span>
+                                </div>
+                                <h3
+                                    class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-1">
+                                    Apex: Le Mans 24
+                                </h3>
+                                <p class="font-body-sm text-body-sm text-outline mt-1 line-clamp-2">
+                                    Two rival drivers forge an uneasy alliance to push engineering and human endurance
+                                    past the breaking point.
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">4DX
+                                    Dynamic</span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">IMAX</span>
+                            </div>
+                            <div class="flex items-center gap-2 pt-2 border-t border-outline-variant/15">
+                                <button
+                                    class="flex-1 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold text-center crimson-glow hover:brightness-110 active:scale-95 transition-all">
+                                    Book Now
+                                </button>
+                                <button
+                                    class="w-10 h-9 rounded-lg bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 flex items-center justify-center transition-colors"
+                                    title="Watch Trailer">
+                                    <span class="material-symbols-outlined text-base">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <!-- Movie Card 6: Studio Anime Fantasy -->
+                    <article
+                        class="glass-card rounded-2xl overflow-hidden flex flex-col group transition-all duration-300">
+                        <div class="relative w-full aspect-[2/3] overflow-hidden bg-surface-container">
+                            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                data-alt="Lush theatrical animated fantasy film poster featuring a mystical flying wooden airship gliding past towering crystalline cloud formations at sunset. Painterly aesthetic with hand-crafted textures, delicate golden hour pinks and purples, sparkling bioluminescent pollen, and exquisite cinematic anime production artistry."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX5AvTIMGbebqtFCmKV1grTZElunyFYS8bfuGy7SMRLatkuuU9GVXbaHcjmSNyOnDisAcfb3iAMMB3lSc9M3t3Y0_I3RvowQYWjPIFGSjTzo_vrDHpJ5LQgpl45T7DXA8fgl8ba1G45cRV0uduBPuVjkGTwvqbGphWDtESiaAVkYOmnHxGBmUZ5p9L3selD8N8dvbyeq5VQdp3GFQ4wKADZxAeYQMkD3EKmAQ6sidAavUqy0U9zdlPRg" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-black/40">
+                            </div>
+                            <div
+                                class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-md border border-white/10 text-on-surface font-label-sm text-label-sm">
+                                    PG
+                                </span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-semibold border border-white/10">
+                                    STANDARD / IMAX
+                                </span>
+                            </div>
+                            <div
+                                class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-on-surface font-label-md text-label-md">
+                                <span
+                                    class="flex items-center gap-1 bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-secondary font-bold">
+                                    <span class="material-symbols-outlined text-xs"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    9.5
+                                </span>
+                                <span
+                                    class="text-xs bg-surface-container-lowest/80 backdrop-blur-md px-2 py-0.5 rounded text-on-surface">
+                                    1h 56m
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2 text-outline font-label-sm text-label-sm mb-1">
+                                    <span>Animation</span>
+                                    <span>•</span>
+                                    <span>Fantasy</span>
+                                    <span>•</span>
+                                    <span>English Dub</span>
+                                </div>
+                                <h3
+                                    class="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-1">
+                                    Skyward Songbird: The Realm
+                                </h3>
+                                <p class="font-body-sm text-body-sm text-outline mt-1 line-clamp-2">
+                                    A young navigator discovers the forgotten harmony that keeps floating archipelago
+                                    kingdoms in delicate equilibrium.
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">Dolby
+                                    Atmos</span>
+                                <span
+                                    class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-[11px] border border-white/5">IMAX
+                                    2D</span>
+                            </div>
+                            <div class="flex items-center gap-2 pt-2 border-t border-outline-variant/15">
+                                <button
+                                    class="flex-1 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold text-center crimson-glow hover:brightness-110 active:scale-95 transition-all">
+                                    Book Now
+                                </button>
+                                <button
+                                    class="w-10 h-9 rounded-lg bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 flex items-center justify-center transition-colors"
+                                    title="Watch Trailer">
+                                    <span class="material-symbols-outlined text-base">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <!-- PAGINATION CONTROLS -->
+                <div
+                    class="bg-surface-container-low border border-outline-variant/20 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md">
+                    <!-- Items per page selector -->
+                    <div class="flex items-center gap-2 text-body-sm font-body-sm text-outline">
+                        <span>Show per page:</span>
+                        <select
+                            class="bg-surface-container border border-outline-variant/30 rounded-lg px-2.5 py-1 text-on-surface font-label-md text-label-md focus:border-primary-container focus:outline-none">
+                            <option>6</option>
+                            <option selected="">12</option>
+                            <option>24</option>
+                            <option>48</option>
+                        </select>
+                    </div>
+                    <!-- Page numeric links -->
+                    <div class="flex items-center gap-1">
+                        <!-- Prev -->
+                        <button
+                            class="p-2 rounded-lg bg-surface-container text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors disabled:opacity-40"
+                            disabled="">
+                            <span class="material-symbols-outlined text-sm">chevron_left</span>
+                        </button>
+                        <!-- Numbers -->
+                        <button
+                            class="w-9 h-9 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold shadow-md">1</button>
+                        <button
+                            class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors">2</button>
+                        <button
+                            class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors">3</button>
+                        <button
+                            class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors">4</button>
+                        <span class="w-7 text-center text-outline">...</span>
+                        <button
+                            class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md transition-colors">12</button>
+                        <!-- Next -->
+                        <button
+                            class="p-2 rounded-lg bg-surface-container text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors">
+                            <span class="material-symbols-outlined text-sm">chevron_right</span>
+                        </button>
+                    </div>
+                    <!-- Quick Jump or status -->
+                    <span class="font-label-sm text-label-sm text-outline hidden xl:inline">
+                        Showing 1 - 6 of 48 total titles
+                    </span>
+                </div>
+                <!-- PROMOTIONAL MEMBER BANNER / ZERO RESULTS PREVIEW FALLBACK -->
+                <div
+                    class="rounded-2xl bg-gradient-to-r from-surface-container-lowest via-surface-container-low to-surface-container border border-outline-variant/30 p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                    <div
+                        class="absolute -right-12 -top-12 w-64 h-64 bg-secondary-container/10 rounded-full blur-2xl pointer-events-none">
+                    </div>
+                    <div class="flex items-center gap-4 z-10">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-primary-container/20 border border-primary-container/40 flex items-center justify-center text-primary shrink-0">
+                            <span class="material-symbols-outlined text-2xl"
+                                style="font-variation-settings: 'FILL' 1;">stars</span>
+                        </div>
+                        <div>
+                            <span
+                                class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-bold">Cineva
+                                Premiere Club</span>
+                            <h4 class="font-title-lg text-title-lg font-bold text-on-surface">Can’t find your specific
+                                screening time?</h4>
+                            <p class="font-body-sm text-body-sm text-outline mt-0.5">
+                                Set an alert for upcoming 70mm and Dolby Cinema showtimes across New York auditoriums.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 z-10 w-full md:w-auto">
+                        <button
+                            class="w-full md:w-auto px-5 py-2.5 rounded-lg bg-surface-container-highest hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold border border-outline-variant/30 transition-colors whitespace-nowrap">
+                            Notify When Available
+                        </button>
+                        <button
+                            class="w-full md:w-auto px-5 py-2.5 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold crimson-glow hover:brightness-110 active:scale-95 transition-all whitespace-nowrap">
+                            Join Cineva VIP
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <!-- FOOTER (from Shared Components JSON) -->
+    <footer class="w-full block bg-surface-container-lowest border-t border-outline-variant/20 mt-16">
+        <div class="w-full max-w-7xl mx-auto px-6 py-12 flex flex-col gap-8">
+            <!-- Top Row: Brand, Description, and Links Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand column -->
+                <div class="md:col-span-1 flex flex-col gap-3">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-2xl"
+                            style="font-variation-settings: 'FILL' 1;">movie</span>
+                        <span class="text-headline-sm font-headline-sm font-bold text-primary">Cineva</span>
+                    </div>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Pioneering digital ticketing, luxury auditorium reservations, and festival showcase experiences
+                        across global cinema hubs.
+                    </p>
+                </div>
+                <!-- Links column 1 -->
+                <div class="flex flex-col gap-3">
+                    <span class="font-title-md text-title-md font-bold text-on-surface">Cineva Platform</span>
+                    <ul class="flex flex-col gap-2 font-body-sm text-body-sm text-on-surface-variant">
+                        <li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Experiences &amp; IMAX</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Cinema Partner Program</a></li>
+                    </ul>
+                </div>
+                <!-- Links column 2 -->
+                <div class="flex flex-col gap-3">
+                    <span class="font-title-md text-title-md font-bold text-on-surface">Legal &amp; Trust</span>
+                    <ul class="flex flex-col gap-2 font-body-sm text-body-sm text-on-surface-variant">
+                        <li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Certified Security Standards</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Newsletter / Quick App links -->
+                <div class="flex flex-col gap-3">
+                    <span class="font-title-md text-title-md font-bold text-on-surface">Experience Everywhere</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Get early access to midnight premieres and film festival badges straight to your inbox.
+                    </p>
+                    <div class="flex gap-2">
+                        <input
+                            class="w-full bg-surface-container border border-outline-variant/30 rounded-lg px-3 py-1.5 font-body-sm text-body-sm text-on-surface focus:border-primary focus:outline-none"
+                            placeholder="Your email address" type="email" />
+                        <button
+                            class="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-bold hover:brightness-110">
+                            Join
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Bottom row: Copyright & Format Attributions -->
+            <div
+                class="pt-6 border-t border-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4 font-body-sm text-body-sm text-on-surface-variant">
+                <p>© 2024 Cineva Entertainment Inc. All rights reserved. Atmos, IMAX, and 4DX are registered trademarks.
+                </p>
+                <div class="flex items-center gap-4">
+                    <a class="hover:text-primary transition-colors font-label-sm text-label-sm" href="#">Privacy</a>
+                    <a class="hover:text-primary transition-colors font-label-sm text-label-sm" href="#">Terms</a>
+                    <a class="hover:text-primary transition-colors font-label-sm text-label-sm" href="#">Security</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

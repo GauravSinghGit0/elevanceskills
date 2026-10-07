@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cineva Cinema Ops - Review &amp; Ratings Moderation Center</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols Outlined -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#5c3f42",
+                        "on-tertiary-fixed": "#07006c",
+                        "surface": "#11131b",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#5b3800",
+                        "on-primary-fixed-variant": "#910030",
+                        "inverse-primary": "#bd0042",
+                        "on-secondary-fixed": "#2a1700",
+                        "outline": "#ac888b",
+                        "surface-variant": "#33343d",
+                        "surface-container": "#1d1f28",
+                        "primary-fixed-dim": "#ffb2ba",
+                        "secondary-container": "#ee9800",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "inverse-on-surface": "#2e3039",
+                        "on-tertiary-container": "#0d0096",
+                        "secondary-fixed": "#ffddb8",
+                        "on-primary": "#670020",
+                        "surface-container-low": "#191b23",
+                        "primary-container": "#ff4f73",
+                        "surface-container-high": "#282a32",
+                        "on-primary-container": "#5a001b",
+                        "primary": "#ffb2ba",
+                        "on-secondary": "#472a00",
+                        "on-surface-variant": "#e5bdc0",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-bright": "#373942",
+                        "surface-tint": "#ffb2ba",
+                        "background": "#11131b",
+                        "tertiary-fixed": "#e1e0ff",
+                        "secondary": "#ffb95f",
+                        "surface-container-lowest": "#0c0e16",
+                        "on-tertiary-fixed-variant": "#2f2ebe",
+                        "tertiary": "#c0c1ff",
+                        "tertiary-fixed-dim": "#c0c1ff",
+                        "surface-dim": "#11131b",
+                        "error-container": "#93000a",
+                        "tertiary-container": "#8083ff",
+                        "surface-container-highest": "#33343d",
+                        "on-surface": "#e1e1ed",
+                        "on-error-container": "#ffdad6",
+                        "inverse-surface": "#e1e1ed",
+                        "primary-fixed": "#ffd9dc",
+                        "on-primary-fixed": "#400011",
+                        "on-background": "#e1e1ed",
+                        "on-tertiary": "#1000a9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "space-xl": "2.5rem",
+                        "space-sm": "0.5rem",
+                        "space-xs": "0.25rem",
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "margin": "2rem",
+                        "space-md": "1rem",
+                        "gutter-mobile": "1rem",
+                        "space-lg": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "display-md": ["Outfit"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "display-md-mobile": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Outfit"],
+                        "title-lg": ["Plus Jakarta Sans"],
+                        "title-md": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Outfit"],
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+                        "display-md": ["44px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "display-md-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "title-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "title-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #11131b;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #33343d;
+            border-radius: 9999px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #5c3f42;
+        }
+
+        .luminous-glow {
+            box-shadow: 0 0 24px -2px rgba(255, 79, 115, 0.45);
+        }
+
+        .subtle-border {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .highlight-border {
+            border: 1px solid rgba(255, 79, 115, 0.3);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface-container-lowest text-on-surface font-body-md antialiased overflow-x-hidden min-h-screen flex selection:bg-primary-container selection:text-on-primary">
+    <!-- SIDE NAVIGATION (Shared Component: SideNavBar) -->
+    <aside
+        class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant/20 shadow-xl z-40 flex flex-col justify-between p-4">
+        <!-- Brand & Hub Header -->
+        <div class="flex flex-col gap-6">
+            <div class="flex items-center gap-3 px-2 pt-2">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary-container to-secondary-container flex items-center justify-center text-on-primary-container shadow-lg shadow-primary-container/20 ring-1 ring-white/20">
+                    <span class="material-symbols-outlined text-title-lg" data-weight="fill"
+                        style="font-variation-settings: 'FILL' 1;">theater_comedy</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight">Cineva</span>
+                    <span
+                        class="font-label-sm text-label-sm text-on-surface-variant tracking-wider uppercase">Auditorium
+                        Hub v2.4</span>
+                </div>
+            </div>
+            <!-- Quick Action CTA -->
+            <button
+                class="w-full h-10 px-4 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary font-title-sm text-title-sm flex items-center justify-center gap-2 border border-outline-variant/30 transition-all duration-150 active:scale-95 group">
+                <span
+                    class="material-symbols-outlined text-title-md group-hover:rotate-90 transition-transform duration-200">add</span>
+                <span>New Screening</span>
+            </button>
+            <!-- Primary Navigation Links -->
+            <nav aria-label="Admin Navigation" class="flex flex-col gap-1.5">
+                <!-- 1. Dashboard -->
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-title-sm text-title-sm hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150"
+                    href="#">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <!-- 2. Screenings -->
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-title-sm text-title-sm hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150"
+                    href="#">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span>Screenings</span>
+                </a>
+                <!-- 3. Movies Catalog -->
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-title-sm text-title-sm hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150"
+                    href="#">
+                    <span class="material-symbols-outlined">movie</span>
+                    <span>Movies Catalog</span>
+                </a>
+                <!-- 4. Theaters -->
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-title-sm text-title-sm hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150"
+                    href="#">
+                    <span class="material-symbols-outlined">theater_comedy</span>
+                    <span>Theaters</span>
+                </a>
+                <!-- 5. Tickets & Sales -->
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-title-sm text-title-sm hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150"
+                    href="#">
+                    <span class="material-symbols-outlined">local_activity</span>
+                    <span>Tickets &amp; Sales</span>
+                </a>
+                <!-- 6. Moderation (ACTIVE STATE: Strict semantic match) -->
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest text-primary font-title-sm text-title-sm shadow-sm relative overflow-hidden group"
+                    href="#">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r"></div>
+                    <span class="material-symbols-outlined text-primary" data-weight="fill"
+                        style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                    <span class="flex-1">Moderation</span>
+                    <span
+                        class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-primary-container text-on-primary-container font-bold animate-pulse">4</span>
+                </a>
+            </nav>
+        </div>
+        <!-- Footer Controls & Profile Stub -->
+        <div class="flex flex-col gap-2 pt-4 border-t border-outline-variant/20">
+            <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant font-title-sm text-title-sm hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150"
+                href="#">
+                <span class="material-symbols-outlined">monitoring</span>
+                <span>Analytics</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant font-title-sm text-title-sm hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150"
+                href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span>Settings</span>
+            </a>
+            <!-- Studio Moderator Badge -->
+            <div class="mt-2 pt-3 border-t border-outline-variant/10 flex items-center gap-3 px-2">
+                <div class="relative">
+                    <img class="w-9 h-9 rounded-full object-cover ring-1 ring-primary/40"
+                        data-alt="A portrait badge of a cinema safety supervisor in an atmospheric dim theater projection room with subtle neon red backlighting and modern uniform"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1GEtOOIu0dzW1zF_mdbkzc4lLADJbGyAmhV8IRbyQTlYz92g_x9_BeOVT9_ZxvCxMfybCyJY6alCUsXfMOuQUGeRZZLAXyITPyAEpRCasflAPRq80BUwg94iliB3OBWZWv2euh1l0Mfb5PuPX_IcvKCSgQfKjxqAVwsEXzA0wzk7ceW_gjrolZgIETRy2lSLUfAFQcngT9AfafEzsjnI8dArFtoN9ETLidL_UJvYDi7G5VaCo6Uv7xQ" />
+                    <span
+                        class="w-2.5 h-2.5 bg-emerald-500 rounded-full absolute bottom-0 right-0 ring-2 ring-surface-container-low"></span>
+                </div>
+                <div class="flex flex-col overflow-hidden">
+                    <span class="font-title-sm text-title-sm text-on-surface truncate">Sarah K.</span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant truncate">Lead Trust &amp;
+                        Safety</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- MAIN VIEWPORT CANVAS (Margin left for side drawer) -->
+    <div class="ml-64 flex-1 flex flex-col min-h-screen bg-background relative">
+        <!-- TOP OPS APP BAR -->
+        <header
+            class="sticky top-0 z-30 flex items-center justify-between px-8 py-3.5 bg-surface/90 backdrop-blur-md border-b border-outline-variant/20 shadow-2xl">
+            <!-- Title & Breadcrumb -->
+            <div class="flex items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Review
+                            Moderation Hub</h1>
+                        <span
+                            class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container border border-error/30 font-semibold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span>
+                            Live Triage
+                        </span>
+                    </div>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Manage viewer sentiment, abuse reports,
+                        and verified ticket validations</p>
+                </div>
+            </div>
+            <!-- Omnisearch & Secondary Actions -->
+            <div class="flex items-center gap-4">
+                <!-- Search bar -->
+                <div class="relative w-80">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-title-md">search</span>
+                    <input
+                        class="w-full h-10 pl-10 pr-4 rounded-lg bg-surface-container-low border border-outline-variant/20 text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/40 transition-all"
+                        placeholder="Search reviews by user, keyword, or movie..." type="text" />
+                    <kbd
+                        class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-label-sm font-label-sm bg-surface-container-highest text-on-surface-variant rounded border border-outline-variant/30">⌘K</kbd>
+                </div>
+                <!-- Action Icons Cluster -->
+                <div class="flex items-center gap-2 border-l border-outline-variant/20 pl-4">
+                    <!-- Notification with counter -->
+                    <button
+                        class="relative p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high/40 transition-all duration-200"
+                        title="4 New Reported Reviews">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span
+                            class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-primary-container rounded-full ring-2 ring-surface"></span>
+                    </button>
+                    <button
+                        class="p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high/40 transition-all duration-200"
+                        title="Ticket Stubs Queue">
+                        <span class="material-symbols-outlined">confirmation_number</span>
+                    </button>
+                    <!-- Audit Log Export -->
+                    <button
+                        class="h-9 px-3 rounded-lg bg-surface-container border border-outline-variant/30 hover:border-primary/50 text-on-surface font-label-md text-label-md flex items-center gap-2 transition-all active:scale-95">
+                        <span class="material-symbols-outlined text-title-sm">history_edu</span>
+                        <span>Audit Trail</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- CONTENT WRAPPER -->
+        <main class="p-8 flex flex-col gap-6">
+            <!-- SECTION 1: MODERATION KPI CARDS (Bento Grid) -->
+            <section aria-label="Key Performance Indicators"
+                class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+                <!-- KPI 1: Total Reviews -->
+                <div
+                    class="p-5 rounded-xl bg-surface-container-low subtle-border backdrop-blur-md flex flex-col justify-between hover:border-outline-variant/40 transition-all group">
+                    <div class="flex items-center justify-between">
+                        <span class="font-label-md text-label-md text-on-surface-variant">Total Reviews</span>
+                        <div
+                            class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-title-md">rate_review</span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-baseline gap-2">
+                            <span
+                                class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">58,420</span>
+                            <span class="font-label-sm text-label-sm text-emerald-400 font-semibold flex items-center">
+                                <span class="material-symbols-outlined text-label-md">arrow_upward</span> +3.2%
+                            </span>
+                        </div>
+                        <div class="mt-2 flex items-center gap-1.5 text-secondary font-title-sm text-title-sm">
+                            <span class="material-symbols-outlined text-title-md" data-weight="fill"
+                                style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="font-bold text-on-surface">4.8</span>
+                            <span class="text-on-surface-variant font-body-sm text-body-sm">/ 5.0 auditorium avg</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- KPI 2: Pending Verification -->
+                <div
+                    class="p-5 rounded-xl bg-surface-container-low subtle-border backdrop-blur-md flex flex-col justify-between hover:border-secondary/40 transition-all group">
+                    <div class="flex items-center justify-between">
+                        <span class="font-label-md text-label-md text-on-surface-variant">Pending Verification</span>
+                        <div
+                            class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-title-md">confirmation_number</span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-baseline gap-2">
+                            <span
+                                class="font-headline-lg text-headline-lg font-bold text-secondary tracking-tight">14</span>
+                            <span class="font-title-sm text-title-sm text-on-surface">Ticket Stubs</span>
+                        </div>
+                        <p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">Physical QR &amp; box-office
+                            stubs awaiting audit validation</p>
+                    </div>
+                </div>
+                <!-- KPI 3: Reported / Flagged Reviews (Urgent) -->
+                <div
+                    class="p-5 rounded-xl bg-surface-container-low highlight-border backdrop-blur-md relative overflow-hidden flex flex-col justify-between group shadow-lg shadow-error-container/10">
+                    <div
+                        class="absolute -right-6 -top-6 w-24 h-24 bg-primary-container/10 rounded-full blur-xl pointer-events-none">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span
+                            class="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">Reported
+                            / Flagged</span>
+                        <div
+                            class="w-9 h-9 rounded-lg bg-primary-container/20 border border-primary/30 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-title-md animate-pulse">report</span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-baseline gap-2">
+                            <span
+                                class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">4</span>
+                            <span class="font-title-sm text-title-sm text-on-surface font-semibold">Flagged
+                                Reviews</span>
+                        </div>
+                        <div class="mt-2 flex items-center gap-1.5 text-primary text-label-sm font-label-sm font-bold">
+                            <span class="w-2 h-2 rounded-full bg-primary-container"></span>
+                            <span>Urgent Triage Required</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- KPI 4: Moderation Response Time -->
+                <div
+                    class="p-5 rounded-xl bg-surface-container-low subtle-border backdrop-blur-md flex flex-col justify-between hover:border-outline-variant/40 transition-all group">
+                    <div class="flex items-center justify-between">
+                        <span class="font-label-md text-label-md text-on-surface-variant">Moderation Response
+                            Time</span>
+                        <div
+                            class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-title-md">timer</span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-baseline gap-2">
+                            <span class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">18
+                                min</span>
+                            <span class="font-title-sm text-title-sm text-on-surface-variant font-normal">avg</span>
+                        </div>
+                        <p class="mt-2 font-body-sm text-body-sm text-emerald-400 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-label-md">bolt</span>
+                            <span>85% resolved under 30 minutes</span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION 2: MODERATION NAVIGATION TABS & STATUS FILTERING -->
+            <div class="flex items-center justify-between border-b border-outline-variant/20 pb-2">
+                <nav aria-label="Moderation Views" class="flex items-center gap-6">
+                    <button
+                        class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors pb-3 border-b-2 border-transparent">
+                        All Reviews <span class="font-normal text-on-surface-variant/70 text-body-sm">(58.4k)</span>
+                    </button>
+                    <!-- Active Tab: Flagged & Reported -->
+                    <button
+                        class="font-label-lg text-label-lg text-primary font-bold pb-3 border-b-2 border-primary flex items-center gap-2">
+                        <span>Flagged &amp; Reported</span>
+                        <span
+                            class="px-2 py-0.2 rounded-full bg-primary-container text-on-primary-container text-label-sm font-label-sm font-bold">4</span>
+                    </button>
+                    <button
+                        class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors pb-3 border-b-2 border-transparent flex items-center gap-2">
+                        <span>Pending Ticket Verification</span>
+                        <span
+                            class="px-2 py-0.2 rounded-full bg-surface-container-highest text-secondary text-label-sm font-label-sm font-semibold">14</span>
+                    </button>
+                    <button
+                        class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors pb-3 border-b-2 border-transparent">
+                        Approved <span class="font-normal text-on-surface-variant/70 text-body-sm">(58.1k)</span>
+                    </button>
+                    <button
+                        class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors pb-3 border-b-2 border-transparent">
+                        Removed / Spam <span class="font-normal text-on-surface-variant/70 text-body-sm">(302)</span>
+                    </button>
+                </nav>
+                <!-- Right Side Quick Toggles -->
+                <div class="flex items-center gap-3">
+                    <button
+                        class="text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 transition-colors">
+                        <span class="material-symbols-outlined text-title-sm">tune</span>
+                        <span>Display Density: Compact</span>
+                    </button>
+                </div>
+            </div>
+            <!-- SECTION 3: FILTER BAR CLUSTERS -->
+            <section
+                class="p-4 rounded-xl bg-surface-container-low subtle-border flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Movie Selector -->
+                    <div class="relative">
+                        <button
+                            class="h-9 px-3 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface font-title-sm text-title-sm flex items-center gap-2 hover:border-primary/40 transition-colors">
+                            <span class="material-symbols-outlined text-title-sm text-primary">movie_filter</span>
+                            <span>Filter by Movie: <span class="text-primary font-semibold">All Movies</span></span>
+                            <span
+                                class="material-symbols-outlined text-title-sm text-on-surface-variant">arrow_drop_down</span>
+                        </button>
+                    </div>
+                    <!-- Star Rating Filter -->
+                    <div class="relative">
+                        <button
+                            class="h-9 px-3 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface font-title-sm text-title-sm flex items-center gap-2 hover:border-primary/40 transition-colors">
+                            <span class="material-symbols-outlined text-title-sm text-secondary" data-weight="fill"
+                                style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span>Rating: All Scores</span>
+                            <span
+                                class="material-symbols-outlined text-title-sm text-on-surface-variant">arrow_drop_down</span>
+                        </button>
+                    </div>
+                    <!-- Flag Reason Chips -->
+                    <div class="flex items-center gap-1.5 pl-2 border-l border-outline-variant/20">
+                        <span
+                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mr-1">Flag:</span>
+                        <button
+                            class="h-7 px-2.5 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-sm text-label-sm flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            <span>Spoiler</span>
+                        </button>
+                        <button
+                            class="h-7 px-2.5 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface border border-outline-variant/20 font-label-sm text-label-sm transition-colors">
+                            Profanity
+                        </button>
+                        <button
+                            class="h-7 px-2.5 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface border border-outline-variant/20 font-label-sm text-label-sm transition-colors">
+                            Irrelevant / Spam
+                        </button>
+                    </div>
+                </div>
+                <!-- Date Range & Bulk Ops -->
+                <div class="flex items-center gap-3">
+                    <button
+                        class="h-9 px-3 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface font-title-sm text-title-sm flex items-center gap-2 hover:border-outline-variant/60">
+                        <span class="material-symbols-outlined text-title-sm text-on-surface-variant">date_range</span>
+                        <span>Past 24 Hours</span>
+                        <span class="material-symbols-outlined text-title-sm text-on-surface-variant">expand_more</span>
+                    </button>
+                    <button
+                        class="h-9 px-3 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-title-sm text-title-sm flex items-center gap-1.5 border border-outline-variant/20 transition-all">
+                        <span class="material-symbols-outlined text-title-sm">checklist</span>
+                        <span>Bulk Batch (4)</span>
+                    </button>
+                </div>
+            </section>
+            <!-- SECTION 4: MAIN WORKSPACE - TABLE + INTERACTIVE INSPECTION DRAWER -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- FLAGGED REVIEWS DATA TABLE (8 cols on large screens) -->
+                <div
+                    class="lg:col-span-8 flex flex-col rounded-xl bg-surface-container-low subtle-border overflow-hidden shadow-xl">
+                    <!-- Table Header -->
+                    <div
+                        class="px-6 py-4 bg-surface-container-lowest border-b border-outline-variant/20 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <input
+                                class="w-4 h-4 rounded bg-surface-container border-outline-variant text-primary-container focus:ring-0 focus:ring-offset-0"
+                                type="checkbox" />
+                            <span
+                                class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Queue:
+                                4 Escalated Flags</span>
+                        </div>
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Auto-refresh active
+                            (30s)</span>
+                    </div>
+                    <!-- Reviews Table / Cards Container -->
+                    <div class="divide-y divide-outline-variant/10">
+                        <!-- ROW 1: PRIMARY FOCUS ROW (Selected / Active in Drawer) -->
+                        <article
+                            class="p-5 bg-surface-container-high/40 border-l-4 border-primary transition-colors flex flex-col gap-3.5 hover:bg-surface-container-high/60">
+                            <!-- Top Row: User & Ticket Meta -->
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3">
+                                    <img class="w-10 h-10 rounded-full object-cover ring-2 ring-primary/40"
+                                        data-alt="A stylish futuristic cyberpunk user avatar with neon magenta glasses against dark cinema backdrop in portrait mode"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-z9s7AFm0YMAxLpGwvXRWhIy0PIr54kIEdz-aBLQ75V5Op-dojx44NBGTnjM5PNxUWg3r5AsGURctjkFkMPrurB5m6ipf3RcXZaH5P9VkWIFAyPSu9YM2qbN1tMDV0DrImN_qlabLK_Euux5X_EskOqaUj2hacQpEASQEB9RC0wiFSG89Pi62F58oYg5pJAuW46As1PaYY8lcRGn0yPmsHyqqzV7SZjB8uWVMyE6L_rlsb3iVy8_wNg" />
+                                    <div class="flex flex-col">
+                                        <div class="flex items-center gap-2">
+                                            <span
+                                                class="font-title-sm text-title-sm text-on-surface font-bold">cinephile_99</span>
+                                            <!-- Verified Ticket Badge -->
+                                            <span
+                                                class="px-2 py-0.5 rounded-md bg-secondary-container/20 border border-secondary/30 text-secondary text-label-sm font-label-sm font-bold flex items-center gap-1"
+                                                title="Confirmed ticket purchase">
+                                                <span class="material-symbols-outlined text-label-sm" data-weight="fill"
+                                                    style="font-variation-settings: 'FILL' 1;">verified</span>
+                                                <span>Verified Ticket Buyer</span>
+                                            </span>
+                                        </div>
+                                        <span class="font-body-sm text-body-sm text-on-surface-variant">Auditorium 1 •
+                                            Seat F14 • IMAX Laser</span>
+                                    </div>
+                                </div>
+                                <!-- Status & Time -->
+                                <div class="flex items-center gap-3">
+                                    <span
+                                        class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container font-bold border border-error/30 flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span>
+                                        Action Required
+                                    </span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant">2 hours ago</span>
+                                </div>
+                            </div>
+                            <!-- Movie & Rating Context -->
+                            <div class="flex items-center gap-3 pt-1">
+                                <span class="font-title-md text-title-md text-on-surface font-semibold">Chronicles of
+                                    Dune: Oblivion</span>
+                                <span class="text-outline-variant">•</span>
+                                <div
+                                    class="flex items-center gap-1 text-primary-container font-title-sm text-title-sm font-bold bg-primary-container/10 px-2 py-0.5 rounded border border-primary-container/20">
+                                    <span class="material-symbols-outlined text-title-sm" data-weight="fill"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span>1.0 / 10</span>
+                                </div>
+                            </div>
+                            <!-- Flag Reason Callout Banner -->
+                            <div
+                                class="p-3 rounded-lg bg-surface-container-highest/60 border border-outline-variant/30 flex items-start gap-2.5">
+                                <span class="material-symbols-outlined text-primary text-title-md mt-0.5">warning</span>
+                                <div class="flex-1">
+                                    <p class="font-title-sm text-title-sm text-on-surface font-semibold">Contains major
+                                        plot spoilers without spoiler tag</p>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant">Reported by 3 verified
+                                        ticket holders within 45 minutes of post creation.</p>
+                                </div>
+                            </div>
+                            <!-- Review Text Content -->
+                            <div
+                                class="p-3.5 rounded-lg bg-surface-container-lowest/80 border border-outline-variant/20">
+                                <p class="font-body-md text-body-md text-on-surface leading-relaxed">
+                                    "Don't waste your money! The protagonist dies in the 42nd minute when the planetary
+                                    shield is sabotaged by Commander Kaelen, completely ruining the third act twist with
+                                    the desert worm emperor..."
+                                </p>
+                                <button
+                                    class="mt-2 text-primary font-label-sm text-label-sm hover:underline flex items-center gap-1">
+                                    <span>Show full 480-word review</span>
+                                    <span class="material-symbols-outlined text-label-md">expand_more</span>
+                                </button>
+                            </div>
+                            <!-- Quick Action Button Row -->
+                            <div
+                                class="flex flex-wrap items-center justify-between pt-2 border-t border-outline-variant/10">
+                                <div class="flex items-center gap-2">
+                                    <button
+                                        class="h-8 px-3 rounded-lg bg-surface-container-highest hover:bg-surface-bright text-primary font-label-md text-label-md flex items-center gap-1.5 transition-colors">
+                                        <span class="material-symbols-outlined text-title-sm">visibility_off</span>
+                                        <span>Add Spoiler Warning</span>
+                                    </button>
+                                    <button
+                                        class="h-8 px-3 rounded-lg bg-surface-container-highest hover:bg-surface-bright text-on-surface font-label-md text-label-md flex items-center gap-1.5 transition-colors">
+                                        <span class="material-symbols-outlined text-title-sm">check_circle</span>
+                                        <span>Dismiss Reports</span>
+                                    </button>
+                                    <button
+                                        class="h-8 px-3 rounded-lg bg-error-container/40 hover:bg-error-container text-error font-label-md text-label-md flex items-center gap-1.5 transition-colors border border-error/20">
+                                        <span class="material-symbols-outlined text-title-sm">delete_forever</span>
+                                        <span>Remove Review</span>
+                                    </button>
+                                </div>
+                                <button
+                                    class="h-8 px-3 rounded-lg bg-primary text-on-primary-fixed font-label-md text-label-md font-bold flex items-center gap-1 shadow-sm hover:brightness-110 transition-all">
+                                    <span>Inspector Active</span>
+                                    <span class="material-symbols-outlined text-title-sm">arrow_forward</span>
+                                </button>
+                            </div>
+                        </article>
+                        <!-- ROW 2: Profanity / Inappropriate Content -->
+                        <article class="p-5 hover:bg-surface-container-high/30 transition-colors flex flex-col gap-3.5">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3">
+                                    <img class="w-10 h-10 rounded-full object-cover ring-1 ring-outline-variant"
+                                        data-alt="A portrait badge of a dark cinema patron with amber backlighting and modern street style aesthetic"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvgIg9t6ImrbWlGXSVW-tk7BzKNYwzbYVNxONE_rqdKDfRD7qQgOSk_zIyrgURfff_wfYd8lrWyLJECqVT8QEBSdD11z8EVMyproILMNjpd1EbxbfNlm4BVjHVB6hOPqbcm0yViPnID1rrwq_f-Y-86rH4h3xEWI-mMpyiAz7sgpNaU7BrMD-crAPSlhmqFwmmfF4Vsyl4X9UCAX96Tsaymcd-EVh2IABb5Z2R0bdbL6yYo_lo8vZtmw" />
+                                    <div class="flex flex-col">
+                                        <div class="flex items-center gap-2">
+                                            <span
+                                                class="font-title-sm text-title-sm text-on-surface font-bold">marcus_reel</span>
+                                            <span
+                                                class="px-2 py-0.5 rounded-md bg-surface-container text-on-surface-variant text-label-sm font-label-sm">Standard
+                                                Account</span>
+                                        </div>
+                                        <span class="font-body-sm text-body-sm text-on-surface-variant">General
+                                            Admission • Unverified Stub</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span
+                                        class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-highest text-secondary font-semibold">
+                                        Under Review
+                                    </span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant">4 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-title-md text-title-md text-on-surface font-semibold">Echoes of the
+                                    Neon Void</span>
+                                <span class="text-outline-variant">•</span>
+                                <div
+                                    class="flex items-center gap-1 text-secondary font-title-sm text-title-sm font-bold bg-secondary-container/10 px-2 py-0.5 rounded">
+                                    <span class="material-symbols-outlined text-title-sm" data-weight="fill"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span>10.0 / 10</span>
+                                </div>
+                            </div>
+                            <!-- Flag snippet -->
+                            <div
+                                class="p-2.5 rounded-lg bg-surface-container/60 border border-outline-variant/20 flex items-center gap-2 text-on-surface-variant text-body-sm font-body-sm">
+                                <span class="material-symbols-outlined text-error text-title-sm">flag</span>
+                                <span>Flagged for offensive language &amp; personal director harassment • 2
+                                    reports</span>
+                            </div>
+                            <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                                "The theater sound was insane, but this director is a complete fraud who needs to be
+                                blacklisted from every festival in North America..."
+                            </p>
+                            <!-- Quick action links -->
+                            <div class="flex items-center justify-between pt-1">
+                                <div class="flex items-center gap-2">
+                                    <button
+                                        class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors">Approve</button>
+                                    <span class="text-outline-variant/40">•</span>
+                                    <button
+                                        class="text-label-sm font-label-sm text-error hover:underline transition-colors">Redact
+                                        Profanity</button>
+                                    <span class="text-outline-variant/40">•</span>
+                                    <button
+                                        class="text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface transition-colors">Send
+                                        Warning</button>
+                                </div>
+                                <button
+                                    class="text-label-sm font-label-sm text-primary hover:underline flex items-center gap-1">
+                                    <span>Inspect Details</span>
+                                    <span class="material-symbols-outlined text-title-sm">open_in_new</span>
+                                </button>
+                            </div>
+                        </article>
+                        <!-- ROW 3: Irrelevant / Promotion Spam -->
+                        <article class="p-5 hover:bg-surface-container-high/30 transition-colors flex flex-col gap-3.5">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-bold">
+                                        BF
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <div class="flex items-center gap-2">
+                                            <span
+                                                class="font-title-sm text-title-sm text-on-surface font-bold">bot_free_films99</span>
+                                            <span
+                                                class="px-2 py-0.5 rounded-md bg-error-container/20 text-error text-label-sm font-label-sm">High
+                                                Risk IP</span>
+                                        </div>
+                                        <span class="font-body-sm text-body-sm text-on-surface-variant">Automated
+                                            pattern match #402</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span
+                                        class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container font-bold">
+                                        Action Required
+                                    </span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant">6 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-title-md text-title-md text-on-surface font-semibold">Midnight in
+                                    Kyoto (4K Restoration)</span>
+                                <span class="text-outline-variant">•</span>
+                                <span class="text-label-sm font-label-sm text-on-surface-variant">No star rating
+                                    given</span>
+                            </div>
+                            <div
+                                class="p-2.5 rounded-lg bg-surface-container/60 border border-outline-variant/20 flex items-center gap-2 text-on-surface-variant text-body-sm font-body-sm">
+                                <span class="material-symbols-outlined text-secondary text-title-sm">link_off</span>
+                                <span>External commercial link / Telegram ticket scalp spam detected</span>
+                            </div>
+                            <p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                                "Cheap passes available for tonight's sold out midnight premiere! Join
+                                t.me/cine_deals_usa for 60% off popcorn combos and vouchers..."
+                            </p>
+                            <!-- Quick action links -->
+                            <div class="flex items-center justify-between pt-1">
+                                <div class="flex items-center gap-2">
+                                    <button
+                                        class="text-label-sm font-label-sm text-error font-bold hover:underline transition-colors flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-label-md">block</span>
+                                        <span>Instant Ban &amp; Delete</span>
+                                    </button>
+                                    <span class="text-outline-variant/40">•</span>
+                                    <button
+                                        class="text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface transition-colors">Mark
+                                        False Positive</button>
+                                </div>
+                                <button
+                                    class="text-label-sm font-label-sm text-primary hover:underline flex items-center gap-1">
+                                    <span>Inspect Details</span>
+                                    <span class="material-symbols-outlined text-title-sm">open_in_new</span>
+                                </button>
+                            </div>
+                        </article>
+                        <!-- ROW 4: Verified Stub Verification Pending Review -->
+                        <article class="p-5 hover:bg-surface-container-high/30 transition-colors flex flex-col gap-3.5">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3">
+                                    <img class="w-10 h-10 rounded-full object-cover ring-1 ring-secondary"
+                                        data-alt="A portrait badge of a film critic in a cozy cinema library surrounded by vintage film reels with warm golden rim lighting"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVChJu0bAwbFBJU5vGefigYfDypWEltr4Z_eeHNkANPg65rrlPzXW8EJ3WKdUt94Ot8H8IxlpuAJTAV5lC76srOZSgpGbcf8PiBAR9jC_cbrYEDrMuTMaY9ZyQ1S7zwn9DYxdmHTcRGBABdvWOXroXYiXURtYm5hpGlK_aF-BMCQK-n37iTC7Z3maWaDyRW-kbE1bVGCN_JiGzfVnLdBM-RrOXTzhOLuB1uaDeH1gxw-FKRJy7RnUF0Q" />
+                                    <div class="flex flex-col">
+                                        <div class="flex items-center gap-2">
+                                            <span
+                                                class="font-title-sm text-title-sm text-on-surface font-bold">arash_cinema</span>
+                                            <span
+                                                class="px-2 py-0.5 rounded-md bg-surface-container-highest text-secondary text-label-sm font-label-sm font-semibold">Stub
+                                                Uploaded</span>
+                                        </div>
+                                        <span class="font-body-sm text-body-sm text-on-surface-variant">Box Office Paper
+                                            Ticket Scan #8841</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span
+                                        class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-highest text-secondary font-semibold">
+                                        Verification Needed
+                                    </span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant">7 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-title-md text-title-md text-on-surface font-semibold">Solaris Horizon
+                                    2024</span>
+                                <span class="text-outline-variant">•</span>
+                                <div
+                                    class="flex items-center gap-1 text-secondary font-title-sm text-title-sm font-bold bg-secondary-container/10 px-2 py-0.5 rounded">
+                                    <span class="material-symbols-outlined text-title-sm" data-weight="fill"
+                                        style="font-variation-settings: 'FILL' 1;">star</span>
+                                    <span>9.5 / 10</span>
+                                </div>
+                            </div>
+                            <p class="font-body-md text-body-md text-on-surface leading-relaxed">
+                                "Breathtaking 70mm screening at Auditorium 4. The sound stage mixing in Dolby Atmos made
+                                every atmospheric pulse feel physical..."
+                            </p>
+                            <!-- Quick action links -->
+                            <div class="flex items-center justify-between pt-1">
+                                <div class="flex items-center gap-2">
+                                    <button
+                                        class="text-label-sm font-label-sm text-secondary font-bold hover:underline transition-colors flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-label-md">verified</span>
+                                        <span>Validate Ticket &amp; Grant Badge</span>
+                                    </button>
+                                    <span class="text-outline-variant/40">•</span>
+                                    <button
+                                        class="text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface transition-colors">Reject
+                                        Stub Scan</button>
+                                </div>
+                                <button
+                                    class="text-label-sm font-label-sm text-primary hover:underline flex items-center gap-1">
+                                    <span>View High-Res Scan</span>
+                                    <span class="material-symbols-outlined text-title-sm">image</span>
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+                    <!-- Table Pagination Footer -->
+                    <div
+                        class="px-6 py-4 bg-surface-container-lowest border-t border-outline-variant/20 flex items-center justify-between">
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">Showing 1-4 of 4 active triage
+                            items</span>
+                        <div class="flex items-center gap-2">
+                            <button
+                                class="h-8 px-3 rounded bg-surface-container text-on-surface-variant/40 text-label-sm font-label-sm cursor-not-allowed"
+                                disabled="">Previous</button>
+                            <button
+                                class="h-8 w-8 rounded bg-primary-container text-on-primary-container text-label-sm font-label-sm font-bold">1</button>
+                            <button
+                                class="h-8 px-3 rounded bg-surface-container text-on-surface-variant/40 text-label-sm font-label-sm cursor-not-allowed"
+                                disabled="">Next</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- SECTION 5: INTERACTIVE MODERATION DRAWER / INSPECTOR PANEL (4 cols on large screens) -->
+                <aside
+                    class="lg:col-span-4 rounded-xl bg-surface-container-low subtle-border p-6 flex flex-col gap-6 shadow-2xl relative sticky top-20">
+                    <!-- Drawer Top Header -->
+                    <div class="flex items-center justify-between border-b border-outline-variant/20 pb-4">
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="material-symbols-outlined text-primary text-headline-sm">admin_panel_settings</span>
+                            <div>
+                                <h2 class="font-title-md text-title-md text-on-surface font-bold">Review Inspector</h2>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">Case ID:
+                                    #REV-90412</span>
+                            </div>
+                        </div>
+                        <button
+                            class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                            title="Close Panel">
+                            <span class="material-symbols-outlined text-title-md">close</span>
+                        </button>
+                    </div>
+                    <!-- Active Target Review Summary -->
+                    <div class="flex flex-col gap-3 p-4 rounded-xl bg-surface-container subtle-border">
+                        <div class="flex items-center gap-3">
+                            <img class="w-12 h-12 rounded-full object-cover ring-2 ring-primary/40"
+                                data-alt="A stylish futuristic cyberpunk user avatar with neon magenta glasses against dark cinema backdrop in portrait mode"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFjltJ47uJjcb-FlK829dXrTT7Tb_jB7jhlHCGMgCskMMj71O3gZJrX1jMXomyDy0mKcNvnqyO_SAeGgKS4hyR8pIKTGfn_q0SM5HZ3Rp5TnIZWgDaWO9Zap7QXjD-wvr58jr5jbKmtJRL6QaNRnCoqmb2Cb6AM3qsJ9XdNA98PJII5ZPdaXdRXKcFdETjBvn_9ZPefOa5W8H17c1kz7iJA9GE0YYKPyLcTDrbUiRu2INBsDavwqt5Ug" />
+                            <div class="flex flex-col">
+                                <div class="flex items-center gap-1.5">
+                                    <span
+                                        class="font-title-sm text-title-sm text-on-surface font-bold">cinephile_99</span>
+                                    <span class="material-symbols-outlined text-secondary text-title-sm"
+                                        data-weight="fill" style="font-variation-settings: 'FILL' 1;">verified</span>
+                                </div>
+                                <span class="font-label-sm text-label-sm text-emerald-400">Trust Score: 92%
+                                    (High)</span>
+                            </div>
+                        </div>
+                        <!-- Ticket Proof Badge Card -->
+                        <div
+                            class="mt-2 p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/30 flex items-center justify-between">
+                            <div class="flex items-center gap-2.5">
+                                <span class="material-symbols-outlined text-secondary">confirmation_number</span>
+                                <div class="flex flex-col">
+                                    <span class="font-label-sm text-label-sm text-on-surface font-bold">Seat F14 • Dune:
+                                        Oblivion</span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant">IMAX Laser Hall 1 •
+                                        Checked In</span>
+                                </div>
+                            </div>
+                            <span
+                                class="text-label-sm font-label-sm text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">Verified</span>
+                        </div>
+                    </div>
+                    <!-- User Reporting History & Trust Signals -->
+                    <div class="flex flex-col gap-2.5">
+                        <span
+                            class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Patron
+                            Moderation History</span>
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div class="p-2.5 rounded-lg bg-surface-container subtle-border">
+                                <span class="font-headline-sm text-headline-sm font-bold text-on-surface">38</span>
+                                <span class="block font-label-sm text-label-sm text-on-surface-variant mt-0.5">Reviews
+                                    Total</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-surface-container subtle-border">
+                                <span class="font-headline-sm text-headline-sm font-bold text-emerald-400">0</span>
+                                <span class="block font-label-sm text-label-sm text-on-surface-variant mt-0.5">Prior
+                                    Bans</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-surface-container highlight-border">
+                                <span class="font-headline-sm text-headline-sm font-bold text-primary">1st</span>
+                                <span class="block font-label-sm text-label-sm text-primary mt-0.5">Report Count</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Audit Trail & Network Metadata -->
+                    <div
+                        class="flex flex-col gap-2 p-3.5 rounded-lg bg-surface-container-lowest border border-outline-variant/20 font-body-sm text-body-sm text-on-surface-variant">
+                        <div class="flex items-center justify-between">
+                            <span
+                                class="font-label-sm text-label-sm text-on-surface font-semibold flex items-center gap-1">
+                                <span class="material-symbols-outlined text-label-md">fingerprint</span>
+                                <span>Audit Trail Snippet</span>
+                            </span>
+                            <span class="text-label-sm font-label-sm text-emerald-400">Passed Auth</span>
+                        </div>
+                        <p class="font-mono text-body-sm text-on-surface/80">IP: 198.51.100.44 [US-East]</p>
+                        <p class="font-mono text-body-sm text-on-surface-variant">Client: Cineva Mobile iOS 18.2</p>
+                        <p class="text-label-sm text-on-surface-variant/70 italic">Future audit logging ready with
+                            cryptographic seat signatures</p>
+                    </div>
+                    <!-- Internal Moderator Notes -->
+                    <div class="flex flex-col gap-2">
+                        <label
+                            class="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between"
+                            for="mod-notes">
+                            <span>Internal Moderation Notes</span>
+                            <span class="text-label-sm font-label-sm text-primary">Sarah K.</span>
+                        </label>
+                        <textarea
+                            class="w-full p-3 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface placeholder:text-on-surface-variant/50 font-body-sm text-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/40 transition-all resize-none"
+                            id="mod-notes"
+                            placeholder="Add administrative rationale (e.g. Valid spoiler flag, applied blur mask rather than complete removal)..."
+                            rows="3">Review contains explicit death spoilers for main protagonist. User has 100% verified attendance. Recommend applying spoiler mask warning instead of deletion.</textarea>
+                    </div>
+                    <!-- Executive Moderation Actions -->
+                    <div class="flex flex-col gap-2.5 pt-2 border-t border-outline-variant/20">
+                        <!-- Primary Action: Apply Spoiler Tag & Dismiss -->
+                        <button
+                            class="w-full h-11 px-4 rounded-lg bg-primary hover:brightness-110 text-on-primary-fixed font-title-sm text-title-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-98">
+                            <span class="material-symbols-outlined text-title-md">visibility_off</span>
+                            <span>Apply Spoiler Tag &amp; Keep Live</span>
+                        </button>
+                        <!-- Secondary Actions Grid -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <button
+                                class="h-10 px-3 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 border border-outline-variant/30 transition-all">
+                                <span class="material-symbols-outlined text-title-sm">check</span>
+                                <span>Dismiss Flag</span>
+                            </button>
+                            <button
+                                class="h-10 px-3 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-secondary font-label-md text-label-md flex items-center justify-center gap-1.5 border border-outline-variant/30 transition-all">
+                                <span class="material-symbols-outlined text-title-sm">mail</span>
+                                <span>Warn User</span>
+                            </button>
+                        </div>
+                        <!-- Danger Zone Action -->
+                        <button
+                            class="w-full h-10 px-4 rounded-lg bg-error-container/30 hover:bg-error-container/60 text-error font-label-md text-label-md font-semibold flex items-center justify-center gap-2 border border-error/30 transition-all">
+                            <span class="material-symbols-outlined text-title-sm">delete_forever</span>
+                            <span>Delete Review &amp; Reverse Badges</span>
+                        </button>
+                    </div>
+                </aside>
+            </div>
+        </main>
+        <!-- FOOTER (Shared Component: Footer) -->
+        <footer class="mt-auto w-full bg-surface-container-lowest border-t border-outline-variant/20 block">
+            <div class="w-full max-w-7xl mx-auto px-8 py-10 flex flex-col gap-6">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <!-- Logo & Operations Signature -->
+                    <div class="flex items-center gap-3">
+                        <span
+                            class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight">Cineva</span>
+                        <span class="text-outline-variant">•</span>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">Cinema Operator Studio &amp;
+                            Trust Systems</span>
+                    </div>
+                    <!-- Navigation Links -->
+                    <div class="flex flex-wrap items-center gap-6">
+                        <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors"
+                            href="#">About Us</a>
+                        <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors"
+                            href="#">Experiences &amp; IMAX</a>
+                        <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors"
+                            href="#">Cinema Partner Program</a>
+                        <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors"
+                            href="#">Privacy Policy</a>
+                        <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors"
+                            href="#">Terms of Service</a>
+                        <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors"
+                            href="#">Certified Security Standards</a>
+                    </div>
+                </div>
+                <div
+                    class="flex flex-col md:flex-row items-center justify-between text-on-surface-variant font-body-sm text-body-sm border-t border-outline-variant/10 pt-6">
+                    <p>© 2024 Cineva Entertainment Inc. All rights reserved. Atmos, IMAX, and 4DX are registered
+                        trademarks.</p>
+                    <div class="flex items-center gap-4 mt-2 md:mt-0">
+                        <span class="flex items-center gap-1 text-emerald-400 text-label-sm font-label-sm">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            Moderation Pipeline Operational
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- Interactive JavaScript micro-actions -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Toggle spoiler review text demonstration
+            const fullTextToggle = document.querySelector('article button:has(span)');
+            if (fullTextToggle) {
+                fullTextToggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const p = fullTextToggle.previousElementSibling;
+                    if (p) {
+                        p.classList.toggle('line-clamp-none');
+                        fullTextToggle.innerHTML = p.classList.contains('line-clamp-none')
+                            ? '<span>Collapse review</span><span class="material-symbols-outlined text-label-md">expand_less</span>'
+                            : '<span>Show full 480-word review</span><span class="material-symbols-outlined text-label-md">expand_more</span>';
+                    }
+                });
+            }
+
+            // Action button feedback demo
+            const primaryActionBtn = document.querySelector('aside button.bg-primary');
+            if (primaryActionBtn) {
+                primaryActionBtn.addEventListener('click', () => {
+                    const originalContent = primaryActionBtn.innerHTML;
+                    primaryActionBtn.innerHTML = '<span class="material-symbols-outlined text-title-md animate-spin">sync</span><span>Saving Decision...</span>';
+                    setTimeout(() => {
+                        primaryActionBtn.innerHTML = '<span class="material-symbols-outlined text-title-md">check_circle</span><span>Action Applied!</span>';
+                        primaryActionBtn.classList.remove('bg-primary');
+                        primaryActionBtn.classList.add('bg-emerald-600', 'text-white');
+                        setTimeout(() => {
+                            primaryActionBtn.innerHTML = originalContent;
+                            primaryActionBtn.classList.remove('bg-emerald-600', 'text-white');
+                            primaryActionBtn.classList.add('bg-primary');
+                        }, 2000);
+                    }, 600);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

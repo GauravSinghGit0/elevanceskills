@@ -1,0 +1,23 @@
+# Python bytecode
+*.py[cod]
+*$py.class
+__pycache__/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Environment secrets and credentials
+.env
+email_config.txt
+*.local
+
+# Django Static Collection and Media
+staticfiles/
+*.log
+
+# OS artifacts
+.DS_Store
+Thumbs.db

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cinema Admission Ticket - {{ t.movie_title }}</title>
+</head>
+<body style="margin: 0; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; color: #111827;">
+
+<div style="max-width: 680px; margin: 0 auto; background: #ffffff; border: 1.5px solid #222222; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+
+    <!-- TICKET HEADER -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 18px 24px 14px 24px; border-bottom: 1.5px solid #222222;">
+        <tr>
+            <td align="left" style="vertical-align: middle;">
+                <span style="font-size: 18px; font-weight: 800; color: #111827; letter-spacing: 0.5px;">
+                    {{ t.screen_name|upper }}
+                </span>
+            </td>
+            <td align="right" style="vertical-align: middle;">
+                <span style="font-size: 16px; font-weight: 900; color: #881337; letter-spacing: 1px;">CINEVA</span><br>
+                <span style="font-size: 10px; font-weight: 600; color: #6b7280; letter-spacing: 0.5px;">PREMIUM CINEMAS</span>
+            </td>
+        </tr>
+    </table>
+
+    <!-- TICKET MAIN CONTENT -->
+    <div style="padding: 20px 24px;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <!-- LEFT DETAILS -->
+                <td style="vertical-align: top; width: 62%;">
+                    <table width="100%" cellpadding="4" cellspacing="0" style="font-size: 12px; line-height: 1.4;">
+                        <tr>
+                            <td width="38%" style="color: #6b7280; font-weight: 500;">Movie Name</td>
+                            <td style="color: #111827; font-weight: 700; font-size: 13px;">{{ t.full_movie_name }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #6b7280; font-weight: 500;">Cinema Name</td>
+                            <td style="color: #111827; font-weight: 600;">{{ t.cinema_name }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #6b7280; font-weight: 500;">Show Date &amp; Time</td>
+                            <td style="color: #111827; font-weight: 700; color: #b91c1c;">{{ t.show_dt_str }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #6b7280; font-weight: 500;">Seat Information</td>
+                            <td style="color: #1e3a8a; font-weight: 800; font-size: 13px;">{{ t.seats_str }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #6b7280; font-weight: 500;">Txn. Date &amp; Time</td>
+                            <td style="color: #374151;">{{ t.txn_dt_str }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #6b7280; font-weight: 500;">Customer Name</td>
+                            <td style="color: #111827; font-weight: 600;">{{ t.customer_name }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #6b7280; font-weight: 500;">Email</td>
+                            <td style="color: #374151;">{{ t.customer_email }}</td>
+                        </tr>
+                    </table>
+                </td>
+
+                <!-- CENTER & RIGHT (PRICE + QR CODE) -->
+                <td style="vertical-align: top; width: 38%; padding-left: 16px; border-left: 1px dashed #d1d5db;">
+                    <table width="100%" cellpadding="3" cellspacing="0" style="font-size: 11px; margin-bottom: 12px;">
+                        <tr>
+                            <td style="color: #6b7280;">Booking ID</td>
+                            <td align="right" style="font-weight: 700; color: #111827;">{{ t.booking_id_str }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #6b7280;">Gross Total</td>
+                            <td align="right" style="font-weight: 700; color: #047857;">{{ t.gross_amount }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #6b7280;">Nett Total</td>
+                            <td align="right" style="color: #374151;">{{ t.nett_amount }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #6b7280;">Conv. Fee &amp; Tax</td>
+                            <td align="right" style="color: #374151;">{{ t.conv_fee }}</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #6b7280;">Payment Mode</td>
+                            <td align="right" style="color: #374151; font-size: 10px;">{{ t.payment_mode }}</td>
+                        </tr>
+                    </table>
+
+                    <!-- QR CODE BOX -->
+                    <div style="text-align: center; padding: 8px; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        <img src="{{ t.qr_base64 }}" width="95" height="95" alt="Ticket Verification QR" style="display: block; margin: 0 auto;" />
+                        <span style="display: block; font-size: 9px; font-weight: 700; color: #374151; letter-spacing: 0.5px; margin-top: 4px;">
+                            SCAN AT ADMISSION
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- TICKET FOOTER INSTRUCTIONS -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 12px 24px; border-top: 1.5px solid #222222; background-color: #fafafa;">
+        <tr>
+            <td style="font-size: 9px; color: #4b5563; line-height: 1.4; vertical-align: middle;">
+                <strong style="color: #111827;">Instructions:</strong> Tickets once booked cannot be exchanged, canceled or refunded. Please carry a valid photo ID along with this ticket. The QR code must be presented at the cinema entrance for contactless verification. All rights of admission reserved.
+            </td>
+            <td align="right" style="vertical-align: middle; white-space: nowrap; padding-left: 12px;">
+                <span style="font-size: 9px; color: #6b7280;">Sourced By</span>
+                <strong style="font-size: 11px; color: #e11d48; margin-left: 2px;">bookmyshow</strong>
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+<!-- ATTACHMENT NOTICE & ONLINE LINK -->
+<div style="max-width: 680px; margin: 16px auto 0 auto; text-align: center; font-size: 12px; color: #6b7280;">
+    <p style="margin: 0 0 8px 0;">
+        📎 <strong>Your official PDF ticket is attached to this email.</strong> You can print it or show it directly on your mobile device at the cinema entrance.
+    </p>
+    <a href="{{ t.verify_url }}" style="display: inline-block; padding: 8px 18px; background-color: #881337; color: #ffffff; text-decoration: none; font-size: 12px; font-weight: 700; border-radius: 6px;">
+        View Verified Digital Pass Online
+    </a>
+</div>
+
+</body>
+</html>

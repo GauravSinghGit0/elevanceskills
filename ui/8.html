@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cineva - Seat Selection | Chronicles of Dune: Oblivion</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#33343d",
+                        "background": "#11131b",
+                        "on-tertiary-fixed-variant": "#2f2ebe",
+                        "on-tertiary-fixed": "#07006c",
+                        "inverse-primary": "#bd0042",
+                        "on-secondary-fixed": "#2a1700",
+                        "error": "#ffb4ab",
+                        "tertiary": "#c0c1ff",
+                        "surface-bright": "#373942",
+                        "surface-variant": "#33343d",
+                        "surface-container-high": "#282a32",
+                        "secondary": "#ffb95f",
+                        "tertiary-container": "#8083ff",
+                        "surface-container-low": "#191b23",
+                        "primary-container": "#ff4f73",
+                        "on-surface-variant": "#e5bdc0",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#1000a9",
+                        "on-error": "#690005",
+                        "surface": "#11131b",
+                        "on-error-container": "#ffdad6",
+                        "on-background": "#e1e1ed",
+                        "tertiary-fixed": "#e1e0ff",
+                        "surface-tint": "#ffb2ba",
+                        "surface-container": "#1d1f28",
+                        "primary-fixed-dim": "#ffb2ba",
+                        "surface-dim": "#11131b",
+                        "secondary-fixed": "#ffddb8",
+                        "outline-variant": "#5c3f42",
+                        "on-primary": "#670020",
+                        "tertiary-fixed-dim": "#c0c1ff",
+                        "on-primary-fixed-variant": "#910030",
+                        "primary-fixed": "#ffd9dc",
+                        "on-secondary-container": "#5b3800",
+                        "inverse-on-surface": "#2e3039",
+                        "secondary-container": "#ee9800",
+                        "on-primary-container": "#5a001b",
+                        "on-primary-fixed": "#400011",
+                        "inverse-surface": "#e1e1ed",
+                        "outline": "#ac888b",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-container-lowest": "#0c0e16",
+                        "on-secondary": "#472a00",
+                        "on-tertiary-container": "#0d0096",
+                        "primary": "#ffb2ba",
+                        "on-surface": "#e1e1ed"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "2rem",
+                        "gutter-mobile": "1rem",
+                        "space-xl": "2.5rem",
+                        "margin-mobile": "1rem",
+                        "space-md": "1rem",
+                        "space-sm": "0.5rem",
+                        "space-xs": "0.25rem",
+                        "space-lg": "1.5rem",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "display-lg-mobile": ["Outfit"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Outfit"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "title-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "title-md": ["Plus Jakarta Sans"],
+                        "display-md": ["Outfit"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-md": ["Outfit"],
+                        "display-md-mobile": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-sm": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "title-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "title-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "display-md": ["44px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-md-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+
+        .neon-glow-primary {
+            box-shadow: 0 0 24px -2px rgba(255, 79, 115, 0.55), 0 0 10px rgba(255, 79, 115, 0.4);
+        }
+
+        .screen-arc-glow {
+            box-shadow: 0 -12px 35px 2px rgba(255, 178, 186, 0.28);
+        }
+
+        .glass-panel {
+            background: rgba(29, 31, 40, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .scrollbar-subtle::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+
+        .scrollbar-subtle::-webkit-scrollbar-track {
+            background: #11131b;
+        }
+
+        .scrollbar-subtle::-webkit-scrollbar-thumb {
+            background: #33343d;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background text-on-background min-h-screen selection:bg-primary-container selection:text-on-primary-container font-body-md text-body-md antialiased overflow-x-hidden">
+    <!-- TopNavBar from Shared Components JSON -->
+    <header
+        class="bg-surface/90 dark:bg-surface/90 backdrop-blur-md border-b border-outline-variant/20 dark:border-outline-variant/20 shadow-2xl dark:shadow-2xl sticky top-0 z-50">
+        <div class="sticky top-0 z-50 flex items-center justify-between px-6 py-3 w-full max-w-7xl mx-auto">
+            <div class="flex items-center gap-8">
+                <a class="text-headline-md font-headline-md font-bold tracking-tight text-primary dark:text-primary flex items-center gap-2"
+                    href="#">
+                    <span class="material-symbols-outlined text-primary text-2xl"
+                        style="font-variation-settings: 'FILL' 1;">movie</span>
+                    <span>Cineva</span>
+                </a>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-primary dark:text-primary font-label-lg text-label-lg border-b-2 border-primary pb-1 transition-all duration-200 ease-out active:scale-95"
+                        href="#">Movies</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-label-lg text-label-lg transition-colors hover:text-primary dark:hover:text-primary hover:bg-surface-container-high/40 dark:hover:bg-surface-container-high/40 px-2 py-1 rounded transition-all duration-200 ease-out active:scale-95"
+                        href="#">Stream</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-label-lg text-label-lg transition-colors hover:text-primary dark:hover:text-primary hover:bg-surface-container-high/40 dark:hover:bg-surface-container-high/40 px-2 py-1 rounded transition-all duration-200 ease-out active:scale-95"
+                        href="#">Experiences</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-label-lg text-label-lg transition-colors hover:text-primary dark:hover:text-primary hover:bg-surface-container-high/40 dark:hover:bg-surface-container-high/40 px-2 py-1 rounded transition-all duration-200 ease-out active:scale-95"
+                        href="#">Events</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <!-- Search bar on right -->
+                <div
+                    class="hidden lg:flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant/20">
+                    <span class="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+                    <input
+                        class="bg-transparent border-0 p-0 text-body-sm font-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:ring-0 focus:outline-none w-44"
+                        placeholder="Search films, venues..." type="text" />
+                </div>
+                <button
+                    class="hidden sm:flex items-center gap-1.5 text-on-surface-variant text-label-md font-label-md hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-base">pin_drop</span>
+                    <span>Location: New York</span>
+                </button>
+                <button class="p-2 rounded-lg text-on-surface-variant hover:text-primary transition-colors relative"
+                    title="Confirmation Number / Tickets">
+                    <span class="material-symbols-outlined">confirmation_number</span>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary-container"></span>
+                </button>
+                <button class="p-2 rounded-lg text-on-surface-variant hover:text-primary transition-colors"
+                    title="Notifications">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button
+                    class="bg-primary-container text-on-primary-container font-label-lg text-label-lg px-4 py-2 rounded-lg font-semibold hover:brightness-110 active:scale-95 transition-all shadow-md">
+                    Sign In
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- Cinema Booking Screen Navigation / Progress Bar -->
+    <div class="w-full bg-surface-container-lowest/80 border-b border-outline-variant/20 py-2.5 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between text-body-sm font-body-sm">
+            <a class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors"
+                href="#">
+                <span class="material-symbols-outlined text-base">arrow_back</span>
+                <span class="font-label-md text-label-md">Change Showtime &amp; Cinema</span>
+            </a>
+            <!-- Flow Tracker -->
+            <div class="hidden md:flex items-center gap-6">
+                <div class="flex items-center gap-2 text-on-surface-variant">
+                    <span
+                        class="w-5 h-5 rounded-full bg-surface-container-high text-label-sm font-label-sm flex items-center justify-center">1</span>
+                    <span>Showtime</span>
+                </div>
+                <span class="w-4 h-[1px] bg-outline-variant/30"></span>
+                <div class="flex items-center gap-2 text-primary">
+                    <span
+                        class="w-5 h-5 rounded-full bg-primary text-on-primary text-label-sm font-label-sm flex items-center justify-center font-bold">2</span>
+                    <span class="font-title-sm text-title-sm font-semibold">Seat Selection</span>
+                </div>
+                <span class="w-4 h-[1px] bg-outline-variant/30"></span>
+                <div class="flex items-center gap-2 text-on-surface-variant/60">
+                    <span
+                        class="w-5 h-5 rounded-full bg-surface-container-low text-label-sm font-label-sm flex items-center justify-center">3</span>
+                    <span>Snacks &amp; Extras</span>
+                </div>
+                <span class="w-4 h-[1px] bg-outline-variant/30"></span>
+                <div class="flex items-center gap-2 text-on-surface-variant/60">
+                    <span
+                        class="w-5 h-5 rounded-full bg-surface-container-low text-label-sm font-label-sm flex items-center justify-center">4</span>
+                    <span>Payment</span>
+                </div>
+            </div>
+            <!-- Live Reservation Timer -->
+            <div
+                class="flex items-center gap-2 bg-primary-container/15 border border-primary-container/30 px-3 py-1 rounded-full text-primary">
+                <span class="material-symbols-outlined text-base animate-pulse">timer</span>
+                <span class="font-label-md text-label-md tracking-wider">RESERVATION LOCK: <strong
+                        class="text-on-surface" id="countdown-timer">09:42</strong></span>
+            </div>
+        </div>
+    </div>
+    <!-- Main Workspace: Header, Seating Canvas, Sidebar -->
+    <main class="w-full max-w-7xl mx-auto px-4 md:px-6 py-6">
+        <!-- Movie & Screening Header Banner -->
+        <section class="glass-panel rounded-xl p-5 md:p-6 mb-8 relative overflow-hidden">
+            <div
+                class="absolute right-0 top-0 bottom-0 w-1/2 opacity-10 bg-gradient-to-l from-primary to-transparent pointer-events-none">
+            </div>
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                <div class="flex items-start md:items-center gap-4 md:gap-5">
+                    <img class="w-16 h-24 md:w-20 md:h-28 rounded-lg object-cover shadow-xl border border-outline-variant/30 flex-shrink-0"
+                        data-alt="Cinematic theatrical poster for Chronicles of Dune Oblivion showing an ominous eclipse over towering glowing desert spice dunes, silhouetted colossal war fleet, in deep obsidian, bronze sand, and luminous neon crimson hues in high contrast cinematic IMAX style."
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAK0VyDPNaC6YSA4HZubZ8FbeliQI0-T-ss_4e5YsmxV-qTOTNbjN3p2UOVgW9wUU7t6hcyETPjsus8AQgEqnJhnFJFpjmnMdRDXUfesFZq8kgPRLKDG7tmgw4AEDBLQcuUvaFLzE3Cu2AQvTYrb8dA3K_QuH703MXB0Rt9xDnPLjy3q_bHJa9X2hxQWm9hsjhKG-aBhliiHkG9CZe7xDCfdg8KB1B2Uk-xh2QF2Uw7r9uYNSDKrK0DWw" />
+                    <div class="space-y-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span
+                                class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded font-bold uppercase tracking-wider">PG-13</span>
+                            <span
+                                class="bg-surface-container-highest text-on-surface font-label-sm text-label-sm px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-outline-variant/30">
+                                <span class="material-symbols-outlined text-secondary text-xs"
+                                    style="font-variation-settings: 'FILL' 1;">star</span>
+                                4.9 (14.2k ratings)
+                            </span>
+                            <span class="text-on-surface-variant font-body-sm text-body-sm flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">schedule</span> 2h 46m
+                            </span>
+                        </div>
+                        <h1
+                            class="font-headline-md md:font-headline-lg text-headline-md md:text-headline-lg font-bold tracking-tight text-on-surface">
+                            Chronicles of Dune: Oblivion
+                        </h1>
+                        <div
+                            class="flex flex-wrap items-center gap-x-4 gap-y-1 text-on-surface-variant font-body-md text-body-md">
+                            <span class="flex items-center gap-1 text-on-surface font-medium">
+                                <span class="material-symbols-outlined text-primary text-sm">theater_comedy</span>
+                                AMC Empire 25 IMAX Laser Hall 1
+                            </span>
+                            <span class="text-outline-variant/60">•</span>
+                            <span class="flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">calendar_today</span>
+                                Today, Oct 24
+                            </span>
+                            <span class="text-outline-variant/60">•</span>
+                            <span class="text-primary font-semibold">7:15 PM</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Format Badges -->
+                <div
+                    class="flex flex-wrap items-center gap-2.5 border-t lg:border-t-0 lg:border-l border-outline-variant/20 pt-4 lg:pt-0 lg:pl-6">
+                    <div
+                        class="bg-surface-container-low px-3 py-2 rounded-lg border border-outline-variant/30 flex flex-col">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Projection</span>
+                        <span class="font-title-sm text-title-sm font-bold text-primary flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">view_in_ar</span> IMAX Laser
+                        </span>
+                    </div>
+                    <div
+                        class="bg-surface-container-low px-3 py-2 rounded-lg border border-outline-variant/30 flex flex-col">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Spatial Audio</span>
+                        <span class="font-title-sm text-title-sm font-bold text-tertiary flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">surround_sound</span> Dolby Atmos
+                        </span>
+                    </div>
+                    <div
+                        class="bg-surface-container-low px-3 py-2 rounded-lg border border-outline-variant/30 flex flex-col">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Comfort</span>
+                        <span class="font-title-sm text-title-sm font-bold text-secondary flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">airline_seat_recline_extra</span> Heated
+                            Pods
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Layout Grid: Seating Arena & Floating Order Summary -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+            <!-- Center & Left: Seating Canvas (8 cols on XL) -->
+            <div class="xl:col-span-8 flex flex-col gap-6">
+                <!-- Seating Arena Card -->
+                <div
+                    class="bg-surface-container-lowest border border-outline-variant/25 rounded-2xl p-4 md:p-8 shadow-2xl relative overflow-hidden">
+                    <!-- Cinema Curved Screen Arc -->
+                    <div class="w-full mb-12 flex flex-col items-center justify-center pt-2">
+                        <div class="relative w-full max-w-2xl mx-auto flex flex-col items-center">
+                            <!-- Radial Ambient Beams -->
+                            <div
+                                class="w-3/4 h-16 bg-gradient-to-b from-primary/15 to-transparent rounded-t-[100px] blur-xl absolute -top-4 pointer-events-none">
+                            </div>
+                            <!-- Curved Screen Stroke SVG -->
+                            <svg class="w-full h-12 text-primary/80 overflow-visible" fill="none" viewbox="0 0 500 40">
+                                <path class="filter drop-shadow-[0_0_12px_rgba(255,178,186,0.8)]"
+                                    d="M 10 32 Q 250 -4 490 32" stroke="currentColor" stroke-linecap="round"
+                                    stroke-width="4"></path>
+                                <path d="M 25 36 Q 250 4 475 36" stroke="rgba(255,255,255,0.2)" stroke-linecap="round"
+                                    stroke-width="1.5"></path>
+                            </svg>
+                            <!-- Screen Text Banner -->
+                            <div class="text-center mt-1">
+                                <span
+                                    class="font-label-sm text-label-sm uppercase tracking-[0.25em] text-primary font-bold flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-xs">videocam</span>
+                                    IMAX CURVED SCREEN - ALL EYES THIS WAY
+                                </span>
+                                <p class="font-body-sm text-body-sm text-on-surface-variant/70 text-[11px] mt-0.5">Laser
+                                    Alignment • RealD 3D Certified Arc</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Seating Grid Interactive Viewport -->
+                    <div class="overflow-x-auto pb-6 scrollbar-subtle">
+                        <div class="min-w-[620px] mx-auto flex flex-col items-center space-y-6">
+                            <!-- TIER 1: VIP Recliner Pods -->
+                            <div class="w-full space-y-2">
+                                <div
+                                    class="flex items-center justify-between border-b border-outline-variant/20 pb-1.5 px-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+                                        <span class="font-title-sm text-title-sm font-semibold text-secondary">VIP
+                                            Recliner Pods</span>
+                                        <span class="text-on-surface-variant font-body-sm text-body-sm">Front rows •
+                                            Table service &amp; heated footrests</span>
+                                    </div>
+                                    <span class="font-label-md text-label-md text-secondary font-bold">$28.00</span>
+                                </div>
+                                <!-- Row A -->
+                                <div class="flex items-center justify-center gap-2 md:gap-3 py-1">
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">A</span>
+                                    <div class="flex items-center gap-2">
+                                        <!-- Pod A1-A2 -->
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="A1" data-tier="VIP Recliner Pod"
+                                            title="Seat A1 (VIP) - $28">
+                                            <span
+                                                class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-lg">chair</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="A2" data-tier="VIP Recliner Pod"
+                                            title="Seat A2 (VIP) - $28">
+                                            <span
+                                                class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-lg">chair</span>
+                                        </button>
+                                    </div>
+                                    <!-- Spacer Center Aisle -->
+                                    <div
+                                        class="w-8 flex items-center justify-center text-[10px] text-on-surface-variant/40 font-mono">
+                                        AISLE</div>
+                                    <div class="flex items-center gap-2">
+                                        <!-- Reserved Pods A3, A4 -->
+                                        <button
+                                            class="p-1 rounded-lg border border-outline-variant/20 bg-surface-container-lowest opacity-40 cursor-not-allowed"
+                                            disabled="" title="Seat A3 - Taken">
+                                            <span
+                                                class="material-symbols-outlined text-on-surface-variant text-lg">chair</span>
+                                        </button>
+                                        <button
+                                            class="p-1 rounded-lg border border-outline-variant/20 bg-surface-container-lowest opacity-40 cursor-not-allowed"
+                                            disabled="" title="Seat A4 - Taken">
+                                            <span
+                                                class="material-symbols-outlined text-on-surface-variant text-lg">chair</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="A5" data-tier="VIP Recliner Pod"
+                                            title="Seat A5 (VIP) - $28">
+                                            <span
+                                                class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-lg">chair</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="A6" data-tier="VIP Recliner Pod"
+                                            title="Seat A6 (VIP) - $28">
+                                            <span
+                                                class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-lg">chair</span>
+                                        </button>
+                                    </div>
+                                    <div
+                                        class="w-8 flex items-center justify-center text-[10px] text-on-surface-variant/40 font-mono">
+                                        AISLE</div>
+                                    <div class="flex items-center gap-2">
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="A7" data-tier="VIP Recliner Pod"
+                                            title="Seat A7 (VIP) - $28">
+                                            <span
+                                                class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-lg">chair</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="A8" data-tier="VIP Recliner Pod"
+                                            title="Seat A8 (VIP) - $28">
+                                            <span
+                                                class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-lg">chair</span>
+                                        </button>
+                                    </div>
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">A</span>
+                                </div>
+                                <!-- Row B -->
+                                <div class="flex items-center justify-center gap-2 md:gap-3 py-1">
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">B</span>
+                                    <div class="flex items-center gap-2">
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="B1" data-tier="VIP Recliner Pod">
+                                            <span class="material-symbols-outlined text-secondary text-lg">chair</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="B2" data-tier="VIP Recliner Pod">
+                                            <span class="material-symbols-outlined text-secondary text-lg">chair</span>
+                                        </button>
+                                    </div>
+                                    <div class="w-8"></div>
+                                    <div class="flex items-center gap-2">
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="B3" data-tier="VIP Recliner Pod">
+                                            <span class="material-symbols-outlined text-secondary text-lg">chair</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="B4" data-tier="VIP Recliner Pod">
+                                            <span class="material-symbols-outlined text-secondary text-lg">chair</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="B5" data-tier="VIP Recliner Pod">
+                                            <span class="material-symbols-outlined text-secondary text-lg">chair</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="B6" data-tier="VIP Recliner Pod">
+                                            <span class="material-symbols-outlined text-secondary text-lg">chair</span>
+                                        </button>
+                                    </div>
+                                    <div class="w-8"></div>
+                                    <div class="flex items-center gap-2">
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="B7" data-tier="VIP Recliner Pod">
+                                            <span class="material-symbols-outlined text-secondary text-lg">chair</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn group relative p-1 rounded-lg border border-secondary/40 bg-surface-container-high hover:bg-secondary/20 transition-all active:scale-95"
+                                            data-price="28.00" data-seat="B8" data-tier="VIP Recliner Pod">
+                                            <span class="material-symbols-outlined text-secondary text-lg">chair</span>
+                                        </button>
+                                    </div>
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">B</span>
+                                </div>
+                            </div>
+                            <!-- TIER 2: Premium Club Loungers (Center Sweet Spot) -->
+                            <div class="w-full space-y-2 pt-2">
+                                <div
+                                    class="flex items-center justify-between border-b border-outline-variant/20 pb-1.5 px-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+                                        <span class="font-title-sm text-title-sm font-semibold text-tertiary">Premium
+                                            Club Loungers</span>
+                                        <span class="text-on-surface-variant font-body-sm text-body-sm">Prime viewing
+                                            sweet spot • Optic geometric center</span>
+                                    </div>
+                                    <span class="font-label-md text-label-md text-tertiary font-bold">$24.50</span>
+                                </div>
+                                <!-- Row C -->
+                                <div class="flex items-center justify-center gap-1.5 md:gap-2.5 py-1">
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">C</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="C1" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="C2" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="C3" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                    </div>
+                                    <div class="w-6"></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="p-1 rounded bg-surface-container-lowest opacity-30 cursor-not-allowed"
+                                            disabled=""><span
+                                                class="material-symbols-outlined text-on-surface-variant text-base">event_seat</span></button>
+                                        <button
+                                            class="p-1 rounded bg-surface-container-lowest opacity-30 cursor-not-allowed"
+                                            disabled=""><span
+                                                class="material-symbols-outlined text-on-surface-variant text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="C6" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="C7" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="C8" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="C9" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                    </div>
+                                    <div class="w-6"></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="C10" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="C11" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="C12" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                    </div>
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">C</span>
+                                </div>
+                                <!-- Row D (Wheelchair accessible spots included) -->
+                                <div class="flex items-center justify-center gap-1.5 md:gap-2.5 py-1">
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">D</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <!-- Wheelchair spots D1 & D2 -->
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container border border-primary/30 hover:border-primary transition-all"
+                                            data-price="24.50" data-seat="D1 (Accessible)"
+                                            data-tier="Premium Accessible" title="Accessible Companion Space">
+                                            <span
+                                                class="material-symbols-outlined text-primary text-base">accessible</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container border border-primary/30 hover:border-primary transition-all"
+                                            data-price="24.50" data-seat="D2 (Accessible)"
+                                            data-tier="Premium Accessible" title="Wheelchair Space">
+                                            <span
+                                                class="material-symbols-outlined text-primary text-base">accessible_forward</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="D3" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                    </div>
+                                    <div class="w-6"></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="D4" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="D5" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="D6" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="D7" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="D8" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="D9" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                    </div>
+                                    <div class="w-6"></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="D10" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="D11" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="D12" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                    </div>
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">D</span>
+                                </div>
+                                <!-- Row E -->
+                                <div class="flex items-center justify-center gap-1.5 md:gap-2.5 py-1">
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">E</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="E1" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="E2" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="E3" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                    </div>
+                                    <div class="w-6"></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="E4" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="E5" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="p-1 rounded bg-surface-container-lowest opacity-30 cursor-not-allowed"
+                                            disabled=""><span
+                                                class="material-symbols-outlined text-on-surface-variant text-base">event_seat</span></button>
+                                        <button
+                                            class="p-1 rounded bg-surface-container-lowest opacity-30 cursor-not-allowed"
+                                            disabled=""><span
+                                                class="material-symbols-outlined text-on-surface-variant text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="E8" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="E9" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                    </div>
+                                    <div class="w-6"></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="E10" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="E11" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container hover:border-tertiary/50 border border-outline-variant/20 transition-all"
+                                            data-price="24.50" data-seat="E12" data-tier="Premium Club Lounger"><span
+                                                class="material-symbols-outlined text-tertiary text-base">event_seat</span></button>
+                                    </div>
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">E</span>
+                                </div>
+                            </div>
+                            <!-- TIER 3: Standard D-Cinema Seats -->
+                            <div class="w-full space-y-2 pt-2">
+                                <div
+                                    class="flex items-center justify-between border-b border-outline-variant/20 pb-1.5 px-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-on-surface"></span>
+                                        <span class="font-title-sm text-title-sm font-semibold text-on-surface">Standard
+                                            D-Cinema Seats</span>
+                                        <span class="text-on-surface-variant font-body-sm text-body-sm">Elevated stadium
+                                            rows • High clarity sightlines</span>
+                                    </div>
+                                    <span class="font-label-md text-label-md text-on-surface font-bold">$19.00</span>
+                                </div>
+                                <!-- Row F (Contains pre-selected Seats F14, F15 as requested) -->
+                                <div class="flex items-center justify-center gap-1.5 md:gap-2.5 py-1">
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">F</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="F1" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="F2" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="F3" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="F4" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                    </div>
+                                    <div class="w-4"></div>
+                                    <!-- Center Pod containing Row F 14 & 15 Selected -->
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="p-1 rounded bg-surface-container-lowest opacity-30 cursor-not-allowed"
+                                            disabled=""><span
+                                                class="material-symbols-outlined text-on-surface-variant text-base">chair_alt</span></button>
+                                        <button
+                                            class="p-1 rounded bg-surface-container-lowest opacity-30 cursor-not-allowed"
+                                            disabled=""><span
+                                                class="material-symbols-outlined text-on-surface-variant text-base">chair_alt</span></button>
+                                        <!-- Pre-selected Row F Seat 14 -->
+                                        <button
+                                            class="seat-btn is-selected p-1 rounded bg-primary-container text-on-primary-container border-2 border-primary neon-glow-primary transition-all active:scale-95"
+                                            data-price="19.00" data-seat="F14" data-tier="Standard D-Cinema"
+                                            title="Selected: Row F Seat 14">
+                                            <span class="material-symbols-outlined text-base"
+                                                style="font-variation-settings: 'FILL' 1;">chair_alt</span>
+                                        </button>
+                                        <!-- Pre-selected Row F Seat 15 -->
+                                        <button
+                                            class="seat-btn is-selected p-1 rounded bg-primary-container text-on-primary-container border-2 border-primary neon-glow-primary transition-all active:scale-95"
+                                            data-price="19.00" data-seat="F15" data-tier="Standard D-Cinema"
+                                            title="Selected: Row F Seat 15">
+                                            <span class="material-symbols-outlined text-base"
+                                                style="font-variation-settings: 'FILL' 1;">chair_alt</span>
+                                        </button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="F16" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="F17" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                    </div>
+                                    <div class="w-4"></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="F18" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="F19" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="F20" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="F21" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                    </div>
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">F</span>
+                                </div>
+                                <!-- Row G -->
+                                <div class="flex items-center justify-center gap-1.5 md:gap-2.5 py-1">
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">G</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G1" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G2" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G3" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G4" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                    </div>
+                                    <div class="w-4"></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G5" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G6" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G7" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G8" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G9" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G10" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                    </div>
+                                    <div class="w-4"></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G11" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G12" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G13" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                        <button
+                                            class="seat-btn p-1 rounded bg-surface-container-high border border-outline-variant/20 text-on-surface-variant hover:border-primary/60 transition-all"
+                                            data-price="19.00" data-seat="G14" data-tier="Standard D-Cinema"><span
+                                                class="material-symbols-outlined text-base">chair_alt</span></button>
+                                    </div>
+                                    <span
+                                        class="w-6 text-center font-label-sm text-label-sm text-on-surface-variant font-bold">G</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Color-Coded State Legend Bar -->
+                    <div
+                        class="mt-6 pt-4 border-t border-outline-variant/20 flex flex-wrap items-center justify-center gap-6 text-body-sm font-body-sm">
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="w-4 h-4 rounded bg-surface-container border border-outline-variant/40 inline-block"></span>
+                            <span class="text-on-surface-variant">Available</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="w-4 h-4 rounded bg-primary-container border border-primary neon-glow-primary inline-block"></span>
+                            <span class="text-primary font-semibold">Selected (Neon Crimson)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="w-4 h-4 rounded bg-surface-container-lowest opacity-40 border border-outline-variant/20 inline-block"></span>
+                            <span class="text-on-surface-variant/60">Reserved / Taken</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="w-4 h-4 rounded bg-surface-container border border-primary/40 flex items-center justify-center text-primary text-[11px]">
+                                <span class="material-symbols-outlined text-xs">accessible</span>
+                            </span>
+                            <span class="text-on-surface-variant">Wheelchair Accessible</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Venue Sensory & Safety Amenities Feature -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="glass-panel p-4 rounded-xl flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary">
+                            <span class="material-symbols-outlined">restaurant</span>
+                        </div>
+                        <div>
+                            <h4 class="font-title-sm text-title-sm font-semibold text-on-surface">In-Seat Dine In</h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Express delivery via aisle pods
+                            </p>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 rounded-xl flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-tertiary">
+                            <span class="material-symbols-outlined">volume_up</span>
+                        </div>
+                        <div>
+                            <h4 class="font-title-sm text-title-sm font-semibold text-on-surface">128-Channel Matrix
+                            </h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">Calibrated for sweet spot rows
+                                C-E</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 rounded-xl flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined">contactless</span>
+                        </div>
+                        <div>
+                            <h4 class="font-title-sm text-title-sm font-semibold text-on-surface">Digital Gate Entry
+                            </h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">NFC Apple &amp; Google Wallet
+                                pass</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column: Floating Sticky Order Summary Sidebar (4 cols on XL) -->
+            <div class="xl:col-span-4 sticky top-20">
+                <div
+                    class="glass-panel rounded-2xl p-6 border border-outline-variant/30 shadow-2xl flex flex-col gap-6">
+                    <!-- Section Title & Badge -->
+                    <div class="flex items-center justify-between border-b border-outline-variant/20 pb-4">
+                        <div>
+                            <span
+                                class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">ORDER
+                                SUMMARY</span>
+                            <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Screening Pass</h3>
+                        </div>
+                        <span
+                            class="bg-primary-container/20 text-primary px-2.5 py-1 rounded text-label-sm font-label-sm font-bold">2
+                            Seats Active</span>
+                    </div>
+                    <!-- Movie Info Mini Stub -->
+                    <div
+                        class="flex items-center gap-3.5 bg-surface-container-low p-3.5 rounded-xl border border-outline-variant/20">
+                        <span class="material-symbols-outlined text-primary text-2xl"
+                            style="font-variation-settings: 'FILL' 1;">theaters</span>
+                        <div class="text-left leading-tight">
+                            <h4 class="font-title-sm text-title-sm font-bold text-on-surface">Chronicles of Dune:
+                                Oblivion</h4>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">AMC Empire 25 •
+                                Auditorium 1</p>
+                            <p class="font-body-sm text-body-sm text-primary font-semibold text-xs mt-0.5">Today • 7:15
+                                PM - 10:01 PM</p>
+                        </div>
+                    </div>
+                    <!-- Seats Itemized Dynamic List -->
+                    <div class="space-y-3">
+                        <span
+                            class="font-label-sm text-label-sm text-on-surface-variant uppercase font-bold tracking-wider">Assigned
+                            Seats</span>
+                        <div class="space-y-2" id="selected-seats-container">
+                            <!-- Seat Row F 14 -->
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-surface-container-high/60 border border-outline-variant/30">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-label-md">
+                                        F14
+                                    </div>
+                                    <div>
+                                        <span
+                                            class="font-title-sm text-title-sm font-semibold text-on-surface block">Row
+                                            F, Seat 14</span>
+                                        <span class="font-body-sm text-body-sm text-on-surface-variant text-xs">Standard
+                                            D-Cinema</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-title-sm text-title-sm font-bold text-on-surface">$19.00</span>
+                                </div>
+                            </div>
+                            <!-- Seat Row F 15 -->
+                            <div
+                                class="flex items-center justify-between p-3 rounded-lg bg-surface-container-high/60 border border-outline-variant/30">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-label-md">
+                                        F15
+                                    </div>
+                                    <div>
+                                        <span
+                                            class="font-title-sm text-title-sm font-semibold text-on-surface block">Row
+                                            F, Seat 15</span>
+                                        <span class="font-body-sm text-body-sm text-on-surface-variant text-xs">Standard
+                                            D-Cinema</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-title-sm text-title-sm font-bold text-on-surface">$19.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fast F&B Add-on Module -->
+                    <div class="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/30 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span
+                                class="font-title-sm text-title-sm font-semibold text-on-surface flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-secondary text-base">fastfood</span>
+                                Concessions Express
+                            </span>
+                            <span class="font-label-sm text-label-sm text-secondary font-bold">Pick Up at Seat</span>
+                        </div>
+                        <!-- F&B Item Quick Toggle -->
+                        <label class="flex items-center justify-between cursor-pointer group pt-1">
+                            <div class="flex items-center gap-2.5">
+                                <input checked=""
+                                    class="rounded bg-surface-container-high border-outline-variant/40 text-primary focus:ring-primary h-4 w-4"
+                                    id="addon-popcorn" type="checkbox" />
+                                <div class="text-left">
+                                    <span
+                                        class="font-body-md text-body-md font-medium text-on-surface group-hover:text-primary transition-colors block leading-tight">Gourmet
+                                        Spice Butter Popcorn (L)</span>
+                                    <span class="text-[11px] text-on-surface-variant">Truffle salt &amp; caramelized
+                                        cinnamon</span>
+                                </div>
+                            </div>
+                            <span class="font-title-sm text-title-sm font-bold text-on-surface">+$10.50</span>
+                        </label>
+                    </div>
+                    <!-- Price Calculation Breakdown -->
+                    <div class="space-y-2 border-t border-outline-variant/20 pt-4 text-body-sm font-body-sm">
+                        <div class="flex justify-between text-on-surface-variant">
+                            <span>Standard Tickets (2x $19.00)</span>
+                            <span class="text-on-surface font-medium" id="tickets-subtotal">$38.00</span>
+                        </div>
+                        <div class="flex justify-between text-on-surface-variant">
+                            <span>Concession Add-on</span>
+                            <span class="text-on-surface font-medium" id="addon-subtotal">$10.50</span>
+                        </div>
+                        <div class="flex justify-between text-on-surface-variant">
+                            <span>City Cultural Tax &amp; Booking Fee</span>
+                            <span class="text-on-surface font-medium" id="tax-subtotal">$5.70</span>
+                        </div>
+                        <div
+                            class="flex justify-between items-center text-title-lg font-title-lg border-t border-outline-variant/25 pt-3">
+                            <span class="font-bold text-on-surface">Total Amount</span>
+                            <span class="font-bold text-primary font-headline-sm" id="grand-total-display">$54.20</span>
+                        </div>
+                    </div>
+                    <!-- Prominent Checkout CTA Button -->
+                    <button
+                        class="w-full bg-primary-container text-on-primary-container hover:brightness-110 font-label-lg text-label-lg font-bold py-3.5 px-6 rounded-xl transition-all duration-200 neon-glow-primary active:scale-[0.98] flex items-center justify-center gap-2"
+                        id="checkout-btn">
+                        <span>Proceed to Payment ($54.20)</span>
+                        <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                    </button>
+                    <p class="text-center text-on-surface-variant/60 text-xs flex items-center justify-center gap-1">
+                        <span class="material-symbols-outlined text-sm">lock</span>
+                        Guaranteed 100% encrypted checkout. Free cancellation up to 60m before film.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Web Footer from Shared Components JSON -->
+    <footer
+        class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/20 dark:border-outline-variant/20 w-full block mt-20">
+        <div class="w-full max-w-7xl mx-auto px-6 py-12 flex flex-col gap-8">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <a class="text-headline-sm font-headline-sm font-bold text-primary dark:text-primary flex items-center gap-2"
+                    href="#">
+                    <span class="material-symbols-outlined text-primary"
+                        style="font-variation-settings: 'FILL' 1;">movie</span>
+                    <span>Cineva</span>
+                </a>
+                <div class="flex flex-wrap gap-6">
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-body-sm text-body-sm hover:text-primary dark:hover:text-primary transition-colors"
+                        href="#">About Us</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-body-sm text-body-sm hover:text-primary dark:hover:text-primary transition-colors"
+                        href="#">Experiences &amp; IMAX</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-body-sm text-body-sm hover:text-primary dark:hover:text-primary transition-colors"
+                        href="#">Cinema Partner Program</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-body-sm text-body-sm hover:text-primary dark:hover:text-primary transition-colors"
+                        href="#">Privacy Policy</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-body-sm text-body-sm hover:text-primary dark:hover:text-primary transition-colors"
+                        href="#">Terms of Service</a>
+                    <a class="text-on-surface-variant dark:text-on-surface-variant font-body-sm text-body-sm hover:text-primary dark:hover:text-primary transition-colors"
+                        href="#">Certified Security Standards</a>
+                </div>
+            </div>
+            <div
+                class="border-t border-outline-variant/20 pt-6 flex flex-col md:flex-row items-center justify-between text-body-sm font-body-sm text-on-surface-variant/70 gap-4">
+                <p>© 2024 Cineva Entertainment Inc. All rights reserved. Atmos, IMAX, and 4DX are registered trademarks.
+                </p>
+                <div class="flex items-center gap-4 text-xs">
+                    <span class="inline-flex items-center gap-1 text-on-surface-variant">
+                        <span class="material-symbols-outlined text-sm text-secondary">verified</span> AMC Partnered
+                    </span>
+                    <span class="inline-flex items-center gap-1 text-on-surface-variant">
+                        <span class="material-symbols-outlined text-sm text-tertiary">spatial_audio_off</span> RealD
+                        Precision
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Micro-Interactions Script for Dynamic Seat Toggling & Cart Updates -->
+    <script>
+            (function () {
+                // Countdown Timer Emulation
+                let secondsRemaining = 9 * 60 + 42;
+                const timerElement = document.getElementById('countdown-timer');
+
+                setInterval(() => {
+                    if (secondsRemaining <= 0) return;
+                    secondsRemaining--;
+                    const mins = Math.floor(secondsRemaining / 60);
+                    const secs = secondsRemaining % 60;
+                    timerElement.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                }, 1000);
+
+                // Selected Seats Tracking
+                const seats = [
+                    { code: 'F14', tier: 'Standard D-Cinema', price: 19.00 },
+                    { code: 'F15', tier: 'Standard D-Cinema', price: 19.00 }
+                ];
+
+                const addonCheckbox = document.getElementById('addon-popcorn');
+                const seatsContainer = document.getElementById('selected-seats-container');
+                const ticketsSubtotalElem = document.getElementById('tickets-subtotal');
+                const addonSubtotalElem = document.getElementById('addon-subtotal');
+                const taxSubtotalElem = document.getElementById('tax-subtotal');
+                const grandTotalElem = document.getElementById('grand-total-display');
+                const checkoutBtn = document.getElementById('checkout-btn');
+
+                function recalculate() {
+                    const ticketTotal = seats.reduce((acc, curr) => acc + curr.price, 0);
+                    const addonTotal = addonCheckbox.checked ? 10.50 : 0.00;
+                    const taxTotal = ticketTotal > 0 ? (ticketTotal * 0.15) : 0;
+                    const finalTotal = ticketTotal + addonTotal + taxTotal;
+
+                    ticketsSubtotalElem.textContent = `$${ticketTotal.toFixed(2)}`;
+                    addonSubtotalElem.textContent = `$${addonTotal.toFixed(2)}`;
+                    taxSubtotalElem.textContent = `$${taxTotal.toFixed(2)}`;
+                    grandTotalElem.textContent = `$${finalTotal.toFixed(2)}`;
+                    checkoutBtn.innerHTML = `<span>Proceed to Payment ($${finalTotal.toFixed(2)})</span><span class="material-symbols-outlined text-lg">arrow_forward</span>`;
+
+                    // Render seats in sidebar
+                    if (seats.length === 0) {
+                        seatsContainer.innerHTML = `<div class="text-center py-4 text-on-surface-variant/70 text-sm">Please select at least one seat from the auditorium map.</div>`;
+                        checkoutBtn.disabled = true;
+                        checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    } else {
+                        checkoutBtn.disabled = false;
+                        checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        seatsContainer.innerHTML = seats.map(s => `
+            <div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-high/60 border border-outline-variant/30">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-label-md">
+                  ${s.code}
+                </div>
+                <div>
+                  <span class="font-title-sm text-title-sm font-semibold text-on-surface block">Row ${s.code.charAt(0)}, Seat ${s.code.slice(1)}</span>
+                  <span class="font-body-sm text-body-sm text-on-surface-variant text-xs">${s.tier}</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="font-title-sm text-title-sm font-bold text-on-surface">$${s.price.toFixed(2)}</span>
+              </div>
+            </div>
+          `).join('');
+                    }
+                }
+
+                addonCheckbox.addEventListener('change', recalculate);
+
+                // Seat Click Handling
+                document.querySelectorAll('.seat-btn').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const seatCode = this.getAttribute('data-seat');
+                        const tier = this.getAttribute('data-tier') || 'Standard';
+                        const price = parseFloat(this.getAttribute('data-price') || '19');
+
+                        const existingIndex = seats.findIndex(s => s.code === seatCode);
+
+                        if (existingIndex > -1) {
+                            // Deselect
+                            seats.splice(existingIndex, 1);
+                            this.classList.remove('is-selected', 'bg-primary-container', 'text-on-primary-container', 'border-2', 'border-primary', 'neon-glow-primary');
+                            this.classList.add('bg-surface-container');
+                        } else {
+                            // Select
+                            seats.push({ code: seatCode, tier, price });
+                            this.classList.add('is-selected', 'bg-primary-container', 'text-on-primary-container', 'border-2', 'border-primary', 'neon-glow-primary');
+                            this.classList.remove('bg-surface-container');
+                        }
+                        recalculate();
+                    });
+                });
+            })();
+    </script>
+</body>
+
+</html>

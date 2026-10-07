@@ -1,0 +1,107 @@
+{% load movie_tags %}
+{# Reusable Movie Card Component #}
+<div
+    onclick="window.location.href='{% url 'movie_detail' movie.slug %}';"
+    role="link"
+    tabindex="0"
+    onkeydown="if(event.key==='Enter') window.location.href='{% url 'movie_detail' movie.slug %}';"
+    class="group relative flex flex-col bg-surface-container-low rounded-2xl overflow-hidden border border-outline-variant/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary-container/10 cursor-pointer">
+    <!-- Poster Container -->
+    <div class="relative aspect-[3/4] w-full overflow-hidden bg-surface-container">
+        <img
+            src="{{ movie.get_primary_poster_url }}"
+            alt="{{ movie.title }}"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80'"
+        />
+
+        <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
+
+        <!-- Rating Pill Top-Left -->
+        <div class="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md border border-outline-variant/30 text-secondary text-label-sm font-label-sm font-bold">
+            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+            <span>{{ movie.rating|floatformat:1 }}</span>
+            {% if movie.total_reviews > 0 %}
+            <span class="text-on-surface-variant/60 font-normal">({{ movie.total_reviews }})</span>
+            {% endif %}
+        </div>
+
+        <!-- Age Certification Badge Top-Right -->
+        {% if movie.age_certification %}
+        <div class="absolute top-3 right-3 px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-md border border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm font-mono">
+            {{ movie.age_certification }}
+        </div>
+        {% endif %}
+
+        <!-- Play Trailer Button Hover Overlay (if trailer available) -->
+        {% if movie.get_youtube_video_id %}
+        <button
+            type="button"
+            onclick="event.stopPropagation(); openTrailerModal('{{ movie.get_youtube_video_id }}', '{{ movie.title|escapejs }}')"
+            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/40"
+            title="Watch Official Trailer">
+            <div class="w-14 h-14 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-xl transform scale-90 group-hover:scale-100 transition-transform">
+                <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+            </div>
+        </button>
+        {% endif %}
+
+        <!-- Runtime Badge Bottom -->
+        <div class="absolute bottom-3 left-3 text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1.5 bg-surface/70 backdrop-blur-sm px-2 py-0.5 rounded">
+            <span class="material-symbols-outlined text-xs">schedule</span>
+            <span>{{ movie.duration|duration_format }}</span>
+            {% if movie.language %}
+            <span>•</span>
+            <span>{{ movie.language.name }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Movie Card Body -->
+    <div class="p-4 flex flex-col flex-1 justify-between gap-3">
+        <div>
+            <h3 class="text-title-md font-title-md font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-1">
+                <a href="{% url 'movie_detail' movie.slug %}">
+                    {{ movie.title }}
+                </a>
+            </h3>
+
+            <!-- Genres Pills -->
+            <div class="flex flex-wrap gap-1 mt-2">
+                {% for genre in movie.genres.all|slice:":3" %}
+                <span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant border border-outline-variant/20">
+                    {{ genre.name }}
+                </span>
+                {% empty %}
+                <span class="text-label-sm text-on-surface-variant/40">General Screening</span>
+                {% endfor %}
+            </div>
+
+            {% if movie.short_description %}
+            <p class="text-body-sm font-body-sm text-on-surface-variant line-clamp-2 mt-2 leading-relaxed">
+                {{ movie.short_description }}
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Action Row -->
+        <div class="pt-3 border-t border-outline-variant/15 flex items-center justify-between gap-2">
+            <a
+                href="{% url 'movie_detail' movie.slug %}"
+                class="flex-1 py-2 px-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md font-semibold text-center transition-colors">
+                Details &amp; Reviews
+            </a>
+
+            {% if movie.get_youtube_video_id %}
+            <button
+                type="button"
+                onclick="event.stopPropagation(); openTrailerModal('{{ movie.get_youtube_video_id }}', '{{ movie.title|escapejs }}')"
+                class="p-2 rounded-xl bg-surface-container hover:bg-primary-container hover:text-on-primary-container text-primary transition-colors"
+                title="Watch Trailer">
+                <span class="material-symbols-outlined text-lg">smart_display</span>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
