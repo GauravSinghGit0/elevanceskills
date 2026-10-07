@@ -11,6 +11,7 @@ ENV/
 
 # Environment secrets and credentials
 .env
+.env*
 email_config.txt
 *.local
 
