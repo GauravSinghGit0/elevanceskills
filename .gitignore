@@ -12,6 +12,8 @@ ENV/
 # Environment secrets and credentials
 .env
 .env*
+vercel_env.txt
+env_*.txt
 email_config.txt
 *.local
 
