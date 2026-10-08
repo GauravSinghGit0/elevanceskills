@@ -1,10 +1,10 @@
 {% extends "users/basic.html" %}
 
-{% block title %}Cineva | Premium Cinema Experience &amp; Showtimes{% endblock %}
+{% block title %}Cineva | Premium Cinema Experience, Showtimes &amp; Theaters{% endblock %}
 
 {% block content %}
 <!-- Grand Cinematic Hero Banner -->
-{% with featured=movies.0 %}
+{% with featured=featured %}
 <section class="relative w-full overflow-hidden bg-surface-container-lowest border-b border-outline-variant/20">
     <div class="relative h-[560px] md:h-[660px] w-full">
         <!-- Backdrop Image Container -->
@@ -27,10 +27,17 @@
                         IMAX Laser Experience
                     </span>
                     {% if featured %}
+                    {% if featured.is_upcoming %}
+                    <span class="px-2.5 py-1 rounded bg-amber-500 text-slate-950 font-bold text-label-sm font-label-sm flex items-center gap-1 shadow">
+                        <span class="material-symbols-outlined text-xs">calendar_month</span>
+                        Releasing {{ featured.release_date|date:"F d, Y" }}
+                    </span>
+                    {% else %}
                     <span class="px-2.5 py-1 rounded bg-surface-container-high/80 text-on-surface text-label-sm font-label-sm border border-outline-variant/30 flex items-center gap-1 backdrop-blur-sm">
                         <span class="material-symbols-outlined text-secondary text-xs" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
                         {{ featured.rating|default:"0.0" }} Audience Score
                     </span>
+                    {% endif %}
                     <span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/20">
                         {{ featured.age_certification|default:"UA" }}
                     </span>
@@ -67,7 +74,7 @@
                     <a href="{% url 'movie_detail' featured.slug %}"
                        class="px-8 py-3.5 rounded-lg bg-primary-container hover:bg-inverse-primary text-on-primary-container font-label-lg text-label-lg glow-aura flex items-center gap-2 btn-interactive shadow-lg">
                         <span class="material-symbols-outlined text-base" data-icon="local_activity">local_activity</span>
-                        <span>Experience &amp; Book</span>
+                        <span>{% if featured.is_upcoming %}Advance Booking / Details{% else %}Experience &amp; Book{% endif %}</span>
                     </a>
                     {% if featured.trailer_video_id %}
                     <a href="{% url 'movie_detail' featured.slug %}#trailerSection"
@@ -89,77 +96,348 @@
 </section>
 {% endwith %}
 
-<!-- Now Showing & Curated Films Grid -->
-<div class="max-w-7xl mx-auto px-6 py-16">
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <div>
-            <div class="flex items-center gap-2 text-secondary text-label-sm font-label-sm uppercase tracking-widest mb-1">
-                <span class="material-symbols-outlined text-sm" data-icon="local_movies">local_movies</span>
-                <span>Active Repertoire</span>
-            </div>
-            <h2 class="text-headline-lg font-headline-lg text-on-surface">Now Showing in Theaters</h2>
+<!-- Main Content Container -->
+<div class="max-w-7xl mx-auto px-6 py-12 space-y-16">
+
+    <!-- Category Filter Tabs Bar -->
+    <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-outline-variant/20">
+        <div class="flex flex-wrap items-center gap-2" id="catalogTabs">
+            <button
+                type="button"
+                onclick="switchTab('all')"
+                id="tab-all"
+                class="px-4 py-2 rounded-xl text-label-md font-label-md font-bold transition-all bg-primary-container text-on-primary-container glow-aura-subtle">
+                All Movies ({{ movies|length }})
+            </button>
+            <button
+                type="button"
+                onclick="switchTab('now_showing')"
+                id="tab-now_showing"
+                class="px-4 py-2 rounded-xl text-label-md font-label-md font-medium transition-all bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface">
+                Now Showing ({{ now_showing_movies|length }})
+            </button>
+            <button
+                type="button"
+                onclick="switchTab('upcoming')"
+                id="tab-upcoming"
+                class="px-4 py-2 rounded-xl text-label-md font-label-md font-medium transition-all bg-surface-container hover:bg-surface-container-high text-amber-400 hover:text-amber-300 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">calendar_month</span>
+                <span>Upcoming Releases ({{ upcoming_movies|length }})</span>
+            </button>
+            <button
+                type="button"
+                onclick="switchTab('hollywood')"
+                id="tab-hollywood"
+                class="px-4 py-2 rounded-xl text-label-md font-label-md font-medium transition-all bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface">
+                Hollywood
+            </button>
+            <button
+                type="button"
+                onclick="switchTab('bollywood')"
+                id="tab-bollywood"
+                class="px-4 py-2 rounded-xl text-label-md font-label-md font-medium transition-all bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface">
+                Bollywood
+            </button>
+            <button
+                type="button"
+                onclick="switchTab('anime')"
+                id="tab-anime"
+                class="px-4 py-2 rounded-xl text-label-md font-label-md font-medium transition-all bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface">
+                Anime
+            </button>
         </div>
 
-        <div class="flex items-center gap-3">
-            <a href="{% url 'movie_list' %}" class="flex items-center gap-1 text-label-md font-label-md text-primary hover:text-on-surface transition-colors">
-                <span>View Full Catalog</span>
-                <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+        <a href="{% url 'movie_list' %}" class="flex items-center gap-1 text-label-md font-label-md text-primary hover:text-on-surface transition-colors font-semibold">
+            <span>Explore All Filter &amp; Search</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+    </div>
+
+    <!-- Section 1: UPCOMING IN THEATERS (WITH DATES) -->
+    {% if upcoming_movies %}
+    <section class="space-y-6" id="upcomingSection">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2 text-amber-400 text-label-sm font-label-sm uppercase tracking-widest font-bold">
+                    <span class="material-symbols-outlined text-base">upcoming</span>
+                    <span>Advance Booking &amp; Premiere Dates</span>
+                </div>
+                <h2 class="text-headline-md sm:text-headline-lg font-headline-lg font-bold text-on-surface mt-1">
+                    Upcoming in Theaters (With Release Dates)
+                </h2>
+                <p class="text-body-sm font-body-sm text-on-surface-variant/80 mt-1">
+                    Mark your calendar and reserve opening week showtimes across IMAX, 4DX, and Dolby Atmos auditoriums.
+                </p>
+            </div>
+            <a href="{% url 'movie_list' %}?release_date=upcoming" class="px-4 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-400/30 text-label-md font-label-md font-semibold flex items-center gap-1.5 transition-all">
+                <span>View All Upcoming</span>
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
             </a>
         </div>
-    </div>
 
-    <!-- Movie Cards Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {% for movie in movies %}
-        {% include "components/movie_card.html" with movie=movie %}
-        {% empty %}
-        <div class="col-span-4 text-center py-16 text-on-surface-variant">
-            <span class="material-symbols-outlined text-4xl mb-2 text-primary" data-icon="movie">movie</span>
-            <p class="text-body-lg">No movies currently published in the catalog.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {% for movie in upcoming_movies %}
+            {% include "components/movie_card.html" with movie=movie %}
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
+    </section>
+    {% endif %}
 
-    <!-- Cineva Premium Formats Showcase -->
-    <div class="mt-20 pt-12 border-t border-outline-variant/20">
-        <div class="text-center max-w-2xl mx-auto mb-10">
-            <span class="text-secondary text-label-sm font-label-sm uppercase tracking-widest">Pinnacle Presentation</span>
-            <h3 class="text-headline-lg font-headline-lg text-on-surface mt-1">Curated Cinema Formats</h3>
+    <!-- Section 2: NOW SHOWING IN THEATERS -->
+    <section class="space-y-6" id="nowShowingSection">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2 text-secondary text-label-sm font-label-sm uppercase tracking-widest font-bold">
+                    <span class="material-symbols-outlined text-sm">local_movies</span>
+                    <span>Currently Running</span>
+                </div>
+                <h2 class="text-headline-md sm:text-headline-lg font-headline-lg font-bold text-on-surface mt-1">
+                    Now Showing in Theaters
+                </h2>
+            </div>
+            <a href="{% url 'movie_list' %}?release_date=now_showing" class="flex items-center gap-1 text-label-md font-label-md text-primary hover:text-on-surface transition-colors">
+                <span>View All Running Titles</span>
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="p-6 rounded-xl bg-surface-container-low border border-outline-variant/20 space-y-3">
-                <div class="w-10 h-10 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center">
-                    <span class="material-symbols-outlined text-2xl" data-icon="hdr_strong">hdr_strong</span>
-                </div>
-                <h4 class="text-title-lg font-title-lg font-bold text-on-surface">IMAX with Laser</h4>
-                <p class="text-body-sm font-body-sm text-on-surface-variant">
-                    Next-generation dual 4K laser projection delivering unmatched brightness, contrast, and crystal-clear clarity.
-                </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="moviesGrid">
+            {% for movie in now_showing_movies %}
+            <div class="movie-item"
+                 data-category="{% if movie.language and movie.language.code == 'en' %}hollywood{% elif movie.language and movie.language.code == 'hi' %}bollywood{% elif movie.language and movie.language.code == 'ja' %}anime{% else %}other{% endif %}"
+                 data-status="now_showing">
+                {% include "components/movie_card.html" with movie=movie %}
             </div>
-
-            <div class="p-6 rounded-xl bg-surface-container-low border border-outline-variant/20 space-y-3">
-                <div class="w-10 h-10 rounded-lg bg-secondary-container/20 text-secondary flex items-center justify-center">
-                    <span class="material-symbols-outlined text-2xl" data-icon="surround_sound">surround_sound</span>
-                </div>
-                <h4 class="text-title-lg font-title-lg font-bold text-on-surface">Dolby Atmos Acoustic Array</h4>
-                <p class="text-body-sm font-body-sm text-on-surface-variant">
-                    Up to 64 individual speaker channels positioning sound in dynamic 3D space with visceral low-frequency impact.
-                </p>
+            {% empty %}
+            <div class="col-span-4 text-center py-16 text-on-surface-variant">
+                <span class="material-symbols-outlined text-4xl mb-2 text-primary">movie</span>
+                <p class="text-body-lg">No movies currently running.</p>
             </div>
+            {% endfor %}
+        </div>
+    </section>
 
-            <div class="p-6 rounded-xl bg-surface-container-low border border-outline-variant/20 space-y-3">
-                <div class="w-10 h-10 rounded-lg bg-tertiary-container/20 text-tertiary flex items-center justify-center">
-                    <span class="material-symbols-outlined text-2xl" data-icon="chair">chair</span>
+    <!-- Section 3: DIFFERENT TYPES OF THEATERS SHOWCASE (BIG, SMALL, BOUTIQUE, DRIVE-IN, ROOFTOP) -->
+    <section class="space-y-8 pt-8 border-t border-outline-variant/20">
+        <div class="text-center max-w-3xl mx-auto space-y-2">
+            <span class="text-secondary text-label-sm font-label-sm uppercase tracking-widest font-bold">Diverse Cinema Formats</span>
+            <h2 class="text-headline-lg font-headline-lg font-bold text-on-surface">
+                Different Types of Theaters for Every Vibe
+            </h2>
+            <p class="text-body-md font-body-md text-on-surface-variant">
+                From giant IMAX laser superplexes and intimate velvet boutique lounges to scenic cliffside drive-ins and open-air rooftop decks.
+            </p>
+        </div>
+
+        <!-- Category 1: BIG THEATERS (Mega Multiplexes & Superplexes) -->
+        <div class="space-y-4">
+            <div class="flex items-center gap-2 text-primary font-bold text-title-md">
+                <span class="material-symbols-outlined text-2xl">apartment</span>
+                <h3>Big Theaters: Mega Multiplexes &amp; Superplexes</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-3 hover:border-primary/50 transition-all shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded bg-primary-container/20 text-primary text-xs font-bold uppercase">Mega Superplex</span>
+                        <span class="text-xs text-on-surface-variant">Mumbai (Lower Parel)</span>
+                    </div>
+                    <h4 class="text-title-lg font-bold text-on-surface">PVR Superplex IMAX Laser &amp; 4DX</h4>
+                    <p class="text-body-sm text-on-surface-variant">
+                        High Street Phoenix Mall. Features 4 state-of-the-art auditoriums: Audi 1 (IMAX 4K Laser, 280 seats), Audi 2 (4DX Motion, 140 seats), Audi 3 (Dolby Atmos, 220 seats), Audi 4 (Laser RealD 3D).
+                    </p>
+                    <div class="flex flex-wrap gap-1.5 pt-2">
+                        <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant border border-outline-variant/30">IMAX 4K</span>
+                        <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant border border-outline-variant/30">4DX Motion</span>
+                        <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant border border-outline-variant/30">Dolby Atmos</span>
+                    </div>
                 </div>
-                <h4 class="text-title-lg font-title-lg font-bold text-on-surface">VIP Recliner Lounges</h4>
-                <p class="text-body-sm font-body-sm text-on-surface-variant">
-                    Zero-gravity heated leather recliners with reserved seat-side attendant hospitality and artisanal pairings.
-                </p>
+
+                <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-3 hover:border-primary/50 transition-all shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded bg-secondary-container/20 text-secondary text-xs font-bold uppercase">Megaplex Luxe</span>
+                        <span class="text-xs text-on-surface-variant">Delhi NCR (Noida)</span>
+                    </div>
+                    <h4 class="text-title-lg font-bold text-on-surface">INOX Megaplex &amp; Luxe Club</h4>
+                    <p class="text-body-sm text-on-surface-variant">
+                        DLF Mall of India. Audi 1 (Dolby Cinema Laser, 260 seats), Audi 2 (Insignia VIP Lounge, 64 seats), Audi 3 (IMAX Laser, 240 seats). Full gourmet chef menu and attendant service.
+                    </p>
+                    <div class="flex flex-wrap gap-1.5 pt-2">
+                        <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant border border-outline-variant/30">Dolby Cinema</span>
+                        <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant border border-outline-variant/30">Insignia VIP</span>
+                        <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant border border-outline-variant/30">Laser 3D</span>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-3 hover:border-primary/50 transition-all shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded bg-tertiary-container/20 text-tertiary text-xs font-bold uppercase">Macro XE Multiplex</span>
+                        <span class="text-xs text-on-surface-variant">Bengaluru (Whitefield)</span>
+                    </div>
+                    <h4 class="text-title-lg font-bold text-on-surface">Cinepolis Grand Megaplex</h4>
+                    <p class="text-body-sm text-on-surface-variant">
+                        Forum Shantiniketan. Giant curved Macro XE silver screen with 64-speaker Dolby Atmos audio (250 seats), plus 4DX Motion hall and VIP Royal Class recliner lounge.
+                    </p>
+                    <div class="flex flex-wrap gap-1.5 pt-2">
+                        <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant border border-outline-variant/30">Macro XE</span>
+                        <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant border border-outline-variant/30">4DX Hall</span>
+                        <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant border border-outline-variant/30">Royal Recliners</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+
+        <!-- Category 2: SMALL THEATERS (Boutique, Indie & Heritage Single Screens) -->
+        <div class="space-y-4">
+            <div class="flex items-center gap-2 text-secondary font-bold text-title-md">
+                <span class="material-symbols-outlined text-2xl">weekend</span>
+                <h3>Small Theaters: Boutique, Indie, Arthouse &amp; Heritage Single-Screens</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-2.5 hover:border-secondary/50 transition-all shadow-md">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-bold uppercase">Boutique Lounge</span>
+                        <span class="text-[11px] text-on-surface-variant">36 Seats</span>
+                    </div>
+                    <h4 class="text-title-md font-bold text-on-surface">The Velvet Screen Boutique</h4>
+                    <p class="text-xs text-on-surface-variant leading-relaxed">
+                        Indiranagar, Bengaluru. Acoustic velvet walls, private couple recliners, gourmet mocktails, and curated festival cinema.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-2.5 hover:border-secondary/50 transition-all shadow-md">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase">Heritage Single Screen</span>
+                        <span class="text-[11px] text-on-surface-variant">140 Seats</span>
+                    </div>
+                    <h4 class="text-title-md font-bold text-on-surface">Regal Heritage Cinema</h4>
+                    <p class="text-xs text-on-surface-variant leading-relaxed">
+                        Colaba, Mumbai. Historic 1930s Art-Deco grand balcony and stall architecture with vintage red velvet curtain reveal.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-2.5 hover:border-secondary/50 transition-all shadow-md">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 text-[10px] font-bold uppercase">Family Playhouse</span>
+                        <span class="text-[11px] text-on-surface-variant">48 Seats</span>
+                    </div>
+                    <h4 class="text-title-md font-bold text-on-surface">Little Star Family Playhouse</h4>
+                    <p class="text-xs text-on-surface-variant leading-relaxed">
+                        Saket, Delhi NCR. Soft beanbags, low-decibel child-friendly acoustics, gentle ambient illumination for families &amp; kids.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-2.5 hover:border-secondary/50 transition-all shadow-md">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase">Arthouse Cinema</span>
+                        <span class="text-[11px] text-on-surface-variant">52 Seats</span>
+                    </div>
+                    <h4 class="text-title-md font-bold text-on-surface">Criterion Arthouse &amp; Vault</h4>
+                    <p class="text-xs text-on-surface-variant leading-relaxed">
+                        Park Street, Kolkata. Dedicated to auteur cinema, anime festivals, 35mm archival projections, and 4K digital restorations.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 3: EVERY TYPE (Unique Cinemas: Drive-In, VIP Luxury, 4DX, Rooftop) -->
+        <div class="space-y-4">
+            <div class="flex items-center gap-2 text-tertiary font-bold text-title-md">
+                <span class="material-symbols-outlined text-2xl">auto_awesome</span>
+                <h3>Unique Concepts: Drive-In, Ultra-VIP, 4DX Dynamic &amp; Starlight Rooftop</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-2.5 hover:border-tertiary/50 transition-all shadow-md">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-bold uppercase">Drive-In Cinema</span>
+                        <span class="text-[11px] text-on-surface-variant">Goa Coast</span>
+                    </div>
+                    <h4 class="text-title-md font-bold text-on-surface">Sunset Open-Air &amp; Drive-In</h4>
+                    <p class="text-xs text-on-surface-variant leading-relaxed">
+                        Vagator Cliffside, Goa. Park your car and tune your car stereo to FM 98.4, or relax on open-deck loungers under starlit skies.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-2.5 hover:border-tertiary/50 transition-all shadow-md">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase">Gold Class VIP</span>
+                        <span class="text-[11px] text-on-surface-variant">Mumbai (Bandra)</span>
+                    </div>
+                    <h4 class="text-title-md font-bold text-on-surface">Gold Class VIP Luxury Cinema</h4>
+                    <p class="text-xs text-on-surface-variant leading-relaxed">
+                        180° motor-driven heated leather recliners with personal butler call buttons, cashmere blankets, and 3-course tasting menu.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-2.5 hover:border-tertiary/50 transition-all shadow-md">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-red-500/20 text-red-300 text-[10px] font-bold uppercase">4DX Dynamic</span>
+                        <span class="text-[11px] text-on-surface-variant">Pune</span>
+                    </div>
+                    <h4 class="text-title-md font-bold text-on-surface">CineMotion 4DX &amp; Sensations</h4>
+                    <p class="text-xs text-on-surface-variant leading-relaxed">
+                        Synchronized multi-axis motion seats with wind gusts, water sprays, fog, lightning strobes, scents, and leg ticklers.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20 space-y-2.5 hover:border-tertiary/50 transition-all shadow-md">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase">Rooftop Cinema</span>
+                        <span class="text-[11px] text-on-surface-variant">Bengaluru</span>
+                    </div>
+                    <h4 class="text-title-md font-bold text-on-surface">Skyline Rooftop Starlight</h4>
+                    <p class="text-xs text-on-surface-variant leading-relaxed">
+                        13th Floor Barton Centre Rooftop. Skyline starlight deck with wireless silent-disco hi-fi headphones and open starlight skies.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
+
+<!-- Tab Switching Script -->
+<script>
+function switchTab(category) {
+    const tabs = ['all', 'now_showing', 'upcoming', 'hollywood', 'bollywood', 'anime'];
+    tabs.forEach(t => {
+        const btn = document.getElementById('tab-' + t);
+        if (btn) {
+            if (t === category) {
+                btn.className = 'px-4 py-2 rounded-xl text-label-md font-label-md font-bold transition-all bg-primary-container text-on-primary-container glow-aura-subtle';
+            } else {
+                btn.className = 'px-4 py-2 rounded-xl text-label-md font-label-md font-medium transition-all bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface';
+            }
+        }
+    });
+
+    const upcomingSec = document.getElementById('upcomingSection');
+    const nowShowingSec = document.getElementById('nowShowingSection');
+    const movieItems = document.querySelectorAll('.movie-item');
+
+    if (category === 'upcoming') {
+        if (upcomingSec) upcomingSec.style.display = 'block';
+        if (nowShowingSec) nowShowingSec.style.display = 'none';
+    } else if (category === 'now_showing') {
+        if (upcomingSec) upcomingSec.style.display = 'none';
+        if (nowShowingSec) nowShowingSec.style.display = 'block';
+        movieItems.forEach(el => el.style.display = 'block');
+    } else if (category === 'all') {
+        if (upcomingSec) upcomingSec.style.display = 'block';
+        if (nowShowingSec) nowShowingSec.style.display = 'block';
+        movieItems.forEach(el => el.style.display = 'block');
+    } else {
+        // hollywood / bollywood / anime
+        if (upcomingSec) upcomingSec.style.display = 'none';
+        if (nowShowingSec) nowShowingSec.style.display = 'block';
+        movieItems.forEach(el => {
+            if (el.getAttribute('data-category') === category) {
+                el.style.display = 'block';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+    }
+}
+</script>
 
 {% include "components/trailer_modal.html" %}
 {% endblock %}

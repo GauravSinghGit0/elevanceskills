@@ -3,15 +3,52 @@ from .forms import UserRegisterForm, UserUpdateForm
 from django.shortcuts import render,redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from movies.models import Movie, Booking, Payment
+from django.utils import timezone
+from movies.models import Movie, Booking, Payment, Theater
 
 def home(request):
-    movies = (
+    today = timezone.localdate()
+    movies_qs = (
         Movie.objects.filter(is_active=True)
         .select_related('language')
         .prefetch_related('genres')
+        .order_by('-rating', '-release_date')
     )
-    return render(request, 'home.html', {'movies': movies})
+    all_movies = list(movies_qs)
+
+    now_showing_movies = [m for m in all_movies if m.release_date and m.release_date <= today]
+    upcoming_movies = [m for m in all_movies if m.release_date and m.release_date > today]
+
+    # Curated categories for quick filtering
+    hollywood_movies = [m for m in all_movies if m.language and m.language.code == 'en']
+    bollywood_movies = [m for m in all_movies if m.language and m.language.code == 'hi']
+    anime_movies = [
+        m for m in all_movies
+        if (m.language and m.language.code == 'ja') or any(g.slug in ['anime', 'animation'] for g in m.genres.all())
+    ]
+
+    # Featured hero movie
+    featured = now_showing_movies[0] if now_showing_movies else (all_movies[0] if all_movies else None)
+
+    # Diverse Theaters Showcase (Big, Small, Boutique, Drive-In, Rooftop)
+    theaters = (
+        Theater.objects.filter(is_active=True)
+        .prefetch_related('screens')
+        .order_by('id')
+    )
+
+    context = {
+        'movies': all_movies,
+        'featured': featured,
+        'now_showing_movies': now_showing_movies,
+        'upcoming_movies': upcoming_movies,
+        'hollywood_movies': hollywood_movies,
+        'bollywood_movies': bollywood_movies,
+        'anime_movies': anime_movies,
+        'theaters': theaters,
+        'today': today,
+    }
+    return render(request, 'home.html', context)
 def register(request):
     if request.method == 'POST':
         form=UserRegisterForm(request.POST)

@@ -62,19 +62,40 @@
                     </button>
                 </form>
 
-                <!-- Quick Genre Tags -->
-                <div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 custom-scrollbar">
-                    <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider whitespace-nowrap">Genres:</span>
-                    <a href="{% param_replace genre='' %}"
-                       class="px-3.5 py-1.5 rounded-full font-label-md text-label-md font-semibold whitespace-nowrap transition-all {% if not selected_genre %}bg-primary-container text-on-primary-container glow-aura-subtle{% else %}bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface{% endif %}">
-                        All
-                    </a>
-                    {% for g in all_genres %}
-                    <a href="{% param_replace genre=g.slug %}"
-                       class="px-3.5 py-1.5 rounded-full font-label-md text-label-md font-semibold whitespace-nowrap transition-all {% if selected_genre == g.slug %}bg-primary-container text-on-primary-container glow-aura-subtle{% else %}bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface{% endif %}">
-                        {{ g.name }}
-                    </a>
-                    {% endfor %}
+                <!-- Quick Filter Chips: Status & Genres -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 overflow-x-auto pb-1 lg:pb-0 custom-scrollbar">
+                    <div class="flex items-center gap-2">
+                        <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider whitespace-nowrap">Status:</span>
+                        <a href="{% param_replace release_date='' page=1 %}"
+                           class="px-3 py-1 rounded-full font-label-md text-label-md font-semibold whitespace-nowrap transition-all {% if not selected_release or selected_release == 'all' %}bg-primary-container text-on-primary-container glow-aura-subtle{% else %}bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface{% endif %}">
+                            All
+                        </a>
+                        <a href="{% param_replace release_date='now_showing' page=1 %}"
+                           class="px-3 py-1 rounded-full font-label-md text-label-md font-semibold whitespace-nowrap transition-all {% if selected_release == 'now_showing' %}bg-primary-container text-on-primary-container glow-aura-subtle{% else %}bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface{% endif %}">
+                            Now Showing
+                        </a>
+                        <a href="{% param_replace release_date='upcoming' page=1 %}"
+                           class="px-3 py-1 rounded-full font-label-md text-label-md font-bold whitespace-nowrap transition-all flex items-center gap-1 {% if selected_release == 'upcoming' %}bg-amber-400 text-slate-950 shadow-md{% else %}bg-amber-500/10 border border-amber-400/30 text-amber-300 hover:bg-amber-500/20{% endif %}">
+                            <span class="material-symbols-outlined text-xs">calendar_month</span>
+                            <span>Upcoming</span>
+                        </a>
+                    </div>
+
+                    <div class="h-4 w-px bg-outline-variant/30 hidden sm:block"></div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider whitespace-nowrap">Genres:</span>
+                        <a href="{% param_replace genre='' page=1 %}"
+                           class="px-3 py-1 rounded-full font-label-md text-label-md font-semibold whitespace-nowrap transition-all {% if not selected_genre %}bg-primary-container text-on-primary-container glow-aura-subtle{% else %}bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface{% endif %}">
+                            All
+                        </a>
+                        {% for g in all_genres|slice:":6" %}
+                        <a href="{% param_replace genre=g.slug page=1 %}"
+                           class="px-3 py-1 rounded-full font-label-md text-label-md font-semibold whitespace-nowrap transition-all {% if selected_genre == g.slug %}bg-primary-container text-on-primary-container glow-aura-subtle{% else %}bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface{% endif %}">
+                            {{ g.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

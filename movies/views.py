@@ -277,28 +277,45 @@ def theater_list(request, movie_id):
         theaters = Theater.objects.filter(is_active=True)
 
     today = timezone.localdate()
-    selected_date_str = request.GET.get('date', today.strftime('%Y-%m-%d'))
+    is_upcoming_movie = bool(movie.release_date and movie.release_date > today)
+
+    # For upcoming movies without an explicit date parameter, default to the premiere release date
+    default_start_date = movie.release_date if is_upcoming_movie else today
+    selected_date_str = request.GET.get('date', default_start_date.strftime('%Y-%m-%d'))
     selected_format = request.GET.get('format', 'all')
     selected_slot = request.GET.get('slot', 'all')
 
     try:
         selected_date = datetime.strptime(selected_date_str, '%Y-%m-%d').date()
     except (ValueError, TypeError):
-        selected_date = today
-        selected_date_str = today.strftime('%Y-%m-%d')
+        selected_date = default_start_date
+        selected_date_str = default_start_date.strftime('%Y-%m-%d')
 
     is_past_date = selected_date < today
     now = timezone.now()
     cutoff_delta = timedelta(minutes=10)
 
+    # Base date for the 7-day strip
+    if 'date' not in request.GET:
+        base_strip_date = default_start_date
+    else:
+        if selected_date < today:
+            base_strip_date = selected_date
+        elif is_upcoming_movie and selected_date >= movie.release_date:
+            base_strip_date = movie.release_date
+        else:
+            base_strip_date = today
+
     dates = []
     for i in range(7):
-        d = today + timedelta(days=i)
+        d = base_strip_date + timedelta(days=i)
         d_str = d.strftime('%Y-%m-%d')
-        if i == 0:
+        if d == today:
             day_label = "Today"
-        elif i == 1:
+        elif d == today + timedelta(days=1):
             day_label = "Tomorrow"
+        elif movie.release_date and d == movie.release_date and is_upcoming_movie:
+            day_label = "Premiere"
         else:
             day_label = d.strftime('%a')
 
@@ -419,6 +436,8 @@ def theater_list(request, movie_id):
         'selected_format': selected_format,
         'selected_slot': selected_slot,
         'is_past_date': is_past_date,
+        'is_upcoming_movie': is_upcoming_movie,
+        'movie_release_date': movie.release_date,
     }
     return render(request, 'movies/theater_list.html', context)
 

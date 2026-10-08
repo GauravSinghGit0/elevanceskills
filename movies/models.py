@@ -376,6 +376,13 @@ class Movie(models.Model):
         self.total_reviews = stats['count'] or 0
         Movie.objects.filter(pk=self.pk).update(rating=self.rating, total_reviews=self.total_reviews)
 
+    @property
+    def is_upcoming(self) -> bool:
+        """Returns True if the movie has a future release date beyond today."""
+        if not self.release_date:
+            return False
+        return self.release_date > timezone.localdate()
+
     def __str__(self):
         return self.title or self.name
 

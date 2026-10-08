@@ -46,7 +46,12 @@
                         <span class="px-2.5 py-1 rounded bg-surface-container-high text-on-surface text-label-sm font-label-sm border border-outline-variant/30">
                             {{ movie.duration }} min
                         </span>
-                        {% if movie.release_date %}
+                        {% if movie.is_upcoming %}
+                        <span class="px-3 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-400/40 text-label-sm font-label-sm font-bold uppercase flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">calendar_month</span>
+                            Releasing {{ movie.release_date|date:"F d, Y" }}
+                        </span>
+                        {% elif movie.release_date %}
                         <span class="px-2.5 py-1 rounded bg-surface-container-high text-on-surface text-label-sm font-label-sm border border-outline-variant/30">
                             Released {{ movie.release_date|date:"F Y" }}
                         </span>
@@ -95,7 +100,7 @@
                         <a href="{% url 'theater_list' movie.id %}"
                            class="px-8 py-3.5 rounded-xl bg-primary-container hover:bg-inverse-primary text-on-primary-container font-label-lg text-label-lg font-bold glow-aura flex items-center gap-2 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95">
                             <span class="material-symbols-outlined text-base">local_activity</span>
-                            <span>Book Seats</span>
+                            <span>{% if movie.is_upcoming %}Advance Booking / Showtimes{% else %}Book Seats{% endif %}</span>
                         </a>
 
                         {% if movie.trailer_video_id %}

@@ -5,10 +5,10 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon_Cloud-336791.svg?logo=postgresql)](https://neon.tech)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.x-38B2AC.svg?logo=tailwind-css)](https://tailwindcss.com)
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel_Ready-black.svg?logo=vercel)](https://vercel.com)
-[![Tests](https://img.shields.io/badge/Tests-141%20Passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-159%20Passing-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)]()
 
-> A full-stack, enterprise-grade cinema booking platform inspired by **BookMyShow** and **AMC Theatres**. Cineva delivers an immersive, dark-mode cinema experience with real-time seat locks, multi-tier auditorium layouts, gourmet food court ordering, authentic scannable UPI QR code simulation, automated PDF ticket passes, and asynchronous email confirmations.
+> A full-stack, enterprise-grade cinema booking platform inspired by **BookMyShow** and **AMC Theatres**. Cineva delivers an immersive, dark-mode cinema experience with real-time seat locks, multi-tier auditorium layouts, diverse theater types (Big Superplexes, Small Boutique Lounges, Drive-Ins, Rooftops), Hollywood, Anime, Bollywood, and Upcoming movie schedules, authentic UPI QR payments, and automated PDF tickets.
 
 ---
 
@@ -29,15 +29,22 @@
 
 ## ✨ Key Features
 
-- **🎬 Real Cinema Repertory**: 19 pre-populated box office movies with high-resolution posters, certifications (`UA`, `U`, `A`), ratings, runtimes, and embedded YouTube trailer modals.
-- **🏛️ Multi-Theater Network**: 8 flagship theaters and 16 screens across major cities (Mumbai, Delhi, Bengaluru, Hyderabad) with 97 scheduled showtimes.
-- **💺 Dynamic Multi-Tier Seating Map**: 1,315 auditorium seats spanning 5 distinct tiers:
-  - 🛋️ **Recliner VIP Lounge** (₹350.00)
-  - ⭐ **Premium Prime** (₹250.00)
-  - 🎟️ **Executive Club** (₹200.00)
-  - 💺 **Silver Plus** (₹160.00)
-  - 🍿 **Classic D-Cinema** (₹120.00)
-- **⏱️ High-Concurrency 2-Minute Lock**: When a patron selects a seat, an atomic database lock (`select_for_update`) holds the seat for 120 seconds. If payment is not finalized within 2 minutes, seats are automatically released for other users.
+- **🎬 Expanded Cinema Repertory**: 36 curated movies spanning:
+  - 🇺🇸 **Hollywood**: *Gladiator II*, *Deadpool & Wolverine*, *Dune: Part Two*, *Interstellar (10th Anniversary IMAX)*, *The Dark Knight*, *Oppenheimer*.
+  - 🇯🇵 **Anime**: *Demon Slayer: Kimetsu no Yaiba - Infinity Castle*, *Suzume*, *Your Name (Kimi no Na wa)*, *Jujutsu Kaisen 0*, *Spirited Away (Ghibli 4K)*.
+  - 🇮🇳 **Bollywood**: *Jawan*, *Stree 2: Sarkate Ka Aatank*, *Kalki 2898 AD*, *12th Fail*, *Fighter*.
+  - 📅 **Upcoming in Theaters (With Release Dates & Advance Booking)**:
+    - *Spider-Man: Beyond the Spider-Verse* (Releasing Oct 30, 2026)
+    - *War 2* (Releasing Nov 14, 2026 — Diwali)
+    - *Chainsaw Man – The Movie: Reze Arc* (Releasing Nov 20, 2026)
+    - *Avatar: Fire and Ash* (Releasing Dec 18, 2026)
+    - *Avengers: Secret Wars* (Releasing May 7, 2027)
+- **🏛️ Diverse Theater Network (Big, Small & Unique Concepts)**: 19 active theaters and screens:
+  - 🏢 **Big Theaters / Mega Multiplexes**: *PVR Superplex IMAX Laser & 4DX* (Mumbai, 4 screens), *INOX Megaplex & Luxe Club* (Delhi NCR, 4 screens), *Cinepolis Grand Megaplex* (Bengaluru).
+  - 🛋️ **Small Theaters / Boutique & Indie**: *The Velvet Screen Boutique & Indie Lounge* (Bengaluru, 36 private recliners), *Regal Heritage Single-Screen Cinema* (Mumbai, 140 vintage seats), *Little Star Kids & Family Playhouse* (Delhi NCR, 48 beanbag loungers), *Criterion Arthouse & Vault Cinema* (Kolkata, 52 seats).
+  - 🌴 **Every Type / Unique Concepts**: *Sunset Open-Air & Drive-In Cinema* (Goa Coast, Car FM 98.4 & deck loungers), *Gold Class VIP Luxury Cinema* (Mumbai Bandra, heated electric recliners), *CineMotion 4DX Dynamic Sensations* (Pune), *Skyline Rooftop Starlight Cinema* (Bengaluru 13th Floor, silent wireless Hi-Fi).
+- **💺 Dynamic Multi-Tier Seating Map**: Over 3,100 auditorium seats spanning 5 distinct tiers (Recliner VIP, Balcony Gold, Gold Club, Silver Plus, Classic Silver) with multi-row selection.
+- **⏱️ 10-Minute Booking Cut-Off & Instant 100% Refunds**: Past showtimes and shows starting within 10 minutes are locked automatically against late bookings. Confirmed tickets before cutoff are 100% refundable with 1-click instant cancellation and seat freeing.
 - **🍿 Gourmet Food Court Concessions**: Interactive menu with categories (Popcorn, Combos, Snacks, Beverages) and live cart calculation with a 10% multiplex convenience fee.
 - **📱 100% Real Scannable UPI / QR Code**: Encodes standard UPI specification (`upi://pay?pa=cinevatickets@okaxis&pn=CinevaCinema&am=...`). Instantly recognized by Google Pay, PhonePe, Paytm, BHIM, and phone cameras.
 - **⚡ 1-Click Instant Test Sandbox**: One-click simulation button to verify payment, confirm bookings, generate PDF tickets, and dispatch confirmation emails instantly.

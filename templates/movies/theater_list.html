@@ -37,6 +37,12 @@
                     <!-- Movie Info -->
                     <div class="space-y-2">
                         <div class="flex flex-wrap items-center gap-2">
+                            {% if movie.is_upcoming %}
+                            <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 text-label-sm font-label-sm font-bold uppercase flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">calendar_month</span>
+                                In Theaters {{ movie.release_date|date:"M d, Y" }}
+                            </span>
+                            {% endif %}
                             {% if movie.age_certification %}
                             <span class="px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container text-label-sm font-label-sm font-bold uppercase">
                                 {{ movie.age_certification }}
@@ -89,6 +95,29 @@
             </div>
         </div>
 
+        <!-- Upcoming Premiere Notice Banner -->
+        {% if is_upcoming_movie %}
+        <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-primary-container/20 via-surface-container to-secondary-container/15 border border-primary/40 text-on-surface flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+            <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 glow-aura">
+                    <span class="material-symbols-outlined text-xl">event_available</span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-primary-container/40 text-primary border border-primary/40">Advance Booking Open</span>
+                        <p class="font-bold text-sm text-on-surface">Releases on {{ movie_release_date|date:"l, F d, Y" }}</p>
+                    </div>
+                    <p class="text-xs text-on-surface-variant/90 mt-0.5">Explore opening week schedules below and secure your premiere seats before auditoriums sell out.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/30 text-secondary">
+                    🌟 Premiere Week Schedule
+                </span>
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Past Date Notice Banner if viewing previous dates -->
         {% if is_past_date %}
         <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
@@ -113,7 +142,9 @@
                     <span class="material-symbols-outlined text-sm text-primary">calendar_month</span>
                     <span>Select Screening Date</span>
                 </span>
-                <span class="text-label-sm font-label-sm text-on-surface-variant/70">Showing next 7 days</span>
+                <span class="text-label-sm font-label-sm text-on-surface-variant/70">
+                    {% if is_upcoming_movie %}Showing Premiere &amp; Opening Week{% else %}Showing next 7 days{% endif %}
+                </span>
             </div>
 
             <div class="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-subtle">

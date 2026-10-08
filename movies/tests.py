@@ -3098,10 +3098,170 @@ class RefundProcessTests(TestCase):
         self.assertContains(response, 'TICKET VOIDED &bull; BOOKING REFUNDED')
 
 
+class ExpandedCatalogAndUpcomingMoviesTests(TestCase):
+    """
+    Validates diverse movie categories (Anime, Hollywood, Bollywood),
+    upcoming movies in theaters with dates, diverse theater types, and catalog management commands.
+    """
 
+    def setUp(self):
+        self.client = Client()
+        today = timezone.localdate()
 
+        self.lang_en = Language.objects.create(name='English', code='en')
+        self.lang_hi = Language.objects.create(name='Hindi', code='hi')
+        self.lang_ja = Language.objects.create(name='Japanese', code='ja')
 
+        self.genre_anime = Genre.objects.create(name='Anime', slug='anime')
+        self.genre_action = Genre.objects.create(name='Action', slug='action')
+        self.genre_scifi = Genre.objects.create(name='Sci-Fi', slug='sci-fi')
 
+        # Running Hollywood Movie
+        self.movie_now = Movie.objects.create(
+            title='Gladiator II',
+            release_date=today - timedelta(days=10),
+            duration=148,
+            language=self.lang_en,
+            is_active=True
+        )
+        self.movie_now.genres.add(self.genre_action)
 
+        # Running Anime Movie
+        self.movie_anime = Movie.objects.create(
+            title='Demon Slayer: Infinity Castle',
+            release_date=today - timedelta(days=5),
+            duration=115,
+            language=self.lang_ja,
+            is_active=True
+        )
+        self.movie_anime.genres.add(self.genre_anime)
 
+        # Running Bollywood Movie
+        self.movie_bolly = Movie.objects.create(
+            title='Jawan',
+            release_date=today - timedelta(days=30),
+            duration=169,
+            language=self.lang_hi,
+            is_active=True
+        )
+        self.movie_bolly.genres.add(self.genre_action)
 
+        # Upcoming Movie with future release date
+        self.movie_upcoming = Movie.objects.create(
+            title='Avatar: Fire and Ash',
+            release_date=today + timedelta(days=60),
+            duration=190,
+            language=self.lang_en,
+            is_active=True
+        )
+        self.movie_upcoming.genres.add(self.genre_scifi)
+
+        # Big Theater (IMAX Superplex)
+        self.theater_big = Theater.objects.create(
+            name='PVR Superplex IMAX Laser & 4DX',
+            city='Mumbai',
+            address='Phoenix Mall, Lower Parel',
+            is_active=True
+        )
+        self.screen_imax = Screen.objects.create(
+            theater=self.theater_big,
+            name='Audi 1 (IMAX Laser)',
+            screen_type='IMAX',
+            seating_capacity=280
+        )
+
+        # Small Theater (Boutique Lounge)
+        self.theater_small = Theater.objects.create(
+            name='The Velvet Screen Boutique & Indie Lounge',
+            city='Bengaluru',
+            address='100 Feet Road, Indiranagar',
+            is_active=True
+        )
+        self.screen_boutique = Screen.objects.create(
+            theater=self.theater_small,
+            name='The Velvet Salon',
+            screen_type='Dolby Atmos',
+            seating_capacity=36
+        )
+
+        # Unique Theater (Drive-In)
+        self.theater_drivein = Theater.objects.create(
+            name='Sunset Open-Air & Drive-In Cinema',
+            city='Goa',
+            address='Vagator Cliffside',
+            is_active=True
+        )
+        self.screen_drivein = Screen.objects.create(
+            theater=self.theater_drivein,
+            name='Cliffside Screen (FM 98.4)',
+            screen_type='2D',
+            seating_capacity=60
+        )
+
+    def test_movie_is_upcoming_property(self):
+        """Movie.is_upcoming returns True for future dates and False for current/past dates."""
+        self.assertFalse(self.movie_now.is_upcoming)
+        self.assertFalse(self.movie_anime.is_upcoming)
+        self.assertFalse(self.movie_bolly.is_upcoming)
+        self.assertTrue(self.movie_upcoming.is_upcoming)
+
+    def test_theater_list_view_upcoming_movie_release_date_handling(self):
+        """theater_list view defaults date selection to release_date for upcoming movies."""
+        response = self.client.get(reverse('theater_list', args=[self.movie_upcoming.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['is_upcoming_movie'])
+        self.assertEqual(response.context['selected_date'], self.movie_upcoming.release_date.strftime('%Y-%m-%d'))
+        self.assertContains(response, 'Advance Booking Open')
+        self.assertContains(response, 'Premiere')
+
+    def test_home_view_categorization_and_theaters_context(self):
+        """Home view splits movies into now_showing, upcoming, hollywood, bollywood, anime and provides theaters."""
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('now_showing_movies', response.context)
+        self.assertIn('upcoming_movies', response.context)
+        self.assertIn('hollywood_movies', response.context)
+        self.assertIn('bollywood_movies', response.context)
+        self.assertIn('anime_movies', response.context)
+        self.assertIn('theaters', response.context)
+
+        upcoming_ids = [m.id for m in response.context['upcoming_movies']]
+        self.assertIn(self.movie_upcoming.id, upcoming_ids)
+        self.assertNotIn(self.movie_now.id, upcoming_ids)
+
+        now_ids = [m.id for m in response.context['now_showing_movies']]
+        self.assertIn(self.movie_now.id, now_ids)
+        self.assertIn(self.movie_anime.id, now_ids)
+        self.assertIn(self.movie_bolly.id, now_ids)
+
+    def test_theater_seating_layout_and_types(self):
+        """Theaters of varying types (Big, Small, Drive-in) generate appropriate seating capacity and layouts."""
+        TheaterSeatingService.ensure_full_theater_layout(self.theater_big, min_seats=50)
+        TheaterSeatingService.ensure_full_theater_layout(self.theater_small, min_seats=30)
+        TheaterSeatingService.ensure_full_theater_layout(self.theater_drivein, min_seats=30)
+
+        self.assertGreaterEqual(self.theater_big.seats.count(), 50)
+        self.assertGreaterEqual(self.theater_small.seats.count(), 30)
+        self.assertGreaterEqual(self.theater_drivein.seats.count(), 30)
+
+    def test_populate_expanded_catalog_command(self):
+        """populate_expanded_catalog command runs cleanly and ensures all categories and theaters are created."""
+        from django.core.management import call_command
+        call_command('populate_expanded_catalog')
+
+        # Verify diverse movies exist
+        self.assertTrue(Movie.objects.filter(language__code='ja').exists(), "Anime movies must exist")
+        self.assertTrue(Movie.objects.filter(language__code='hi').exists(), "Bollywood movies must exist")
+        self.assertTrue(Movie.objects.filter(language__code='en').exists(), "Hollywood movies must exist")
+        self.assertTrue(Movie.objects.filter(release_date__gt=timezone.localdate()).exists(), "Upcoming movies must exist")
+
+        # Verify diverse theaters exist
+        self.assertTrue(Theater.objects.filter(name__icontains='PVR Superplex').exists(), "Big Superplex must exist")
+        self.assertTrue(Theater.objects.filter(name__icontains='Velvet Screen').exists(), "Boutique theater must exist")
+        self.assertTrue(Theater.objects.filter(name__icontains='Drive-In').exists(), "Drive-in cinema must exist")
+        self.assertTrue(Theater.objects.filter(name__icontains='Rooftop').exists(), "Rooftop cinema must exist")
+
+        # Verify shows exist for upcoming movies
+        upcoming_movie = Movie.objects.filter(release_date__gt=timezone.localdate()).first()
+        self.assertIsNotNone(upcoming_movie)
+        self.assertTrue(upcoming_movie.shows.exists(), "Upcoming movies must have scheduled shows in theaters")

@@ -300,9 +300,13 @@
             </div>
 
             <!-- Navigation Links -->
-            <nav class="hidden md:flex items-center gap-8">
+            <nav class="hidden md:flex items-center gap-6">
                 <a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary hover:bg-surface-container-high/40 px-3 py-1.5 rounded transition-colors" href="{% url 'home' %}">Home</a>
                 <a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary hover:bg-surface-container-high/40 px-3 py-1.5 rounded transition-colors" href="{% url 'movie_list' %}">Explore Movies</a>
+                <a class="text-amber-400 font-label-lg text-label-lg hover:text-amber-300 hover:bg-surface-container-high/40 px-3 py-1.5 rounded transition-colors flex items-center gap-1.5" href="{% url 'movie_list' %}?release_date=upcoming">
+                    <span class="material-symbols-outlined text-sm">calendar_month</span>
+                    <span>Upcoming Releases</span>
+                </a>
 
                 {% if user.is_authenticated and user.is_staff or user.is_authenticated and user.is_superuser %}
                 <a class="text-secondary font-label-lg text-label-lg hover:text-primary flex items-center gap-1 px-3 py-1.5 rounded bg-surface-container-high/40 border border-secondary/30 transition-colors" href="{% url 'movie_admin_dashboard' %}">
@@ -377,6 +381,10 @@
             <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-on-surface hover:text-primary hover:bg-surface-container font-label-lg" href="{% url 'movie_list' %}">
                 <span class="material-symbols-outlined text-xl text-primary">movie</span>
                 <span>Explore Movies</span>
+            </a>
+            <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-amber-400 hover:text-amber-300 hover:bg-surface-container font-label-lg" href="{% url 'movie_list' %}?release_date=upcoming">
+                <span class="material-symbols-outlined text-xl text-amber-400">calendar_month</span>
+                <span>Upcoming in Theaters</span>
             </a>
             {% if user.is_authenticated and user.is_staff or user.is_authenticated and user.is_superuser %}
             <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-secondary hover:text-primary hover:bg-surface-container font-label-lg border border-secondary/20" href="{% url 'movie_admin_dashboard' %}">

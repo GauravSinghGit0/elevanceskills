@@ -151,6 +151,21 @@ G. 100% Instant Ticket Cancellation & Refund Workflow:
    - Telemetry tracks refunded transactions and revenue across analytics suite.
    - Voids admission passes and invalidates QR gate tokens immediately.
 
+H. Expanded Movie Catalog & Diverse Theater Ecosystem:
+   - 36 Total Movies spanning Hollywood, Anime, Bollywood, and Upcoming Releases.
+   - Upcoming Releases with explicit future release dates and advance booking:
+     * Spider-Man: Beyond the Spider-Verse (Oct 30, 2026)
+     * War 2 (Nov 14, 2026)
+     * Chainsaw Man – The Movie: Reze Arc (Nov 20, 2026)
+     * Avatar: Fire and Ash (Dec 18, 2026)
+     * Avengers: Secret Wars (May 7, 2027)
+   - 19 Diverse Theaters covering every format:
+     * Big / Mega: PVR Superplex IMAX Laser & 4DX, INOX Megaplex & Luxe Club, Cinepolis Grand Megaplex.
+     * Small / Boutique: The Velvet Screen Boutique (36 seats), Regal Heritage Single-Screen (140 seats), Little Star Playhouse (48 seats), Criterion Arthouse (52 seats).
+     * Unique / Every Type: Sunset Open-Air & Drive-In (Goa Coast, FM 98.4), Gold Class VIP Luxury (Bandra, heated recliners), CineMotion 4DX (Pune), Skyline Rooftop Starlight (Bengaluru, silent Hi-Fi).
+   - Dynamic schedule management command: python manage.py populate_expanded_catalog.
+   - 159 automated unit tests verifying all core workflows, edge cases, and catalog features.
+
 
 5. DATABASE SCHEMA & DATA MODEL DETAILS
 --------------------------------------------------------------------------------

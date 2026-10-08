@@ -18,7 +18,16 @@
 
         <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
 
-        <!-- Rating Pill Top-Left -->
+        <!-- Rating Pill / Upcoming Pill Top-Left -->
+        {% if movie.is_upcoming %}
+        <div class="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 text-label-sm font-label-sm font-bold shadow-md">
+            <span class="material-symbols-outlined text-[13px]">calendar_month</span>
+            <span>{{ movie.release_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-[10px] font-bold uppercase tracking-wider shadow">
+            UPCOMING
+        </div>
+        {% else %}
         <div class="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md border border-outline-variant/30 text-secondary text-label-sm font-label-sm font-bold shadow-sm">
             <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
             <span>{{ movie.rating|floatformat:1 }}</span>
@@ -26,12 +35,12 @@
             <span class="text-on-surface-variant/60 font-normal">({{ movie.total_reviews }})</span>
             {% endif %}
         </div>
-
         <!-- Age Certification Badge Top-Right -->
         {% if movie.age_certification %}
         <div class="absolute top-3 right-3 px-2 py-0.5 rounded bg-surface-container-lowest/80 backdrop-blur-md border border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm font-mono shadow-sm">
             {{ movie.age_certification }}
         </div>
+        {% endif %}
         {% endif %}
 
         <!-- Play Trailer Button Hover Overlay (if trailer available) -->
@@ -67,6 +76,13 @@
                 </a>
             </h3>
 
+            {% if movie.is_upcoming %}
+            <div class="flex items-center gap-1 text-[11px] font-semibold text-amber-400 mt-1">
+                <span class="material-symbols-outlined text-xs">event</span>
+                <span>In Theaters: {{ movie.release_date|date:"F d, Y" }}</span>
+            </div>
+            {% endif %}
+
             <!-- Genres Pills -->
             <div class="flex flex-wrap gap-1 mt-2">
                 {% for genre in movie.genres.all|slice:":3" %}
@@ -87,11 +103,20 @@
 
         <!-- Action Row -->
         <div class="pt-3 border-t border-outline-variant/15 flex items-center justify-between gap-2">
+            {% if movie.is_upcoming %}
+            <a
+                href="{% url 'theater_list' movie.id %}"
+                class="flex-1 py-2 px-3 rounded-xl bg-primary-container hover:bg-inverse-primary text-on-primary-container text-label-md font-label-md font-bold text-center transition-all duration-200 btn-interactive shadow-sm flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">confirmation_number</span>
+                <span>Advance Booking</span>
+            </a>
+            {% else %}
             <a
                 href="{% url 'movie_detail' movie.slug %}"
                 class="flex-1 py-2 px-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface hover:text-primary text-label-md font-label-md font-semibold text-center transition-all duration-200 btn-interactive">
                 Details &amp; Reviews
             </a>
+            {% endif %}
 
             {% if movie.get_youtube_video_id %}
             <button
