@@ -118,11 +118,11 @@
                         <span>•</span>
                         <span class="flex items-center gap-1">
                             <span class="material-symbols-outlined text-sm">calendar_month</span>
-                            {% if theater.time %}{{ theater.time|date:"D, M d" }}{% else %}Today{% endif %}
+                            {% if show %}{{ show.start_time|date:"D, M d" }}{% elif theater.time %}{{ theater.time|date:"D, M d" }}{% else %}Today{% endif %}
                         </span>
                         <span>•</span>
                         <span class="text-primary font-bold">
-                            {% if theater.time %}{{ theater.time|date:"h:i A" }}{% else %}07:15 PM{% endif %}
+                            {% if show %}{{ show.start_time|date:"h:i A" }}{% elif theater.time %}{{ theater.time|date:"h:i A" }}{% else %}07:15 PM{% endif %}
                         </span>
                     </div>
                 </div>
@@ -152,6 +152,23 @@
         </div>
     </section>
 
+    <!-- Closed Show Warning Banner -->
+    {% if is_show_closed %}
+    <div class="p-5 rounded-2xl bg-error-container/30 border border-error text-error flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+        <div class="flex items-center gap-3.5">
+            <span class="material-symbols-outlined text-3xl flex-shrink-0 text-error">lock_clock</span>
+            <div>
+                <h3 class="font-bold text-title-md">Ticket Booking Closed for this Screening</h3>
+                <p class="text-body-sm text-on-surface-variant mt-0.5">{{ closed_reason|default:"Online booking closes 10 minutes prior to showtime." }}</p>
+            </div>
+        </div>
+        <a href="{% url 'theater_list' theater.movie.id %}" class="px-5 py-2.5 rounded-xl bg-error text-on-error font-label-md font-bold hover:opacity-90 transition-opacity flex items-center gap-2 flex-shrink-0 shadow-md">
+            <span class="material-symbols-outlined text-base">calendar_month</span>
+            <span>Choose Upcoming Show</span>
+        </a>
+    </div>
+    {% endif %}
+
     <!-- Error Alert if validation fails -->
     {% if error %}
     <div class="p-4 rounded-xl bg-error-container/30 border border-error text-error text-body-sm flex items-center gap-3 shadow-lg">
@@ -161,8 +178,11 @@
     {% endif %}
 
     <!-- Booking Form Container -->
-    <form method="POST" id="seat-booking-form" action="{% url 'book_seats' theater.id %}">
+    <form method="POST" id="seat-booking-form" action="{% url 'book_seats' theater.id %}{% if show %}?show_id={{ show.id }}{% endif %}">
         {% csrf_token %}
+        {% if show %}
+        <input type="hidden" name="show_id" value="{{ show.id }}" />
+        {% endif %}
 
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
 
@@ -763,6 +783,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const theaterId = "{{ theater.id }}";
     const csrfToken = "{{ csrf_token }}";
+    const showId = "{{ show.id|default:'' }}";
+    const isShowClosed = {% if is_show_closed %}true{% else %}false{% endif %};
 
     const rawSeatsData = document.querySelectorAll('#raw-seats-data > div');
     const addonPopcorn = document.getElementById('addon-popcorn');
@@ -775,6 +797,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('book-submit-btn');
     const btnText = document.getElementById('btn-text');
     const timerElem = document.getElementById('countdown-timer');
+
+    if (isShowClosed) {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+        }
+        if (btnText) {
+            btnText.textContent = "Booking Closed (10m Cut-off)";
+        }
+    }
 
     // Selected seats tracking: Map of seatId -> { id, number, row, col, tier, tierName, price }
     const mySelectedSeats = new Map();
@@ -1054,6 +1086,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 3. Handle Seat Click with Instant Backend Hold (Concurrency Protection & 2-Minute Lock)
     async function handleSeatClick(seat, label, checkbox) {
+        if (isShowClosed) {
+            showToast("Booking for this show is closed (10-minute cut-off).", "error");
+            return;
+        }
+
         if (label.classList.contains('is-held-by-other') || label.classList.contains('is-sold')) {
             showToast(`Seat ${seat.number} is currently reserved by another customer.`, 'warning');
             return;
@@ -1070,7 +1107,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken,
                 },
-                body: JSON.stringify({ seat_id: seat.id, action: action })
+                body: JSON.stringify({
+                    seat_id: seat.id,
+                    action: action,
+                    show_id: showId ? parseInt(showId) : null
+                })
             });
             const data = await resp.json();
 
@@ -1599,7 +1640,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     seats: Array.from(mySelectedSeats.keys()),
                     payment_method: methodName,
                     food_total: snackTotal,
-                    addon_popcorn: snackTotal > 0
+                    addon_popcorn: snackTotal > 0,
+                    show_id: showId ? parseInt(showId) : null
                 })
             });
 
@@ -1675,7 +1717,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         seats: Array.from(mySelectedSeats.keys()),
                         payment_method: paymentMethod,
                         food_total: snackTotal,
-                        addon_popcorn: snackTotal > 0
+                        addon_popcorn: snackTotal > 0,
+                        show_id: showId ? parseInt(showId) : null
                     })
                 });
 

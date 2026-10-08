@@ -58,6 +58,8 @@ def profile(request):
     total_spent = sum(p.amount for p in payments if p.status == 'SUCCESS')
     successful_payments_count = sum(1 for p in payments if p.status == 'SUCCESS')
     pending_payments_count = sum(1 for p in payments if p.status == 'PENDING')
+    refunded_count = sum(1 for p in payments if p.status == 'REFUNDED')
+    refunded_amount = sum(p.amount for p in payments if p.status == 'REFUNDED')
 
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
@@ -74,6 +76,8 @@ def profile(request):
         'total_spent': total_spent,
         'successful_payments_count': successful_payments_count,
         'pending_payments_count': pending_payments_count,
+        'refunded_count': refunded_count,
+        'refunded_amount': refunded_amount,
     }
     return render(request, 'users/profile.html', context)
 

@@ -24,7 +24,7 @@ from .models import (
 )
 from .services import (
     ReviewEligibilityService, MovieQueryService, SeatLockService, TheaterSeatingService,
-    PaymentGatewayService, BusinessAnalyticsService, MovieDiscoveryService
+    PaymentGatewayService, BusinessAnalyticsService, MovieDiscoveryService, RefundService
 )
 from .ticket_service import TicketGeneratorService
 from .tasks import send_booking_ticket_email_task, dispatch_booking_ticket_email
@@ -58,7 +58,7 @@ class MovieAppTests(TestCase):
         self.theater = Theater.objects.create(
             name='IMAX Downtown',
             movie=self.movie,
-            time=timezone.now()
+            time=timezone.now() + timedelta(hours=3)
         )
         self.seat1 = Seat.objects.create(theater=self.theater, seat_number='A1', is_booked=False)
         self.seat2 = Seat.objects.create(theater=self.theater, seat_number='A2', is_booked=False)
@@ -2817,6 +2817,286 @@ class TicketGenerationAndEmailTests(TestCase):
         res_invalid = self.client.get(reverse('verify_ticket', args=[self.booking.id]), {'token': 'bad_token'})
         self.assertEqual(res_invalid.status_code, 200)
         self.assertContains(res_invalid, 'INVALID / UNVERIFIED TICKET')
+
+
+# ======================================================================
+# Task: 10-Minute Cut-Off & Past Show Booking Restrictions
+# ======================================================================
+
+class ShowCutoffAndPastSlotTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='cutoff_user', password='password123', email='cutoff@test.com')
+        self.movie = Movie.objects.create(
+            name='Avatar: Way of Water',
+            title='Avatar: Way of Water',
+            slug='avatar-way-of-water',
+            duration=192,
+            is_active=True
+        )
+        self.theater = Theater.objects.create(
+            name='PVR Gold Class',
+            movie=self.movie,
+            city='Mumbai',
+            is_active=True
+        )
+        self.screen = Screen.objects.create(
+            theater=self.theater,
+            name='Screen 1 (IMAX)',
+            screen_type='IMAX',
+            seating_capacity=100
+        )
+        now = timezone.now()
+        # 1. Past show (started 1 hour ago)
+        self.show_past = ShowSchedule.objects.create(
+            movie=self.movie,
+            theater=self.theater,
+            screen=self.screen,
+            start_time=now - timedelta(hours=1),
+            price=Decimal('250.00'),
+            status='open'
+        )
+        # 2. Show within 10-minute cutoff (starts in 5 minutes)
+        self.show_cutoff = ShowSchedule.objects.create(
+            movie=self.movie,
+            theater=self.theater,
+            screen=self.screen,
+            start_time=now + timedelta(minutes=5),
+            price=Decimal('250.00'),
+            status='open'
+        )
+        # 3. Upcoming valid show (starts in 3 hours)
+        self.show_future = ShowSchedule.objects.create(
+            movie=self.movie,
+            theater=self.theater,
+            screen=self.screen,
+            start_time=now + timedelta(hours=3),
+            price=Decimal('250.00'),
+            status='open'
+        )
+        self.seat = Seat.objects.create(theater=self.theater, seat_number='C5', price=Decimal('250.00'), is_booked=False)
+
+    def test_show_schedule_properties(self):
+        """Tests is_past, is_within_cutoff, and is_booking_open properties."""
+        # Past show
+        self.assertTrue(self.show_past.is_past)
+        self.assertTrue(self.show_past.is_within_cutoff)
+        self.assertFalse(self.show_past.is_booking_open)
+        self.assertTrue(self.show_past.is_closed)
+
+        # Show starting in 5 minutes (within 10m cutoff)
+        self.assertFalse(self.show_cutoff.is_past)
+        self.assertTrue(self.show_cutoff.is_within_cutoff)
+        self.assertFalse(self.show_cutoff.is_booking_open)
+        self.assertTrue(self.show_cutoff.is_closed)
+        self.assertEqual(self.show_cutoff.booking_status_label, 'Closed')
+
+        # Upcoming show (3 hours away)
+        self.assertFalse(self.show_future.is_past)
+        self.assertFalse(self.show_future.is_within_cutoff)
+        self.assertTrue(self.show_future.is_booking_open)
+        self.assertFalse(self.show_future.is_closed)
+
+    def test_theater_list_displays_closed_slots(self):
+        """Verifies theater list displays closed indicator for past or cutoff slots."""
+        response = self.client.get(reverse('theater_list', args=[self.movie.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Closed')
+
+    def test_book_seats_rejects_closed_show(self):
+        """Seat selection submission is blocked if show is within 10m cutoff or past."""
+        self.client.login(username='cutoff_user', password='password123')
+        # Attempt booking show within cutoff
+        response = self.client.post(
+            reverse('book_seats', args=[self.theater.id]) + f"?show_id={self.show_cutoff.id}",
+            {'seats': [self.seat.id]}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'closed')
+        self.seat.refresh_from_db()
+        self.assertFalse(self.seat.is_booked)
+
+    def test_toggle_seat_lock_blocks_closed_show(self):
+        """Seat lock AJAX endpoint returns 400 for show within cutoff."""
+        self.client.login(username='cutoff_user', password='password123')
+        response = self.client.post(
+            reverse('toggle_seat_lock', args=[self.theater.id]),
+            {'seat_id': self.seat.id, 'action': 'lock', 'show_id': self.show_cutoff.id}
+        )
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertFalse(data['success'])
+        self.assertIn('closed', data['message'].lower())
+
+    def test_create_order_blocks_closed_show(self):
+        """Payment order creation is rejected for show within cutoff."""
+        session = self.client.session
+        session.save()
+        success, msg, order_data = PaymentGatewayService.create_payment_order(
+            theater=self.theater,
+            seat_ids=[self.seat.id],
+            user=self.user,
+            session_key=session.session_key,
+            show_id=self.show_cutoff.id
+        )
+        self.assertFalse(success)
+        self.assertIn('closed', msg.lower())
+
+
+# ======================================================================
+# Task: Ticket Cancellation & Refund Process Tests
+# ======================================================================
+
+class RefundProcessTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='refund_user', password='password123', email='refund@test.com')
+        self.other_user = User.objects.create_user(username='other_customer', password='password123', email='other@test.com')
+        self.admin_user = User.objects.create_superuser(username='refund_admin', password='password123', email='admin@test.com')
+
+        self.movie = Movie.objects.create(
+            name='Interstellar IMAX',
+            title='Interstellar IMAX',
+            slug='interstellar-imax',
+            duration=169,
+            is_active=True
+        )
+        self.theater = Theater.objects.create(
+            name='Cinepolis Grand',
+            movie=self.movie,
+            city='Delhi',
+            is_active=True
+        )
+        self.screen = Screen.objects.create(
+            theater=self.theater,
+            name='Audi 1',
+            screen_type='IMAX',
+            seating_capacity=80
+        )
+        now = timezone.now()
+        # Future show (starts in 4 hours, well ahead of 10m cutoff)
+        self.show_future = ShowSchedule.objects.create(
+            movie=self.movie,
+            theater=self.theater,
+            screen=self.screen,
+            start_time=now + timedelta(hours=4),
+            price=Decimal('200.00'),
+            status='open'
+        )
+        # Near show (starts in 5 minutes, inside 10m cutoff)
+        self.show_cutoff = ShowSchedule.objects.create(
+            movie=self.movie,
+            theater=self.theater,
+            screen=self.screen,
+            start_time=now + timedelta(minutes=5),
+            price=Decimal('200.00'),
+            status='open'
+        )
+        self.seat1 = Seat.objects.create(theater=self.theater, seat_number='D1', price=Decimal('200.00'), is_booked=True)
+        self.seat2 = Seat.objects.create(theater=self.theater, seat_number='D2', price=Decimal('200.00'), is_booked=True)
+
+        self.payment = Payment.objects.create(
+            order_id='ord_refund_test_123',
+            transaction_id='txn_direct_refund_123',
+            gateway='RAZORPAY',
+            status='SUCCESS',
+            user=self.user,
+            movie=self.movie,
+            theater=self.theater,
+            show=self.show_future,
+            amount=Decimal('440.00'),
+            seat_ids=[self.seat1.id, self.seat2.id],
+            seat_numbers='D1, D2'
+        )
+        self.b1 = Booking.objects.create(user=self.user, seat=self.seat1, movie=self.movie, theater=self.theater, show=self.show_future, payment=self.payment)
+        self.b2 = Booking.objects.create(user=self.user, seat=self.seat2, movie=self.movie, theater=self.theater, show=self.show_future, payment=self.payment)
+
+    def test_refund_eligibility_future_show(self):
+        """Confirmed booking on upcoming show is eligible for 100% refund."""
+        eligible, reason = RefundService.is_eligible_for_refund(self.payment, user=self.user)
+        self.assertTrue(eligible)
+
+    def test_refund_eligibility_cutoff_show(self):
+        """Show within 10 minutes of start time is ineligible for refund."""
+        self.payment.show = self.show_cutoff
+        self.payment.save()
+        eligible, reason = RefundService.is_eligible_for_refund(self.payment, user=self.user)
+        self.assertFalse(eligible)
+        self.assertIn('10 minutes', reason)
+
+    def test_refund_eligibility_unauthorized_user(self):
+        """User cannot refund another user's payment transaction."""
+        eligible, reason = RefundService.is_eligible_for_refund(self.payment, user=self.other_user)
+        self.assertFalse(eligible)
+        self.assertIn('permission', reason.lower())
+
+    def test_process_refund_success(self):
+        """Processing refund changes status to REFUNDED, frees seats, and removes bookings."""
+        self.assertTrue(self.seat1.is_booked)
+        self.assertTrue(self.seat2.is_booked)
+        self.assertEqual(Booking.objects.filter(payment=self.payment).count(), 2)
+
+        success, msg, payment = RefundService.process_refund(self.payment, user=self.user, reason="Schedule conflict")
+        self.assertTrue(success)
+        self.assertEqual(payment.status, 'REFUNDED')
+
+        # Seats must be freed
+        self.seat1.refresh_from_db()
+        self.seat2.refresh_from_db()
+        self.assertFalse(self.seat1.is_booked)
+        self.assertFalse(self.seat2.is_booked)
+
+        # Booking records must be removed
+        self.assertEqual(Booking.objects.filter(payment=self.payment).count(), 0)
+
+        # Second refund attempt must fail (already refunded)
+        self.payment.refresh_from_db()
+        success2, msg2, _ = RefundService.process_refund(self.payment, user=self.user)
+        self.assertFalse(success2)
+        self.assertIn('already been refunded', msg2)
+
+    def test_refund_view_get_confirmation(self):
+        """GET request on refund view renders confirmation page."""
+        self.client.login(username='refund_user', password='password123')
+        response = self.client.get(reverse('process_refund', args=[self.payment.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Cancel Booking &amp; Process Refund')
+        self.assertContains(response, 'Interstellar IMAX')
+
+    def test_refund_view_post_execution(self):
+        """POST request on refund view processes refund and redirects to profile."""
+        self.client.login(username='refund_user', password='password123')
+        response = self.client.post(
+            reverse('process_refund', args=[self.payment.id]),
+            {'reason': 'Booked wrong date'}
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], reverse('profile'))
+
+        self.payment.refresh_from_db()
+        self.assertEqual(self.payment.status, 'REFUNDED')
+
+    def test_download_ticket_blocked_after_refund(self):
+        """Ticket PDF download is blocked once payment has been refunded."""
+        self.client.login(username='refund_user', password='password123')
+        # Refund payment
+        RefundService.process_refund(self.payment, user=self.user)
+        # Attempt download
+        response = self.client.get(reverse('download_payment_tickets', args=[self.payment.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], reverse('profile'))
+
+    def test_verify_ticket_marks_refunded_void(self):
+        """QR gate verification indicates ticket is voided if refunded."""
+        # Create a single booking referencing a refunded payment
+        token = TicketGeneratorService.get_verification_token(self.b1.id, self.user.id, self.movie.id)
+        self.payment.status = 'REFUNDED'
+        self.payment.save()
+
+        response = self.client.get(reverse('verify_ticket', args=[self.b1.id]), {'token': token})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'TICKET VOIDED &bull; BOOKING REFUNDED')
+
 
 
 

@@ -1,0 +1,148 @@
+{% extends "users/basic.html" %}
+
+{% block title %}Cancellation &amp; Refund Request | Cineva{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-2xl mx-auto px-4 py-10">
+    <div class="bg-surface-container-low border border-outline-variant/25 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        <!-- Glow accent -->
+        <div class="absolute -top-24 -right-24 w-60 h-60 {% if eligible %}bg-amber-500/15{% else %}bg-rose-500/15{% endif %} rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Header -->
+        <div class="text-center pb-6 border-b border-outline-variant/20 flex flex-col items-center">
+            {% if eligible %}
+            <div class="w-20 h-20 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center mb-4 shadow-lg shadow-amber-500/10">
+                <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">currency_exchange</span>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-500/15 text-amber-400 font-label-md text-label-md font-bold border border-amber-500/30 mb-2">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                100% INSTANT REFUND ELIGIBLE
+            </span>
+            <h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">Cancel Booking &amp; Process Refund</h1>
+            <p class="text-body-sm text-on-surface-variant mt-1 max-w-md">
+                You are about to cancel your ticket reservation. All selected seats will be immediately released back to availability.
+            </p>
+            {% else %}
+            <div class="w-20 h-20 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center mb-4 shadow-lg shadow-rose-500/10">
+                <span class="material-symbols-outlined text-4xl">lock_clock</span>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-rose-500/15 text-rose-400 font-label-md text-label-md font-bold border border-rose-500/30 mb-2">
+                REFUND WINDOW CLOSED
+            </span>
+            <h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">Refund Unavailable</h1>
+            <p class="text-body-sm text-on-surface-variant mt-1 max-w-md">
+                {{ reason|default:"Online ticket cancellations and refunds strictly close 10 minutes prior to showtime." }}
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Reservation Details -->
+        <div class="py-6 flex flex-col gap-4">
+            <!-- Movie Banner Card -->
+            <div class="flex items-center gap-4 p-4 rounded-2xl bg-surface-container border border-outline-variant/20">
+                <img
+                    src="{{ payment.movie.get_primary_poster_url }}"
+                    alt="{{ payment.movie.title }}"
+                    class="w-16 h-22 object-cover rounded-xl shadow-md flex-shrink-0"
+                    onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=400&q=80'"
+                />
+                <div class="flex flex-col min-w-0">
+                    <span class="text-title-md font-title-md font-bold text-on-surface truncate">
+                        {{ payment.movie.title }}
+                    </span>
+                    <span class="text-label-sm text-primary font-semibold mt-0.5">
+                        {{ payment.movie.age_certification|default:"UA" }} &bull; {{ payment.movie.duration|default:"120" }} min
+                    </span>
+                    <span class="text-body-sm text-on-surface-variant mt-1 truncate">
+                        {{ payment.theater.name }} ({{ payment.theater.city }})
+                    </span>
+                </div>
+            </div>
+
+            <!-- Screening Details Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-body-sm">
+                <div class="p-3.5 rounded-xl bg-surface-container border border-outline-variant/15 flex flex-col">
+                    <span class="text-label-sm text-on-surface-variant">Seats Reserved</span>
+                    <span class="font-mono font-bold text-primary mt-0.5 text-title-sm">{{ payment.seat_numbers|default:"Confirmed Seats" }}</span>
+                </div>
+                <div class="p-3.5 rounded-xl bg-surface-container border border-outline-variant/15 flex flex-col">
+                    <span class="text-label-sm text-on-surface-variant">Refund Amount</span>
+                    <span class="font-mono font-bold text-emerald-400 mt-0.5 text-title-sm">₹{{ payment.amount|floatformat:2 }}</span>
+                </div>
+                <div class="p-3.5 rounded-xl bg-surface-container border border-outline-variant/15 flex flex-col">
+                    <span class="text-label-sm text-on-surface-variant">Screening Showtime</span>
+                    <span class="font-semibold text-on-surface mt-0.5">
+                        {% if payment.show %}
+                        {{ payment.show.start_time|date:"D, M d • h:i A" }}
+                        {% elif payment.theater.time %}
+                        {{ payment.theater.time|date:"D, M d • h:i A" }}
+                        {% else %}
+                        Standard Screening
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="p-3.5 rounded-xl bg-surface-container border border-outline-variant/15 flex flex-col">
+                    <span class="text-label-sm text-on-surface-variant">Order Reference</span>
+                    <span class="font-mono text-xs text-on-surface-variant mt-0.5 truncate">{{ payment.order_id }}</span>
+                </div>
+            </div>
+
+            <!-- 10-Minute Policy Notice -->
+            <div class="p-4 rounded-2xl bg-surface-container border border-outline-variant/20 flex items-start gap-3 text-xs text-on-surface-variant">
+                <span class="material-symbols-outlined text-primary text-xl flex-shrink-0">info</span>
+                <div>
+                    <strong class="text-on-surface font-semibold block mb-0.5">Cancellation &amp; Refund Policy:</strong>
+                    <span>
+                        Full 100% refund is credited back to your original payment method. Under multiplex regulations, online cancellations automatically close <strong>10 minutes prior to showtime</strong>. Once a screening has started or is within the 10-minute cutoff, no refund can be issued.
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Section -->
+        <div class="pt-4 border-t border-outline-variant/20">
+            {% if eligible %}
+            <form method="POST" action="{% url 'process_refund' payment.id %}" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label for="refundReason" class="block text-label-sm font-label-sm text-on-surface-variant mb-1.5">
+                        Reason for Cancellation (Optional)
+                    </label>
+                    <select id="refundReason" name="reason" class="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-3.5 py-2.5 text-body-sm text-on-surface focus:outline-none focus:border-primary">
+                        <option value="Schedule conflict / Change of plans">Schedule conflict / Change of plans</option>
+                        <option value="Booked incorrect showtime or date">Booked incorrect showtime or date</option>
+                        <option value="Selected incorrect seats">Selected incorrect seats</option>
+                        <option value="Personal emergency">Personal emergency</option>
+                        <option value="Other">Other reasons</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                    <button
+                        type="submit"
+                        onclick="return confirm('Are you sure you want to cancel this booking and initiate a 100% refund of ₹{{ payment.amount|floatformat:2 }}? Your seats will be released immediately.');"
+                        class="w-full sm:flex-1 py-3 px-5 rounded-xl bg-error hover:bg-error/90 text-on-error font-label-md text-label-md font-bold transition-all shadow-lg shadow-error/20 flex items-center justify-center gap-2 active:scale-95">
+                        <span class="material-symbols-outlined text-lg">check_circle</span>
+                        <span>Confirm Refund (₹{{ payment.amount|floatformat:2 }})</span>
+                    </button>
+                    <a
+                        href="{% url 'profile' %}"
+                        class="w-full sm:w-auto py-3 px-5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold transition-colors text-center border border-outline-variant/20">
+                        Keep My Ticket
+                    </a>
+                </div>
+            </form>
+            {% else %}
+            <div class="flex justify-center">
+                <a
+                    href="{% url 'profile' %}"
+                    class="py-3 px-6 rounded-xl bg-primary-container hover:bg-primary text-on-primary-container font-label-md text-label-md font-bold transition-all shadow-md flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">arrow_back</span>
+                    <span>Return to Profile</span>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

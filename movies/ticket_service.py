@@ -416,8 +416,8 @@ class TicketGeneratorService:
 
         p.setFont("Helvetica", 6.5)
         p.setFillColor(colors.HexColor('#4B5563'))
-        p.drawString(box_x + 65, footer_line_y - 12, "Tickets once booked cannot be exchanged, canceled or refunded. Please carry a valid photo ID along with")
-        p.drawString(box_x + 65, footer_line_y - 21, "this ticket. The QR code must be presented at the cinema entrance for contactless verification. All rights reserved.")
+        p.drawString(box_x + 65, footer_line_y - 12, "Cancellations and 100% refunds are permitted up to 10 minutes prior to showtime from your profile. Carry valid photo ID")
+        p.drawString(box_x + 65, footer_line_y - 21, "with this ticket. The QR code must be presented at the cinema entrance for contactless verification. All rights reserved.")
 
         # Sourced By Brand on right
         p.setFont("Helvetica", 7)

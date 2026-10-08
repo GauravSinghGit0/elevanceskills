@@ -135,8 +135,21 @@ E. Ticket Generation & Multi-Channel Delivery:
    - ReportLab PDF generator produces authentic admission passes with barcode,
      seat details, auditorium directions, terms of entry, and verification QR code.
    - Email Confirmation: Sends rich HTML emails with PDF ticket attachments
-     via Gmail SMTP (ownai63@gmail.com). Celery worker handles queueing with
-     an automatic daemon thread fallback for environments without Redis.
+     via Gmail SMTP. Celery worker handles queueing with an automatic daemon
+     thread fallback for environments without Redis.
+
+F. 10-Minute Show Cut-off & Past Showtime Enforcement:
+   - Online ticket booking strictly shuts down 10 minutes prior to show start time.
+   - Showtimes in the past or within the 10-minute cut-off are rendered locked
+     with strike-through labels and security badges.
+   - Comprehensive server-side protection blocks seat selection, AJAX locks,
+     and transaction checkout attempts for closed screenings.
+
+G. 100% Instant Ticket Cancellation & Refund Workflow:
+   - Self-service cancellation and refund directly from User Profile.
+   - Restores seat inventory atomically to ensure zero stale reservations.
+   - Telemetry tracks refunded transactions and revenue across analytics suite.
+   - Voids admission passes and invalidates QR gate tokens immediately.
 
 
 5. DATABASE SCHEMA & DATA MODEL DETAILS
@@ -180,19 +193,19 @@ The database schema comprises 13 interconnected models:
 --------------------------------------------------------------------------------
 The project contains an exhaustive automated test suite covering authentication,
 seat locking, payment gateways, idempotent booking finalization, PDF ticket
-generation, and Celery asynchronous tasks.
+generation, 10-minute cut-off restrictions, full refund workflows, and Celery asynchronous tasks.
 
 Test Command:
     python manage.py test
 
 Results:
 --------------------------------------------------------------------------------
-Total Tests Executed:     141
-Tests Passed:             141
+Total Tests Executed:     154
+Tests Passed:             154
 Failures:                 0
 Errors:                   0
 Code Coverage:            Full coverage across views, models, services, tasks.
-Verification Time:        ~45 seconds (In-Memory SQLite Runner)
+Verification Time:        ~57 seconds (In-Memory SQLite Runner)
 
 
 7. ENVIRONMENT VARIABLES DIRECTORY
@@ -203,19 +216,19 @@ Variable Name             Description / Configured Value
 --------------------------------------------------------------------------------
 SECRET_KEY                django-insecure-c8aetlj(=vp90n@#yoc^&d(_6ivp(d!bv...
 DEBUG                     False (Production) / True (Local Development)
-DATABASE_URL              postgresql://neondb_owner:npg_kTM5yC8eLrVS@...
+DATABASE_URL              postgresql://username:password@ep-xyz.neon.tech/neondb
 ADMIN_USERNAME            admin
 ADMIN_PASSWORD            Admin@Cineva#Secure2026!
 ADMIN_EMAIL               admin@cineva.film
 RAZORPAY_KEY_ID           rzp_test_TkuUcn0OX3jYly
-RAZORPAY_KEY_SECRET       jaZh3ffiiNPRPXVrPk6y0pvC
-RAZORPAY_WEBHOOK_SECRET   jaZh3ffiiNPRPXVrPk6y0pvC
+RAZORPAY_KEY_SECRET       your_razorpay_key_secret_here
+RAZORPAY_WEBHOOK_SECRET   your_razorpay_webhook_secret_here
 EMAIL_HOST                smtp.gmail.com
 EMAIL_PORT                587
 EMAIL_USE_TLS             True
-EMAIL_HOST_USER           ownai63@gmail.com
-EMAIL_HOST_PASSWORD       lpunjonbzjthfmqz
-DEFAULT_FROM_EMAIL        Cineva Cinema <ownai63@gmail.com>
+EMAIL_HOST_USER           your_email@gmail.com
+EMAIL_HOST_PASSWORD       [REDACTED_GMAIL_APP_PASSWORD]
+DEFAULT_FROM_EMAIL        Cineva Cinema <your_email@gmail.com>
 
 
 8. LOCAL SETUP & RUNNING INSTRUCTIONS

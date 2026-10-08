@@ -417,6 +417,16 @@ class Theater(models.Model):
             return f'{self.name} - {self.movie.name} at {self.time}'
         return f'{self.name}' + (f' ({self.city})' if self.city else '')
 
+    @property
+    def is_booking_open(self):
+        """Returns True if theater is active and legacy showtime is not past cutoff."""
+        if not self.is_active:
+            return False
+        if self.time:
+            from datetime import timedelta
+            return timezone.now() < (self.time - timedelta(minutes=10))
+        return True
+
 
 class Screen(models.Model):
     SCREEN_TYPE_CHOICES = [
@@ -492,8 +502,61 @@ class ShowSchedule(models.Model):
                     f"from {conflict.start_time.strftime('%Y-%m-%d %H:%M')} to {conflict.end_time.strftime('%H:%M')}."
                 )
 
+    def save(self, *args, **kwargs):
+        if self.start_time and not self.end_time:
+            from datetime import timedelta
+            duration_mins = getattr(self.movie, 'duration', None) or 150
+            self.end_time = self.start_time + timedelta(minutes=duration_mins)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.movie.title} at {self.theater.name} ({self.screen.name}) - {self.start_time.strftime('%Y-%m-%d %H:%M')}"
+
+    @property
+    def cutoff_time(self):
+        """Timestamp exactly 10 minutes prior to show start time when bookings close."""
+        from datetime import timedelta
+        return self.start_time - timedelta(minutes=10)
+
+    @property
+    def is_past(self):
+        """Returns True if the show has already started or ended."""
+        return timezone.now() >= self.start_time
+
+    @property
+    def is_within_cutoff(self):
+        """
+        Returns True if online booking has closed for this show.
+        Ticket booking strictly closes 10 minutes prior to start_time.
+        """
+        return timezone.now() >= self.cutoff_time
+
+    @property
+    def is_booking_open(self):
+        """
+        Returns True if the show is open for booking:
+        - Status is 'open' or 'scheduled'
+        - Start time is more than 10 minutes in the future
+        """
+        if self.status not in ('open', 'scheduled'):
+            return False
+        return not self.is_within_cutoff
+
+    @property
+    def is_closed(self):
+        """Inverse convenience property for is_booking_open."""
+        return not self.is_booking_open
+
+    @property
+    def booking_status_label(self):
+        """Returns descriptive badge label for showtime display."""
+        if self.status == 'cancelled':
+            return 'Cancelled'
+        if self.is_past:
+            return 'Show Started'
+        if self.is_within_cutoff:
+            return 'Closed'
+        return 'Available'
 
 
 class Seat(models.Model):

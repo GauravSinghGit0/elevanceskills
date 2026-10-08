@@ -48,6 +48,8 @@ urlpatterns = [
     path('payment/cancel/', views.payment_cancel_view, name='payment_cancel'),
     path('payment/retry/', views.payment_retry_view, name='payment_retry'),
     path('payment/webhook/', views.razorpay_webhook_view, name='razorpay_webhook'),
+    path('payment/<int:payment_id>/refund/', views.process_refund_view, name='process_refund'),
+    path('tickets/<int:booking_id>/refund/', views.process_booking_refund_view, name='process_booking_refund'),
 
     # Live Search, Dynamic Filtering, and Recommendation API
     path('api/discovery/', views.movie_discovery_api, name='movie_discovery_api'),

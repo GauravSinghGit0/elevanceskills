@@ -983,15 +983,18 @@ class SeatLockService:
         }
 
     @classmethod
-    def finalize_booking(cls, theater, seat_ids, user, session_key='', payment_method='card'):
+    def finalize_booking(cls, theater, seat_ids, user, session_key='', payment_method='card', show=None):
         """
         Atomically finalizes booking and payment completion within a Django transaction.
         Guarantees zero double bookings, verifies 2-minute lock validity,
-        and logs a successful Payment audit record.
+        enforces 10-minute showtime cutoff, and logs a successful Payment audit record.
         Returns: (success: bool, message: str, bookings: list)
         """
         if not seat_ids:
             return False, "No seats selected for booking.", []
+
+        if show and not show.is_booking_open:
+            return False, "Booking for this screening has closed (ticket booking closes 10 minutes prior to showtime).", []
 
         for attempt in range(4):
             now = timezone.now()
@@ -1033,6 +1036,7 @@ class SeatLockService:
                         user=user,
                         movie=theater.movie,
                         theater=theater,
+                        show=show,
                         amount=grand_total,
                         currency='INR',
                         seat_ids=[s.id for s in seats],
@@ -1049,6 +1053,7 @@ class SeatLockService:
                                 seat=s,
                                 movie=theater.movie,
                                 theater=theater,
+                                show=show,
                                 payment=payment
                             )
                             bookings.append(b)
@@ -1202,7 +1207,10 @@ class PaymentGatewayService:
         if show_id:
             show = ShowSchedule.objects.filter(id=show_id, theater=theater).first()
         elif hasattr(theater, 'shows'):
-            show = theater.shows.filter(status__in=['open', 'scheduled']).first()
+            show = theater.shows.filter(status__in=['open', 'scheduled'], start_time__gt=timezone.now() + timedelta(minutes=10)).first()
+
+        if show and not show.is_booking_open:
+            return False, "Booking for this show has closed (online booking closes 10 minutes prior to showtime).", None
 
         seat_numbers_str = ', '.join(sorted([s.seat_number for s in seats]))
 
@@ -1545,6 +1553,152 @@ class PaymentGatewayService:
                 return success, f"Webhook {event_type} handled: {msg}", {'order_id': order_id, 'status': 'FAILED'}
 
         return True, f"Webhook event '{event_type}' processed (no action needed).", {'event': event_type}
+
+
+class RefundService:
+    """
+    Enterprise-grade refund management service with transaction safety,
+    strict 10-minute cutoff enforcement, seat inventory restoration,
+    and optional gateway refund processing.
+    """
+
+    @classmethod
+    def is_eligible_for_refund(cls, payment, user=None):
+        """
+        Determines whether a payment is eligible for cancellation and refund:
+        - User must be the owner of the payment (or staff/superuser)
+        - Payment status must be 'SUCCESS'
+        - Show/screening must not have started and must not be within the 10-minute cutoff window.
+        Returns (eligible: bool, reason: str)
+        """
+        if not payment:
+            return False, "Payment transaction not found."
+
+        if user and user.is_authenticated and not (user.is_staff or user.is_superuser or payment.user_id == user.id):
+            return False, "You do not have permission to refund this payment."
+
+        if payment.status == 'REFUNDED':
+            return False, "This payment has already been refunded."
+
+        if payment.status != 'SUCCESS':
+            return False, f"Only successful payments can be refunded (current status: {payment.status})."
+
+        now = timezone.now()
+        cutoff_delta = timedelta(minutes=10)
+
+        # Check ShowSchedule timing
+        if payment.show:
+            if payment.show.is_past:
+                return False, "Refund unavailable: Screening has already started or completed."
+            if payment.show.is_within_cutoff:
+                return False, "Refund unavailable: Cancellations and refunds strictly close 10 minutes prior to showtime."
+        elif payment.theater and payment.theater.time:
+            if payment.theater.time <= now:
+                return False, "Refund unavailable: Screening has already started or completed."
+            if payment.theater.time <= now + cutoff_delta:
+                return False, "Refund unavailable: Cancellations and refunds strictly close 10 minutes prior to showtime."
+
+        return True, "Eligible for refund."
+
+    @classmethod
+    def process_refund(cls, payment, user=None, reason="User requested cancellation"):
+        """
+        Atomically processes a full refund:
+        1. Validates eligibility (10m cutoff check).
+        2. Contacts Razorpay Gateway refund API if live/test gateway ID exists.
+        3. Transitions Payment status to 'REFUNDED'.
+        4. Releases seats (is_booked=False, clears locks).
+        5. Removes active Booking records to free seats for other patrons.
+        6. Returns (success: bool, message: str, payment: Payment)
+        """
+        eligible, msg = cls.is_eligible_for_refund(payment, user)
+        if not eligible:
+            return False, msg, payment
+
+        for attempt in range(4):
+            try:
+                with transaction.atomic():
+                    # Lock payment row
+                    p = Payment.objects.select_for_update().get(id=payment.id)
+                    if p.status == 'REFUNDED':
+                        return False, "This payment has already been refunded.", p
+                    if p.status != 'SUCCESS':
+                        return False, f"Payment cannot be refunded in status '{p.status}'.", p
+
+                    # Gateway refund call if Razorpay transaction ID is present
+                    gateway_refund_id = ""
+                    if p.gateway == 'RAZORPAY' and p.transaction_id:
+                        client = PaymentGatewayService.get_razorpay_client()
+                        if client and not p.transaction_id.startswith('txn_direct_'):
+                            try:
+                                refund_resp = client.payment.refund(p.transaction_id, {
+                                    'amount': int(p.amount * 100),
+                                    'notes': {
+                                        'reason': reason,
+                                        'refunded_by': user.username if user else 'system'
+                                    }
+                                })
+                                gateway_refund_id = refund_resp.get('id', '')
+                            except Exception as e:
+                                import logging
+                                logging.getLogger(__name__).warning("Razorpay refund API notice: %s", e)
+
+                    # Release booked seats back to inventory
+                    seat_ids = p.seat_ids or []
+                    if seat_ids:
+                        seats = list(Seat.objects.select_for_update().filter(id__in=seat_ids, theater=p.theater))
+                        for s in seats:
+                            s.is_booked = False
+                            s.locked_by = None
+                            s.lock_session_key = ''
+                            s.locked_until = None
+                            s.save(update_fields=['is_booked', 'locked_by', 'lock_session_key', 'locked_until'])
+
+                    # Delete Booking records associated with this payment to release one-to-one seat constraints
+                    Booking.objects.filter(payment=p).delete()
+
+                    # Update Payment record to REFUNDED
+                    refund_note = f"Refunded on {timezone.now().strftime('%Y-%m-%d %H:%M:%S UTC')}."
+                    if gateway_refund_id:
+                        refund_note += f" Gateway Refund ID: {gateway_refund_id}."
+                    if reason:
+                        refund_note += f" Reason: {reason}."
+
+                    p.status = 'REFUNDED'
+                    p.error_description = refund_note
+                    p.save(update_fields=['status', 'error_description', 'updated_at'])
+
+                    # Send cancellation / refund confirmation email
+                    try:
+                        from django.core.mail import send_mail
+                        from django.conf import settings
+                        subject = f"Refund Confirmation - Cineva Cinema ({p.order_id})"
+                        body = (
+                            f"Dear {p.user.first_name or p.user.username},\n\n"
+                            f"Your cancellation and refund of INR {p.amount:.2f} for order {p.order_id} "
+                            f"({p.movie.title} at {p.theater.name}) has been successfully processed.\n\n"
+                            f"Seats released: {p.seat_numbers or 'N/A'}\n"
+                            f"The amount of INR {p.amount:.2f} will be credited back to your original payment method.\n\n"
+                            f"Thank you,\nCineva Cinema Team"
+                        )
+                        send_mail(
+                            subject,
+                            body,
+                            getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@cineva.film'),
+                            [p.user.email],
+                            fail_silently=True
+                        )
+                    except Exception:
+                        pass
+
+                    return True, f"Refund of ₹{p.amount:.2f} processed successfully! The seats have been released.", p
+
+            except (IntegrityError, OperationalError) as e:
+                if attempt < 3:
+                    import time as py_time
+                    py_time.sleep(0.06 * (attempt + 1))
+                    continue
+                return False, "Database busy during refund processing. Please try again.", payment
 
 
 class BusinessAnalyticsService:

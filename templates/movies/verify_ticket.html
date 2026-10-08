@@ -20,6 +20,15 @@
             </span>
             <h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">Verified Cinema Admission</h1>
             <p class="text-body-sm text-on-surface-variant mt-1">Official entry token verified with cryptographic HMAC-SHA256.</p>
+            {% elif is_refunded %}
+            <div class="w-20 h-20 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center mb-4 shadow-lg shadow-purple-500/10">
+                <span class="material-symbols-outlined text-4xl">currency_exchange</span>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-purple-500/15 text-purple-400 font-label-md text-label-md font-bold border border-purple-500/30 mb-2">
+                TICKET VOIDED &bull; BOOKING REFUNDED
+            </span>
+            <h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">Refunded Reservation</h1>
+            <p class="text-body-sm text-on-surface-variant mt-1">This booking was cancelled and 100% refunded. Admission is revoked.</p>
             {% else %}
             <div class="w-20 h-20 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center mb-4 shadow-lg shadow-rose-500/10">
                 <span class="material-symbols-outlined text-4xl">gpp_bad</span>

@@ -347,8 +347,87 @@
                     </a>
                 </div>
                 {% endif %}
+
+                <!-- Mobile Hamburger Menu Button -->
+                <button
+                    id="mobileMenuBtn"
+                    type="button"
+                    class="md:hidden flex items-center justify-center p-2 rounded-xl bg-surface-container text-on-surface hover:text-primary hover:bg-surface-container-high transition-colors"
+                    aria-label="Toggle navigation menu">
+                    <span id="mobileMenuIcon" class="material-symbols-outlined text-2xl">menu</span>
+                </button>
             </div>
         </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobileMenuDrawer" class="hidden md:hidden border-t border-outline-variant/20 bg-surface/98 backdrop-blur-xl px-6 py-4 flex-col gap-3 animate-fade-in-up">
+            <form action="{% url 'movie_list' %}" method="GET" class="relative w-full mb-2">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+                <input
+                    name="search"
+                    class="w-full pl-9 pr-4 py-2 text-body-sm bg-surface-container-lowest rounded-xl border border-outline-variant/30 focus:border-primary focus:outline-none"
+                    placeholder="Search movies by title, cast..."
+                    type="text"
+                />
+            </form>
+            <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-on-surface hover:text-primary hover:bg-surface-container font-label-lg" href="{% url 'home' %}">
+                <span class="material-symbols-outlined text-xl text-secondary">home</span>
+                <span>Home</span>
+            </a>
+            <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-on-surface hover:text-primary hover:bg-surface-container font-label-lg" href="{% url 'movie_list' %}">
+                <span class="material-symbols-outlined text-xl text-primary">movie</span>
+                <span>Explore Movies</span>
+            </a>
+            {% if user.is_authenticated and user.is_staff or user.is_authenticated and user.is_superuser %}
+            <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-secondary hover:text-primary hover:bg-surface-container font-label-lg border border-secondary/20" href="{% url 'movie_admin_dashboard' %}">
+                <span class="material-symbols-outlined text-xl">admin_panel_settings</span>
+                <span>Cinema Ops Dashboard</span>
+            </a>
+            {% endif %}
+            {% if user.is_authenticated %}
+            <a class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-on-surface hover:text-primary hover:bg-surface-container font-label-lg" href="{% url 'profile' %}">
+                <span class="material-symbols-outlined text-xl text-secondary">account_circle</span>
+                <span>My Profile &amp; Bookings</span>
+            </a>
+            <form method="POST" action="{% url 'logout' %}" class="w-full pt-2 border-t border-outline-variant/20">
+                {% csrf_token %}
+                <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-error hover:bg-error-container/20 font-label-lg transition-colors">
+                    <span class="material-symbols-outlined text-xl">logout</span>
+                    <span>Sign Out</span>
+                </button>
+            </form>
+            {% else %}
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-outline-variant/20">
+                <a href="{% url 'login' %}" class="text-center py-2.5 rounded-xl bg-surface-container text-on-surface font-label-md font-semibold">
+                    Sign In
+                </a>
+                <a href="{% url 'register' %}" class="text-center py-2.5 rounded-xl bg-primary-container text-on-primary-container font-label-md font-bold shadow">
+                    Join Cineva
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const btn = document.getElementById('mobileMenuBtn');
+                const drawer = document.getElementById('mobileMenuDrawer');
+                const icon = document.getElementById('mobileMenuIcon');
+                if (btn && drawer) {
+                    btn.addEventListener('click', function() {
+                        const isOpen = !drawer.classList.contains('hidden');
+                        if (isOpen) {
+                            drawer.classList.add('hidden');
+                            drawer.classList.remove('flex');
+                            if (icon) icon.textContent = 'menu';
+                        } else {
+                            drawer.classList.remove('hidden');
+                            drawer.classList.add('flex');
+                            if (icon) icon.textContent = 'close';
+                        }
+                    });
+                }
+            });
+        </script>
     </header>
     {% endblock site_header %}
 

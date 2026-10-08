@@ -191,6 +191,16 @@
                             </span>
 
                             <div class="flex items-center gap-2">
+                                {% if b.payment and b.payment.status == 'SUCCESS' %}
+                                <a
+                                    href="{% url 'process_refund' b.payment.id %}"
+                                    class="px-2.5 py-1.5 rounded-lg bg-error-container/20 hover:bg-error hover:text-white text-error text-label-sm font-label-sm font-semibold transition-colors flex items-center gap-1 border border-error/30"
+                                    title="Cancel booking and request 100% refund (allowed up to 10m before showtime)">
+                                    <span class="material-symbols-outlined text-[14px]">currency_exchange</span>
+                                    <span>Refund</span>
+                                </a>
+                                {% endif %}
+
                                 <a
                                     href="{% url 'download_ticket' b.id %}"
                                     class="px-2.5 py-1.5 rounded-lg bg-primary-container hover:bg-inverse-primary text-on-primary-container text-label-sm font-label-sm font-bold transition-colors flex items-center gap-1 shadow-sm"
@@ -238,7 +248,13 @@
                             <p class="text-body-sm font-body-sm text-on-surface-variant">Real-time ledger of gateway transactions, status, and payment retries</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        {% if refunded_amount > 0 %}
+                        <div class="px-3 py-1 rounded-xl bg-purple-500/10 border border-purple-500/30 text-xs text-purple-300 flex items-center gap-1.5 font-mono">
+                            <span>Refunded:</span>
+                            <strong class="font-bold">₹{{ refunded_amount|floatformat:2 }}</strong>
+                        </div>
+                        {% endif %}
                         <div class="px-3 py-1 rounded-xl bg-surface-container border border-outline-variant/20 text-xs text-on-surface-variant flex items-center gap-1.5 font-mono">
                             <span>Total Confirmed:</span>
                             <strong class="text-emerald-400 font-bold">₹{{ total_spent|floatformat:2 }}</strong>
@@ -291,6 +307,11 @@
                                         <span class="material-symbols-outlined text-xs">check_circle</span>
                                         <span>Successful</span>
                                     </span>
+                                    {% elif p.status == 'REFUNDED' %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 font-semibold text-[11px]">
+                                        <span class="material-symbols-outlined text-xs">currency_exchange</span>
+                                        <span>Refunded</span>
+                                    </span>
                                     {% elif p.status == 'FAILED' %}
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error-container/25 border border-error text-error font-semibold text-[11px]">
                                         <span class="material-symbols-outlined text-xs">cancel</span>
@@ -322,11 +343,18 @@
                                     {% elif p.status == 'SUCCESS' %}
                                     <div class="inline-flex items-center gap-1.5">
                                         <a
+                                            href="{% url 'process_refund' p.id %}"
+                                            class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-error-container/20 hover:bg-error hover:text-white text-error font-bold text-[11px] transition-colors border border-error/30"
+                                            title="Cancel booking & request 100% refund (closes 10m before showtime)">
+                                            <span class="material-symbols-outlined text-xs">currency_exchange</span>
+                                            <span>Refund</span>
+                                        </a>
+                                        <a
                                             href="{% url 'download_payment_tickets' p.id %}"
                                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary-container text-on-primary-container hover:bg-inverse-primary font-bold text-[11px] transition-colors shadow"
                                             title="Download PDF Tickets for this transaction">
                                             <span class="material-symbols-outlined text-xs">download</span>
-                                            <span>Ticket PDF</span>
+                                            <span>PDF</span>
                                         </a>
                                         <a
                                             href="{% url 'movie_detail' p.movie.slug %}"
@@ -334,6 +362,11 @@
                                             <span>Movie</span>
                                         </a>
                                     </div>
+                                    {% elif p.status == 'REFUNDED' %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-300 font-mono text-[11px] font-semibold border border-purple-500/20">
+                                        <span class="material-symbols-outlined text-xs">done_all</span>
+                                        <span>100% Refunded</span>
+                                    </span>
                                     {% else %}
                                     <a
                                         href="{% url 'book_seats' p.theater.id %}"

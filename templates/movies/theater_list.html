@@ -89,6 +89,23 @@
             </div>
         </div>
 
+        <!-- Past Date Notice Banner if viewing previous dates -->
+        {% if is_past_date %}
+        <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-2xl flex-shrink-0 text-amber-400">history_toggle_off</span>
+                <div>
+                    <p class="font-bold text-sm">Viewing Past Date: {{ selected_date }}</p>
+                    <p class="text-xs text-amber-200/80">Ticket bookings are closed for past dates. Please pick today or an upcoming date to reserve seats.</p>
+                </div>
+            </div>
+            <a href="?date={{ dates.0.date_str }}" class="px-4 py-2 rounded-xl bg-amber-500 text-black font-bold text-xs hover:bg-amber-400 transition-colors flex items-center gap-1.5 flex-shrink-0">
+                <span class="material-symbols-outlined text-sm">today</span>
+                <span>Jump to Today</span>
+            </a>
+        </div>
+        {% endif %}
+
         <!-- Date Selection Horizontal Scroller / Tabs -->
         <div class="space-y-3">
             <div class="flex items-center justify-between">
@@ -160,6 +177,10 @@
                     <span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
                     <span>Fast Filling</span>
                 </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-surface-container-highest border border-outline-variant/40"></span>
+                    <span class="text-on-surface-variant/70">Closed / Past (10m cut-off)</span>
+                </span>
             </div>
         </div>
 
@@ -218,8 +239,27 @@
 
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                             {% for slot in item.slots %}
+                            {% if slot.is_closed %}
+                            <div
+                                class="flex flex-col items-center justify-center p-3 rounded-xl bg-surface-container/30 border border-outline-variant/15 text-center cursor-not-allowed select-none opacity-50 relative group"
+                                title="{% if slot.is_started %}Screening has already started or completed{% else %}Booking closed 10 minutes prior to showtime{% endif %}">
+                                <span class="font-title-sm text-title-sm font-semibold text-on-surface-variant/70 line-through">
+                                    {{ slot.time_str }}
+                                </span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant/50 font-medium mt-0.5">
+                                    {{ slot.screen_type }}
+                                </span>
+                                <div class="flex items-center justify-between w-full mt-2 pt-1.5 border-t border-outline-variant/10 text-[11px] text-on-surface-variant/50">
+                                    <span>₹{{ slot.price }}</span>
+                                    <span class="inline-flex items-center gap-0.5 text-error font-semibold">
+                                        <span class="material-symbols-outlined text-[12px]">lock</span>
+                                        <span>{{ slot.status }}</span>
+                                    </span>
+                                </div>
+                            </div>
+                            {% else %}
                             <a
-                                href="{% url 'book_seats' item.theater.id %}"
+                                href="{% url 'book_seats' item.theater.id %}{% if slot.show_id %}?show_id={{ slot.show_id }}{% endif %}"
                                 class="group flex flex-col items-center justify-center p-3 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 hover:border-primary/50 transition-all duration-150 active:scale-95 text-center shadow-sm">
                                 <span class="font-title-sm text-title-sm font-bold text-on-surface group-hover:text-primary transition-colors">
                                     {{ slot.time_str }}
@@ -234,6 +274,7 @@
                                     </span>
                                 </div>
                             </a>
+                            {% endif %}
                             {% endfor %}
                         </div>
                     </div>

@@ -25,7 +25,7 @@ from .forms import (
 )
 from .services import (
     ReviewEligibilityService, MovieQueryService, SeatLockService, TheaterSeatingService,
-    PaymentGatewayService, BusinessAnalyticsService, MovieDiscoveryService
+    PaymentGatewayService, BusinessAnalyticsService, MovieDiscoveryService, RefundService
 )
 from .ticket_service import TicketGeneratorService
 from .tasks import dispatch_booking_ticket_email
@@ -281,6 +281,16 @@ def theater_list(request, movie_id):
     selected_format = request.GET.get('format', 'all')
     selected_slot = request.GET.get('slot', 'all')
 
+    try:
+        selected_date = datetime.strptime(selected_date_str, '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        selected_date = today
+        selected_date_str = today.strftime('%Y-%m-%d')
+
+    is_past_date = selected_date < today
+    now = timezone.now()
+    cutoff_delta = timedelta(minutes=10)
+
     dates = []
     for i in range(7):
         d = today + timedelta(days=i)
@@ -301,28 +311,100 @@ def theater_list(request, movie_id):
             'is_selected': (d_str == selected_date_str)
         })
 
+    from collections import defaultdict
+    schedules_by_theater = defaultdict(list)
+    schedules_qs = ShowSchedule.objects.filter(
+        theater__in=theaters,
+        movie=movie,
+        start_time__date=selected_date
+    ).select_related('screen').order_by('start_time')
+    if selected_format != 'all':
+        schedules_qs = schedules_qs.filter(screen__screen_type__icontains=selected_format)
+
+    for s in schedules_qs:
+        schedules_by_theater[s.theater_id].append(s)
+
     theater_data = []
     for th in theaters:
-        schedules = ShowSchedule.objects.filter(theater=th, movie=movie).select_related('screen')
+        th_schedules = schedules_by_theater.get(th.id, [])
         slots = []
-        if schedules.exists():
-            for s in schedules:
+        if th_schedules:
+            for s in th_schedules:
+                slot_hour = timezone.localtime(s.start_time).hour
+                if selected_slot == 'morning' and not (slot_hour < 12):
+                    continue
+                elif selected_slot == 'afternoon' and not (12 <= slot_hour < 16):
+                    continue
+                elif selected_slot == 'evening' and not (16 <= slot_hour < 20):
+                    continue
+                elif selected_slot == 'night' and not (slot_hour >= 20):
+                    continue
+
+                is_closed = is_past_date or (s.start_time <= now + cutoff_delta) or (s.status not in ['open', 'scheduled'])
+                is_started = is_past_date or (s.start_time <= now)
+
+                if is_started:
+                    status_text = 'Show Started' if not is_past_date else 'Closed'
+                elif is_closed:
+                    status_text = 'Closed'
+                else:
+                    status_text = 'Fast Filling' if (s.id % 2 == 0) else 'Available'
+
                 slots.append({
-                    'time_str': s.start_time.strftime('%I:%M %p'),
+                    'id': s.id,
+                    'show_id': s.id,
+                    'time_str': timezone.localtime(s.start_time).strftime('%I:%M %p'),
                     'screen_type': s.screen.screen_type if s.screen else '2D Standard',
                     'screen_name': s.screen.name if s.screen else 'Screen 1',
                     'price': s.price,
-                    'status': 'Available',
+                    'status': status_text,
+                    'is_closed': is_closed,
+                    'is_started': is_started,
                     'theater_id': th.id,
                 })
         else:
-            base_time = th.time.strftime('%I:%M %p') if th.time else '07:15 PM'
-            slots = [
-                {'time_str': '10:15 AM', 'screen_type': 'IMAX 3D', 'screen_name': 'Audi 1 (IMAX)', 'price': '180.00', 'status': 'Almost Full', 'theater_id': th.id},
-                {'time_str': '01:45 PM', 'screen_type': 'Dolby Atmos', 'screen_name': 'Audi 2 (Atmos)', 'price': '160.00', 'status': 'Available', 'theater_id': th.id},
-                {'time_str': base_time, 'screen_type': '4DX Laser', 'screen_name': 'Audi 3 (4DX)', 'price': '220.00', 'status': 'Fast Filling', 'theater_id': th.id},
-                {'time_str': '09:30 PM', 'screen_type': '2D Standard', 'screen_name': 'Audi 4 (Digital)', 'price': '140.00', 'status': 'Available', 'theater_id': th.id},
+            fallback_times = [
+                ('10:15 AM', 'IMAX 3D', 'Audi 1 (IMAX)', Decimal('180.00'), 10, 15),
+                ('01:45 PM', 'Dolby Atmos', 'Audi 2 (Atmos)', Decimal('160.00'), 13, 45),
+                ('05:30 PM', '4DX Laser', 'Audi 3 (4DX)', Decimal('220.00'), 17, 30),
+                ('09:30 PM', '2D Standard', 'Audi 4 (Digital)', Decimal('140.00'), 21, 30),
             ]
+            for t_str, scr_type, scr_name, pr, hr, mn in fallback_times:
+                if selected_format != 'all' and selected_format.lower() not in scr_type.lower():
+                    continue
+                if selected_slot == 'morning' and not (hr < 12):
+                    continue
+                elif selected_slot == 'afternoon' and not (12 <= hr < 16):
+                    continue
+                elif selected_slot == 'evening' and not (16 <= hr < 20):
+                    continue
+                elif selected_slot == 'night' and not (hr >= 20):
+                    continue
+
+                slot_dt = timezone.make_aware(datetime.combine(selected_date, time(hr, mn)))
+                is_closed = is_past_date or (slot_dt <= now + cutoff_delta)
+                is_started = is_past_date or (slot_dt <= now)
+
+                if is_started:
+                    status_text = 'Show Started' if not is_past_date else 'Closed'
+                elif is_closed:
+                    status_text = 'Closed'
+                else:
+                    status_text = 'Available'
+
+                slots.append({
+                    'id': None,
+                    'show_id': None,
+                    'time_str': t_str,
+                    'screen_type': scr_type,
+                    'screen_name': scr_name,
+                    'price': pr,
+                    'status': status_text,
+                    'is_closed': is_closed,
+                    'is_started': is_started,
+                    'theater_id': th.id,
+                })
+
         theater_data.append({
             'theater': th,
             'slots': slots,
@@ -336,6 +418,7 @@ def theater_list(request, movie_id):
         'selected_date': selected_date_str,
         'selected_format': selected_format,
         'selected_slot': selected_slot,
+        'is_past_date': is_past_date,
     }
     return render(request, 'movies/theater_list.html', context)
 
@@ -352,6 +435,33 @@ def book_seats(request, theater_id):
 
     seats = Seat.objects.filter(theater=theater).order_by('row', 'number', 'seat_number')
 
+    show_id = request.GET.get('show_id') or request.POST.get('show_id')
+    show = None
+    if show_id:
+        show = ShowSchedule.objects.filter(id=show_id, theater=theater).select_related('movie', 'screen').first()
+
+    if not show and hasattr(theater, 'shows'):
+        show = theater.shows.filter(
+            start_time__gt=timezone.now() + timedelta(minutes=10),
+            status__in=['open', 'scheduled']
+        ).order_by('start_time').first()
+
+    is_show_closed = False
+    closed_reason = ""
+    if show:
+        if not show.is_booking_open:
+            is_show_closed = True
+            local_start = timezone.localtime(show.start_time)
+            local_cutoff = timezone.localtime(show.cutoff_time)
+            if show.is_past:
+                closed_reason = f"Screening at {local_start.strftime('%I:%M %p')} has already started or completed. Ticket booking is closed."
+            else:
+                closed_reason = f"Ticket booking for {local_start.strftime('%I:%M %p')} closed 10 minutes prior to showtime (cutoff was {local_cutoff.strftime('%I:%M %p')}). Online booking is not available."
+    elif theater.time and not theater.is_booking_open:
+        is_show_closed = True
+        local_time = timezone.localtime(theater.time)
+        closed_reason = f"Screening at {local_time.strftime('%I:%M %p')} is within the 10-minute cutoff or has already passed. Ticket booking is closed."
+
     if request.method == 'POST':
         import json
         is_json = request.content_type == 'application/json'
@@ -362,9 +472,29 @@ def book_seats(request, theater_id):
                 data = {}
             selected_seats = data.get('seats', [])
             payment_method = data.get('payment_method', 'card')
+            post_show_id = data.get('show_id')
+            if post_show_id and not show:
+                show = ShowSchedule.objects.filter(id=post_show_id, theater=theater).first()
+                if show and not show.is_booking_open:
+                    is_show_closed = True
+                    closed_reason = f"Booking for {timezone.localtime(show.start_time).strftime('%I:%M %p')} has closed (10-minute cutoff reached)."
         else:
             selected_seats = request.POST.getlist('seats')
             payment_method = request.POST.get('payment_method', 'card')
+
+        if is_show_closed:
+            err = closed_reason or "Booking for this screening has closed (online bookings close 10 minutes prior to showtime)."
+            if is_json:
+                return JsonResponse({'success': False, 'message': err}, status=400)
+            return render(request, "movies/seat_selection.html", {
+                'theater': theater,
+                'theaters': theater,
+                'show': show,
+                'is_show_closed': True,
+                'closed_reason': closed_reason,
+                'seats': seats,
+                'error': err
+            })
 
         if not selected_seats:
             err = "No seat selected. Please pick at least one seat to proceed with booking."
@@ -373,6 +503,9 @@ def book_seats(request, theater_id):
             return render(request, "movies/seat_selection.html", {
                 'theater': theater,
                 'theaters': theater,
+                'show': show,
+                'is_show_closed': is_show_closed,
+                'closed_reason': closed_reason,
                 'seats': seats,
                 'error': err
             })
@@ -383,7 +516,8 @@ def book_seats(request, theater_id):
             seat_ids=selected_seats,
             user=request.user,
             session_key=session_key,
-            payment_method=payment_method
+            payment_method=payment_method,
+            show=show
         )
 
         if not success:
@@ -392,6 +526,9 @@ def book_seats(request, theater_id):
             return render(request, 'movies/seat_selection.html', {
                 'theater': theater,
                 'theaters': theater,
+                'show': show,
+                'is_show_closed': is_show_closed,
+                'closed_reason': closed_reason,
                 'seats': seats,
                 'error': message
             })
@@ -413,6 +550,9 @@ def book_seats(request, theater_id):
     return render(request, 'movies/seat_selection.html', {
         'theater': theater,
         'theaters': theater,
+        'show': show,
+        'is_show_closed': is_show_closed,
+        'closed_reason': closed_reason,
         'seats': seats,
     })
 
@@ -441,6 +581,20 @@ def toggle_seat_lock(request, theater_id):
         data = request.POST
 
     action = data.get('action', 'lock')
+    show_id = data.get('show_id') or request.GET.get('show_id')
+    if action == 'lock':
+        if show_id:
+            show = ShowSchedule.objects.filter(id=show_id, theater=theater).first()
+            if show and not show.is_booking_open:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Booking for this screening has closed (online bookings close 10 minutes prior to showtime).'
+                }, status=400)
+        elif theater.time and not theater.is_booking_open:
+            return JsonResponse({
+                'success': False,
+                'message': 'Screening booking has closed (online bookings close 10 minutes prior to showtime).'
+            }, status=400)
 
     # Handle release_all action
     if action == 'release_all':
@@ -654,6 +808,10 @@ def download_ticket_view(request, booking_id):
     if booking.user != request.user and not request.user.is_staff:
         raise PermissionDenied("You do not have permission to download this ticket.")
 
+    if booking.payment and booking.payment.status == 'REFUNDED':
+        messages.error(request, "This booking has been refunded and the ticket is voided.")
+        return redirect('profile')
+
     pdf_bytes = TicketGeneratorService.generate_ticket_pdf(booking=booking, request=request)
     movie_slug = booking.movie.slug or 'movie'
     filename = f"ticket_{movie_slug}_{booking.id}.pdf"
@@ -676,6 +834,10 @@ def download_payment_tickets_view(request, payment_id):
     if payment.user != request.user and not request.user.is_staff:
         raise PermissionDenied("You do not have permission to download tickets for this transaction.")
 
+    if payment.status == 'REFUNDED':
+        messages.error(request, "This transaction has been refunded and the ticket pass is voided.")
+        return redirect('profile')
+
     pdf_bytes = TicketGeneratorService.generate_ticket_pdf(payment=payment, request=request)
     filename = f"tickets_order_{payment.order_id}.pdf"
 
@@ -693,8 +855,12 @@ def verify_ticket_view(request, booking_id):
     token = request.GET.get('token', '')
 
     is_valid = False
+    is_refunded = False
     if booking:
-        if TicketGeneratorService.verify_ticket_token(booking, token):
+        if booking.payment and booking.payment.status == 'REFUNDED':
+            is_valid = False
+            is_refunded = True
+        elif TicketGeneratorService.verify_ticket_token(booking, token):
             is_valid = True
         elif request.user.is_authenticated and request.user.is_staff:
             is_valid = True
@@ -702,6 +868,7 @@ def verify_ticket_view(request, booking_id):
     return render(request, 'movies/verify_ticket.html', {
         'booking': booking,
         'is_valid': is_valid,
+        'is_refunded': is_refunded,
         'token': token,
     })
 
@@ -841,6 +1008,98 @@ def razorpay_webhook_view(request):
         return JsonResponse({'error': message}, status=400)
 
     return JsonResponse({'status': 'ok', 'message': message, 'result': result})
+
+
+# ----------------------------------------------------------------------
+# Cancellation & Refund Management Views
+# ----------------------------------------------------------------------
+
+@login_required(login_url='/login/')
+def process_refund_view(request, payment_id):
+    """
+    Processes ticket cancellation and 100% payment refund.
+    Strictly verifies user ownership and 10-minute showtime cutoff.
+    Releases reserved seats back to real-time inventory and updates status to REFUNDED.
+    """
+    payment = get_object_or_404(
+        Payment.objects.select_related('movie', 'theater', 'show', 'user'),
+        id=payment_id
+    )
+
+    if payment.user != request.user and not request.user.is_staff and not request.user.is_superuser:
+        raise PermissionDenied("You do not have permission to refund this booking.")
+
+    if request.method == 'POST':
+        import json
+        is_json = request.content_type == 'application/json' or request.headers.get('x-requested-with') == 'XMLHttpRequest'
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body.decode('utf-8'))
+            except Exception:
+                data = {}
+            reason = data.get('reason', 'Customer requested cancellation')
+        else:
+            reason = request.POST.get('reason', 'Customer requested cancellation')
+
+        success, message, _ = RefundService.process_refund(payment, user=request.user, reason=reason)
+        if is_json:
+            status_code = 200 if success else 400
+            return JsonResponse({'success': success, 'message': message}, status=status_code)
+
+        if success:
+            messages.success(request, message)
+        else:
+            messages.error(request, message)
+        return redirect('profile')
+
+    # GET request: render confirmation page
+    eligible, reason = RefundService.is_eligible_for_refund(payment, user=request.user)
+    return render(request, 'movies/refund_confirm.html', {
+        'payment': payment,
+        'eligible': eligible,
+        'reason': reason,
+    })
+
+
+@login_required(login_url='/login/')
+def process_booking_refund_view(request, booking_id):
+    """
+    Convenience endpoint: processes cancellation and refund by booking ID.
+    Delegates to payment refund flow or releases individual booking.
+    """
+    booking = get_object_or_404(
+        Booking.objects.select_related('payment', 'user', 'seat', 'theater', 'movie', 'show'),
+        id=booking_id
+    )
+    if booking.user != request.user and not request.user.is_staff and not request.user.is_superuser:
+        raise PermissionDenied("You do not have permission to refund this booking.")
+
+    if booking.payment:
+        return process_refund_view(request, booking.payment.id)
+
+    # Legacy booking without payment record: check cutoff
+    now = timezone.now()
+    cutoff_delta = timedelta(minutes=10)
+    if booking.show:
+        if booking.show.is_past or booking.show.is_within_cutoff:
+            messages.error(request, "Refund unavailable: Cancellations close 10 minutes prior to showtime.")
+            return redirect('profile')
+    elif booking.theater.time:
+        if booking.theater.time <= now + cutoff_delta:
+            messages.error(request, "Refund unavailable: Cancellations close 10 minutes prior to showtime.")
+            return redirect('profile')
+
+    with transaction.atomic():
+        seat = booking.seat
+        booking.delete()
+        seat.is_booked = False
+        seat.locked_by = None
+        seat.lock_session_key = ''
+        seat.locked_until = None
+        seat.save()
+
+    messages.success(request, f"Booking for seat {seat.seat_number} has been cancelled and refunded.")
+    return redirect('profile')
 
 
 # ----------------------------------------------------------------------

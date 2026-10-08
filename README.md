@@ -110,6 +110,22 @@ flowchart TD
 
 ---
 
+## ⏱️ 10-Minute Show Cut-off & Past Showtime Enforcement
+
+- **Strict Online Cut-Off**: Ticket booking strictly closes **10 minutes prior to showtime**.
+- **Past Shows Protected**: Slots for screenings that have already begun or concluded are rendered locked (`line-through` + lock badge).
+- **Multi-Layer Validation**: Cut-off validation is enforced across the Theater List view, AJAX seat locks, Razorpay order generation, and transactional checkout finalization.
+
+---
+
+## 🔄 100% Instant Cancellation & Refund Flow
+
+- **Self-Service Refunds**: Patrons can initiate cancellation and receive a full 100% refund directly from their **User Profile**.
+- **Real-Time Seat Restoration**: Reserved seats are instantaneously returned to active inventory in a single atomic database transaction.
+- **Auditing & Telemetry**: Updates transaction ledger status to `REFUNDED`, voids generated admission passes, and tracks refund telemetry across executive analytics dashboards.
+
+---
+
 ## 🗄️ Database Schema & Models
 
 The system architecture models 13 core entities:
@@ -174,16 +190,16 @@ In Vercel **Settings $\rightarrow$ Environment Variables**, click **"or paste th
 ```env
 SECRET_KEY=django-insecure-c8aetlj(=vp90n@#yoc^&d(_6ivp(d!bv-4-f!r$lawptjzrwu
 DEBUG=False
-DATABASE_URL=postgresql://neondb_owner:npg_kTM5yC8eLrVS@ep-damp-star-b5zrj5t5-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require
+DATABASE_URL=postgresql://username:password@ep-xyz.neon.tech/neondb?sslmode=require
 RAZORPAY_KEY_ID=rzp_test_TkuUcn0OX3jYly
-RAZORPAY_KEY_SECRET=jaZh3ffiiNPRPXVrPk6y0pvC
-RAZORPAY_WEBHOOK_SECRET=jaZh3ffiiNPRPXVrPk6y0pvC
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret_here
+RAZORPAY_WEBHOOK_SECRET=your_razorpay_webhook_secret_here
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
-EMAIL_HOST_USER=ownai63@gmail.com
-EMAIL_HOST_PASSWORD=lpunjonbzjthfmqz
-DEFAULT_FROM_EMAIL=Cineva Cinema <ownai63@gmail.com>
+EMAIL_HOST_USER=your_email@gmail.com
+EMAIL_HOST_PASSWORD=your_gmail_app_password_here
+DEFAULT_FROM_EMAIL=Cineva Cinema <your_email@gmail.com>
 ```
 
 ### 3. Deploy
@@ -193,14 +209,14 @@ Click **Deploy**. Vercel will install dependencies, collect static assets, and d
 
 ## 🧪 Automated Testing
 
-Cineva includes 141 automated unit and integration tests covering the entire booking lifecycle:
+Cineva includes 154 automated unit and integration tests covering the entire booking lifecycle:
 
 ```bash
 python manage.py test
 ```
 
 ```text
-Ran 141 tests in 47.741s
+Ran 154 tests in 57.250s
 
 OK
 ```
